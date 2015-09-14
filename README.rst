@@ -7,3 +7,5 @@ PrimeSTG
     :alt: Build status
 
 Python library of Prime STG-DC Interface Specification
+
+Read the documentation at http://primestg.readthedocs.org
