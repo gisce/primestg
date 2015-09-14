@@ -6,6 +6,8 @@
 Welcome to PrimeSTG's documentation!
 ====================================
 
+Release v\ |release|
+
 Contents:
 
 .. toctree::
