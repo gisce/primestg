@@ -1,13 +1,19 @@
 from expects import expect, equal
 from primestg.report import Report
 from primestg.message import MessageS
-from switching.input.messages.TG import Concentrator, Values
-from switching.input.messages.message import MessageTG
-
+from ast import literal_eval
 
 with description('Report S02 example'):
     with before.all:
-        f = open('spec/data/CIR4621247027_0_S02_0_20150901111051')
+
+        self.data_filename = 'spec/data/CIR4621247027_0_S02_0_20150901111051'
+
+        with open(self.data_filename) as data_file:
+            self.message_s = MessageS(data_file)
+
+    with it('generates expected results for a value of the first meter of '
+            'first contentrator'):
+
         self.expected_firt_value_first_meter = [
             dict(
                 ae=0.0,
@@ -23,13 +29,7 @@ with description('Report S02 example'):
                 timestamp='2015-08-31 02:00:00'
             )
         ]
-        self.message_s = MessageS(f)
 
-        self.message_tg = MessageTG(f)
-        self.message_tg.parse_xml()
-
-    with it('generates expected results for a value of the first meter of '
-            'first contentrator'):
         report = Report(self.message_s)
         concentrator = report.concentrator[0]
         meter = concentrator.meter[0]
@@ -43,28 +43,14 @@ with description('Report S02 example'):
         expect(first_value_first_meter)\
             .to(equal(self.expected_firt_value_first_meter))
 
-    with it('generates the expected results for a value of the first meter of '
-            'first contentrator with switching'):
-        concentrator = Concentrator(self.message_tg.obj.Cnc[0])
-        meter = concentrator.get_meters()[0]
-        values = Values(meter, 'S02', "3.1.c").get()
+    with it('generates the expected results for the whole report'):
 
-        first_value_first_meter = []
-        for x in values:
-            if x['timestamp'] == '2015-08-31 02:00:00':
-                first_value_first_meter.append(x)
+        result_filename = '{}_result.txt'.format(self.data_filename)
 
-        expect(first_value_first_meter)\
-            .to(equal(self.expected_firt_value_first_meter))
+        with open(result_filename) as result_file:
+            result_string = result_file.read()
+            self.expected_result = literal_eval(result_string)
 
-    with it('generates the same results of switching for the first meter'):
-        switching_concentrator = Concentrator(self.message_tg.obj.Cnc[0])
-        switching_meter = switching_concentrator.get_meters()[0]
-        switching_meter_values = Values(switching_meter, 'S02', '3.1.c').get()
+        result = Report(self.message_s).values
 
-        report = Report(self.message_s)
-        primestg_contentrator = report.concentrator[0]
-        primestg_meter = primestg_contentrator.meter[0]
-        primestg_meter_values = primestg_meter.values
-
-        expect(primestg_meter_values).to(equal(switching_meter_values))
+        expect(result).to(equal(self.expected_result))
