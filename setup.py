@@ -9,5 +9,8 @@ setup(
     license='GNU Affero General Public License v3',
     author='GISCE-TI, S.L.',
     author_email='devel@gisce.net',
+    install_requires=[
+        'lxml'
+    ],
     description='Prime STG-DC Interface Specification'
 )
