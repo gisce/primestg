@@ -43,6 +43,10 @@ with description('Report S02 example'):
         expect(first_value_first_meter)\
             .to(equal(self.expected_firt_value_first_meter))
 
+    with it('generates expected result for a meter with error'):
+        result = Report(self.message_s).concentrator[0].meter[17].values
+        expect(result).to(equal({}))
+
     with it('generates the expected results for the whole report'):
 
         result_filename = '{}_result.txt'.format(self.data_filename)
