@@ -14,9 +14,9 @@ with description('MessageS'):
 
     with it('can parse an XML string'):
         message_s = MessageS('<xml><tag attr="var"/></xml>')
-        expect(message_s.objectifyed).to(be_a(ObjectifiedElement))
+        expect(message_s.objectified).to(be_a(ObjectifiedElement))
 
     with it('can parse an XML file'):
         f = open('spec/data/CIR4621247027_0_S02_0_20150901111051')
         message_s = MessageS(f)
-        expect(message_s.objectifyed).to(be_a(ObjectifiedElement))
+        expect(message_s.objectified).to(be_a(ObjectifiedElement))
