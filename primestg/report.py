@@ -441,34 +441,34 @@ class Concentrator(object):
     Base class for a concentrator.
     """
 
-    def __init__(self, concentrator):
+    def __init__(self, objectified_concentrator):
         """
         Create a Concentrator object.
 
-        :param concentrator: an lxml.objectify.StringElement representing a \
-            concentrator
+        :param objectified_concentrator: an lxml.objectify.StringElement \
+            representing a concentrator
         :return: a Concentrator object
         """
-        self.concentrator = concentrator
+        self.objectified = objectified_concentrator
 
     @property
-    def concentrator(self):
+    def objectified(self):
         """
         A concentrator as an lxml.objectify.StringElement.
 
         :return: an lxml.objectify.StringElement representing a concentrator
         """
-        return self._concentrator
+        return self._objectified
 
-    @concentrator.setter
-    def concentrator(self, value):
+    @objectified.setter
+    def objectified(self, value):
         """
         Stores a concentrator as an lxml.objectify.StringElement.
 
         :param value: an lxml.objectify.StringElement representing a \
             concentrator
         """
-        self._concentrator = value
+        self._objectified = value
 
     @property
     def meter_class(self):
@@ -487,7 +487,7 @@ class Concentrator(object):
         :return: a list of meter objects
         """
         meters = []
-        for meter in self.concentrator.Cnt:
+        for meter in self.objectified.Cnt:
             meters.append(self.meter_class(meter))
         return meters
 
@@ -498,7 +498,7 @@ class Concentrator(object):
 
         :return: a string with the name of the concentrator
         """
-        return self.concentrator.get('Id')
+        return self.objectified.get('Id')
 
     @property
     def values(self):
@@ -543,7 +543,7 @@ class ConcentratorWithMetersWithConcentratorName(Concentrator):
         :return: a list of meter objects
         """
         meters = []
-        for meter in self.concentrator.Cnt:
+        for meter in self.objectified.Cnt:
             meters.append(self.meter_class(meter, self.name))
         return meters
 
