@@ -186,32 +186,33 @@ class Meter(object):
     Base class for a meter.
     """
 
-    def __init__(self, meter):
+    def __init__(self, objectified_meter):
         """
         Create a Meter object.
 
-        :param meter: an lxml.objectify.StringElement representing a meter
+        :param objectified_meter: an lxml.objectify.StringElement \
+            representing a meter
         :return: a Meter object
         """
-        self.meter = meter
+        self.objectified = objectified_meter
 
     @property
-    def meter(self):
+    def objectified(self):
         """
         A meter as an lxml.objectify.StringElement.
 
         :return: an lxml.objectify.StringElement representing a meter
         """
-        return self._meter
+        return self._objectified
 
-    @meter.setter
-    def meter(self, value):
+    @objectified.setter
+    def objectified(self, value):
         """
         Stores an lxml.objectify.StringElement representing a meter
 
         :param value: an lxml.objectify.StringElement representing a meter
         """
-        self._meter = value
+        self._objectified = value
 
     @property
     def errors(self):
@@ -221,10 +222,10 @@ class Meter(object):
         :return: a dict with the meter errors
         """
         self._errors = {}
-        if self.meter.get('ErrCat'):
+        if self.objectified.get('ErrCat'):
             self._errors = {
-                'errcat': self.meter.get('ErrCat'),
-                'errcode': self.meter.get('ErrCode')
+                'errcat': self.objectified.get('ErrCat'),
+                'errcode': self.objectified.get('ErrCode')
             }
         return self._errors
 
@@ -235,7 +236,7 @@ class Meter(object):
 
         :return: a string with the name of the meter
         """
-        return self.meter.get('Id')
+        return self.objectified.get('Id')
 
     @property
     def magnitude(self):
@@ -244,7 +245,7 @@ class Meter(object):
 
         :return: a int with the magnitude of the meter measures
         """
-        return self.meter.get('Magn')
+        return self.objectified.get('Magn')
 
     @property
     def report_type(self):
@@ -270,8 +271,8 @@ class Meter(object):
         :return: a list of measure set objects
         """
         measures = []
-        if hasattr(self.meter, self.report_type):
-            for measure in getattr(self.meter, self.report_type):
+        if hasattr(self.objectified, self.report_type):
+            for measure in getattr(self.objectified, self.report_type):
                 measures.append(self.measure_class(measure))
         return measures
 
@@ -337,16 +338,17 @@ class MeterWithConcentratorName(Meter):
         in the values, like S04 and S05.
     """
 
-    def __init__(self, meter, concentrator_name):
+    def __init__(self, objectified_meter, concentrator_name):
         """
         Create a Meter object using Meter constructor and adding the \
             concentrator name.
 
-        :param meter: an lxml.objectify.StringElement representing a meter
+        :param objectified_meter: an lxml.objectify.StringElement \
+            representing a meter
         :param concentrator_name: a string with the name of the concentrator
         :return: a Meter object
         """
-        super(MeterWithConcentratorName, self).__init__(meter)
+        super(MeterWithConcentratorName, self).__init__(objectified_meter)
         self.concentrator_name = concentrator_name
 
     @property
