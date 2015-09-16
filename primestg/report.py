@@ -150,6 +150,36 @@ class MeasureS04(MeasureActiveReactive):
         return values
 
 
+class MeasureS05(MeasureActiveReactive):
+    """
+    Class for a set of measures of report S05.
+    """
+
+    @property
+    def value(self):
+        """
+        Set of measures of report S05.
+
+        :return: a dict with a set of measures of report S05
+        """
+        values = []
+        timestamp = self._get_timestamp('Fh')
+        v = {
+            'type': 'day',
+            'value': 'a',
+            'date_begin': timestamp,
+            'date_end': timestamp,
+            'contract': int(self.measure.get('Ctr')),
+            'period': int(self.measure.get('Pt')),
+        }
+
+        for s05_values in self.measure.Value:
+            v.update(self.active_reactive(s05_values, 'a'))
+            values.append(v)
+
+        return values
+
+
 class Meter(object):
     """
     Base class for a meter.
@@ -377,6 +407,31 @@ class MeterS04(MeterWithConcentratorName):
         return MeasureS04
 
 
+class MeterS05(MeterWithConcentratorName):
+    """
+    Class for a meter of report S05.
+    """
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S05.
+
+        :return: a string with 'S05'
+        """
+
+        return 'S05'
+
+    @property
+    def measure_class(self):
+        """
+        The class used to instance measure sets for report S05.
+
+        :return: a class to instance measure sets of report S05
+        """
+        return MeasureS05
+
+
 class Concentrator(object):
     """
     Base class for a concentrator.
@@ -504,6 +559,21 @@ class ConcentratorS04(ConcentratorWithMetersWithConcentratorName):
         return MeterS04
 
 
+class ConcentratorS05(ConcentratorWithMetersWithConcentratorName):
+    """
+    Class for a concentrator of report S05.
+    """
+
+    @property
+    def meter_class(self):
+        """
+        The class used to instance meters for report S05.
+
+        :return: a class to instance meters of report S05
+        """
+        return MeterS05
+
+
 class Report(object):
     """
     Report class to process MessageS
@@ -554,7 +624,8 @@ class Report(object):
         """
         concentrators = {
             'S02': ConcentratorS02,
-            'S04': ConcentratorS04
+            'S04': ConcentratorS04,
+            'S05': ConcentratorS05
         }
         if self.report_type not in concentrators:
             raise NotImplementedError('Report type not implemented!')
