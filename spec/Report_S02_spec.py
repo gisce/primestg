@@ -13,7 +13,7 @@ with description('Report S02 example'):
             self.message_s = MessageS(data_file)
 
     with it('generates expected results for a value of the first meter of '
-            'first contentrator'):
+            'first concentrator'):
 
         expected_first_value_first_meter = [
             dict(
