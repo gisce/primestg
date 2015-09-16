@@ -351,7 +351,7 @@ class ConcentratorS02(Concentrator):
     @property
     def meter_class(self):
         """
-         The class used to instance meters for report S02.
+        The class used to instance meters for report S02.
 
         :return: a class to instance meters of report S02
         """
