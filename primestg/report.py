@@ -162,11 +162,11 @@ class Meter(object):
         return self.meter.get('Id')
 
     @property
-    def multiplier(self):
+    def magnitude(self):
         """
-        The multiplier of the meter measures.
+        The magnitude of the meter measures.
 
-        :return: a int with the multiplier of the meter measures
+        :return: a int with the magnitude of the meter measures
         """
         return self.meter.get('Magn')
 
@@ -239,7 +239,7 @@ class MeterS02(Meter):
     def values(self):
         """
         Values of measure sets of this meter of report S02, with the name of \
-            meter and the multiplier.
+            meter and the magnitude.
 
         :return: a list with de values of the measure sets
         """
@@ -247,7 +247,7 @@ class MeterS02(Meter):
         for measure in self.measure:
             v = measure.value.copy()
             v['name'] = self.name
-            v['magn'] = int(self.multiplier)
+            v['magn'] = int(self.magnitude)
             values.append(v)
         if values:
             return values
