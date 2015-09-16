@@ -1,6 +1,17 @@
 from datetime import datetime
 
 
+MAGNITUDE_W = 1
+"""
+Magnitude value (1) for measures represented in W.
+"""
+
+MAGNITUDE_KW = 1000
+"""
+Magnitude value (1000) for measures represented in kW.
+"""
+
+
 class Measure(object):
     """
     Base class for a set of measures.
