@@ -3,6 +3,7 @@ from primestg.report import Report
 from primestg.message import MessageS
 from ast import literal_eval
 
+
 with description('Report S02 example'):
     with before.all:
 
