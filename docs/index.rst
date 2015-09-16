@@ -14,6 +14,7 @@ Contents:
    :maxdepth: 2
 
    README.rst
+   api.rst
 
 
 Indices and tables
