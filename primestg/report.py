@@ -116,6 +116,40 @@ class MeasureS02(MeasureActiveReactive):
         return value
 
 
+class MeasureS04(MeasureActiveReactive):
+    """
+    Class for a set of measures of report S04.
+    """
+
+    @property
+    def value(self):
+        """
+        Set of measures of report S04.
+
+        :return: a dict with a set of measures of report S04
+        """
+        values = []
+        common_values = {
+            'type': 'month',
+            'date_begin': self._get_timestamp('Fhi'),
+            'date_end': self._get_timestamp('Fhf'),
+            'contract': int(self.measure.get('Ctr')),
+            'period': int(self.measure.get('Pt')),
+            'max': int(self.measure.get('Mx')),
+            'date_max': self._get_timestamp('Fx')
+        }
+        for s04_values in self.measure.Value:
+            v = common_values.copy()
+            if s04_values.get('AIa'):
+                measure_type = 'a'
+            else:
+                measure_type = 'i'
+            v.update(self.active_reactive(s04_values, measure_type))
+            v['value'] = measure_type
+            values.append(v)
+        return values
+
+
 class Meter(object):
     """
     Base class for a meter.
@@ -266,6 +300,83 @@ class MeterS02(Meter):
             return {}
 
 
+class MeterWithConcentratorName(Meter):
+    """
+    Base class for a meters of report that need the name of the concentrator \
+        in the values, like S04 and S05.
+    """
+
+    def __init__(self, meter, concentrator_name):
+        """
+        Create a Meter object using Meter constructor and adding the \
+            concentrator name.
+
+        :param meter: an lxml.objectify.StringElement representing a meter
+        :return: a Meter object
+        """
+        super(MeterWithConcentratorName, self).__init__(meter)
+        self.concentrator_name = concentrator_name
+
+    @property
+    def concentrator_name(self):
+        """
+        A string with the concentrator name.
+
+        :return: a string with the concentrator name
+        """
+        return self._concentrator_name
+
+    @concentrator_name.setter
+    def concentrator_name(self, value):
+        """
+        Stores a string with the concentrator name.
+
+        :param value: a string with the concentrator name
+        """
+        self._concentrator_name = value
+
+    @property
+    def values(self):
+        """
+        Values of measure sets of this meter of report that need the name of \
+            the concentrator and the meter,
+
+        :return: a list with de values of the measure sets
+        """
+        values = []
+        for measure in self.measure:
+            for subvalue in measure.value:
+                v = subvalue.copy()
+                v['name'] = self.name
+                v['cnc_name'] = self.concentrator_name
+                values.append(v)
+        return values
+
+
+class MeterS04(MeterWithConcentratorName):
+    """
+    Class for a meter of report S04.
+    """
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S04.
+
+        :return: a string with 'S04'
+        """
+        return 'S04'
+
+    @property
+    def measure_class(self):
+        """
+        The class used to instance measure sets for report S04.
+
+        :return: a class to instance measure sets of report S04
+        """
+        return MeasureS04
+
+
 class Concentrator(object):
     """
     Base class for a concentrator.
@@ -358,6 +469,41 @@ class ConcentratorS02(Concentrator):
         return MeterS02
 
 
+class ConcentratorWithMetersWithConcentratorName(Concentrator):
+    """
+    Base class for a concentrator of report that need the name of the \
+        concentrator in the values, like S04 and S05.
+    """
+
+    @property
+    def meter(self):
+        """
+        Meter objects of this concentrator. The name of concentrator is \
+            passed to the meter.
+
+        :return: a list of meter objects
+        """
+        meters = []
+        for meter in self.concentrator.Cnt:
+            meters.append(self.meter_class(meter, self.name))
+        return meters
+
+
+class ConcentratorS04(ConcentratorWithMetersWithConcentratorName):
+    """
+    Class for a concentrator of report S04.
+    """
+
+    @property
+    def meter_class(self):
+        """
+        The class used to instance meters for report S04.
+
+        :return: a class to instance meters of report S04
+        """
+        return MeterS04
+
+
 class Report(object):
     """
     Report class to process MessageS
@@ -406,11 +552,13 @@ class Report(object):
 
         :return: a class to instance concentrators
         """
-        if self.report_type == 'S02':
-            concentrator_class = ConcentratorS02
-        else:
+        concentrators = {
+            'S02': ConcentratorS02,
+            'S04': ConcentratorS04
+        }
+        if self.report_type not in concentrators:
             raise NotImplementedError('Report type not implemented!')
-        return concentrator_class
+        return concentrators[self.report_type]
 
     @property
     def concentrator(self):
