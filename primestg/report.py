@@ -342,6 +342,7 @@ class MeterWithConcentratorName(Meter):
             concentrator name.
 
         :param meter: an lxml.objectify.StringElement representing a meter
+        :param concentrator_name: a string with the name of the concentrator
         :return: a Meter object
         """
         super(MeterWithConcentratorName, self).__init__(meter)
