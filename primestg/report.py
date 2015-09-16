@@ -12,7 +12,41 @@ Magnitude value (1000) for measures represented in kW.
 """
 
 
-class Measure(object):
+class ValueWithTime(object):
+    """
+    Base class for values with time.
+    """
+
+    def _get_timestamp(self, name, element=None):
+        """
+        Formats a timestamp from the name of the value.
+
+        :param name: a string with the name
+        :param element: an lxml.objectify.StringElement, by default \
+            self.objectified
+        :return: a formatted string representing a timestamp \
+            ('%Y-%m-%d %H:%M:%S')
+        """
+        if element is None:
+            e = self.objectified
+        else:
+            e = element
+        value = e.get(name)
+        if len(value) > 15:
+            date_value = value[0:14] + value[-1]
+        else:
+            date_value = value
+
+        # Fix for SAGECOM which puts this timestamp when the period doesn't
+        # affect the contracted tariff
+        if date_value.upper() == 'FFFFFFFFFFFFFFW':
+            date_value = '19000101000000W'
+
+        time = datetime.strptime(date_value[:-1], '%Y%m%d%H%M%S')
+        return time.strftime('%Y-%m-%d %H:%M:%S')
+
+
+class Measure(ValueWithTime):
     """
     Base class for a set of measures.
     """
@@ -45,28 +79,6 @@ class Measure(object):
         :return:
         """
         self._objectified = value
-
-    def _get_timestamp(self, measure_name):
-        """
-        Formats the timestamp from a measure name
-
-        :param measure_name: the measure name
-        :return: a formatted string representing a timestamp \
-            ('%Y-%m-%d %H:%M:%S')
-        """
-        value = self.objectified.get(measure_name)
-        if len(value) > 15:
-            date_value = value[0:14] + value[-1]
-        else:
-            date_value = value
-
-        # Fix for SAGECOM which puts this timestamp when the period doesn't
-        # affect the contracted tariff
-        if date_value.upper() == 'FFFFFFFFFFFFFFW':
-            date_value = '19000101000000W'
-
-        time = datetime.strptime(date_value[:-1], '%Y%m%d%H%M%S')
-        return time.strftime('%Y-%m-%d %H:%M:%S')
 
 
 class MeasureActiveReactive(Measure):
@@ -436,6 +448,228 @@ class MeterS05(MeterWithConcentratorName):
         return MeasureS05
 
 
+class Parameter(ValueWithTime):
+    """
+    Class for a set of parameters of report S12.
+    """
+
+    def __init__(self, objectified_parameter, report_version):
+        """
+        Create a Measure object.
+
+        :param objectified_parameter: an lxml.objectify.StringElement \
+            representing a set of parameters
+        :return: a Measure object
+        """
+        self.objectified = objectified_parameter
+        self.report_version = report_version
+
+    @property
+    def objectified(self):
+        """
+        The set of parameters as an lxml.objectify.StringElement.
+
+        :return: an lxml.objectify.StringElement representing a set of \
+            parameters
+        """
+        return self._objectified
+
+    @objectified.setter
+    def objectified(self, value):
+        """
+        Stores an lxml.objectify.StringElement representing a set of \
+            parameters.
+
+        :param value: an lxml.objectify.StringElement representing a set of \
+            parameters
+        :return:
+        """
+        self._objectified = value
+
+    @property
+    def report_version(self):
+        """
+        The version of the report.
+
+        :return: a string with the version of the report
+        """
+        return self._report_version
+
+    @report_version.setter
+    def report_version(self, value):
+        """
+        Stores the report version.
+        :param value: a string with the version of the report
+        """
+        self._report_version = value
+
+    def get_boolean(self, name, element=None):
+        """
+        Gets a boolean value from the name of value.
+
+        :param name: a string with the name
+        :param element: an lxml.objectify.StringElement, by default \
+            self.objectified
+        :return:
+        """
+        if element is None:
+            e = self.objectified
+        else:
+            e = element
+        if e.get(name) == 'Y':
+            returns = True
+        else:
+            returns = False
+        return returns
+
+    def to_integer(self, value):
+        """
+        Convert a value to an integer. If value is None then returns 0.
+
+        :param value: a string with the value
+        :return: an integer
+        """
+        if value is None:
+            returns = 0
+        else:
+            returns = int(value)
+        return returns
+
+    def filter_integer(self, value):
+        """
+        Filter the provided value. Returns the value if is an integer or \
+            returns 0 if not.
+
+        :param value: an integer or not
+        :return: an integer
+        """
+        if isinstance(value, int):
+            returns = value
+        else:
+            returns = 0
+        return returns
+
+    @property
+    def values(self):
+        """
+        Set of parameters of report S12.
+
+        :return: a dict with a set of parameters of report S12
+        """
+        get = self.objectified.get
+
+        if self.report_version == '3.1c':
+            fwmtup_timeout_key = 'TimeOutMeterFwU'
+        else:
+            fwmtup_timeout_key = 'TimeOutPrimeFwU'
+
+        fwmtup_timeout = self.to_integer(get(fwmtup_timeout_key))
+
+        # Ormazabal Current concentrators returns the IPftp1 field
+        if 'IPftp' in self.objectified.keys():
+            rpt_ftp_ip_address_key = 'IPftp'
+        else:
+            rpt_ftp_ip_address_key = 'IPftp1'
+
+        rpt_ftp_ip_address = get(rpt_ftp_ip_address_key)
+
+        ntp_max_deviation = self.filter_integer(get('NTPMaxDeviation'))
+        session_timeout = self.filter_integer(get('AccInacTimeout'))
+        max_sessions = self.filter_integer(get('AccSimulMax'))
+
+        values = {
+            'date': self._get_timestamp('Fh'),
+            'model': get('Mod'),
+            'mf_year': get('Af'),
+            'type': get('Te'),
+            'w_password': get('DCPwdAdm'),
+            'r_password': get('DCPwdRead'),
+            'fw_version': get('Vf'),
+            'fw_comm_version': get('VfComm'),
+            'protocol': get('Pro'),
+            'communication': get('Com'),
+            'battery_mon': get('Bat'),
+            'ip_address': get('ipCom'),
+            'dc_ws_port': get('PortWS'),
+            'ip_mask': get('ipMask'),
+            'ip_gtw': get('ipGtw'),
+            'dhcp': self.get_boolean('ipDhcp'),
+            'slave1': get('Slave1'),
+            'slave2': get('Slave2'),
+            'slave3': get('Slave3'),
+            'local_ip_address': get('ipLoc'),
+            'local_ip_mask': get('ipMaskLoc'),
+            'plc_mac': get('Macplc'),
+            'serial_port_speed': get('Pse'),
+            'priority': self.get_boolean('Priority'),
+            'stg_ws_ip_address': get('IPstg'),
+            'stg_ws_password': get('stgPwd'),
+            'ntp_ip_address': get('IPNTP'),
+            'rpt_ftp_ip_address': rpt_ftp_ip_address,
+            'rpt_ftp_user': get('FTPUserReport'),
+            'rpt_ftp_password': get('FTPPwdReport'),
+            'fwdcup_ftp_ip_address': get('IPftpDCUpg'),
+            'fwdcup_ftp_user': get('UserftpDCUpg'),
+            'fwdcup_ftp_password': get('PwdftpDCUpg'),
+            'fwmtup_ftp_ip_address': get('IPftpMeterUpg'),
+            'fwmtup_ftp_user': get('UserftpMeterUpg'),
+            'fwmtup_ftp_password': get('UserftpMeterUpg'),
+            'retries': int(get('RetryFtp')),
+            'time_btw_retries': int(get('TimeBetwFtp')),
+            'cycle_ftp_ip_address': get('IPftpCycles'),
+            'cycle_ftp_user': get('UserftpCycles'),
+            'cycle_ftp_password': get('PwdftpCycles'),
+            'cycle_ftp_dir': get('DestDirCycles'),
+            'sync_meter': self.get_boolean('SyncMeter'),
+            'fwmtup_timeout': fwmtup_timeout,
+            'max_time_deviation': int(get('TimeDevOver')),
+            'min_time_deviation': int(get('TimeDev')),
+            'reset_msg': self.get_boolean('ResetMsg'),
+            'rpt_meter_limit': int(get('NumMeters')),
+            'rpt_time_limit': int(get('TimeSendReq')),
+            'disconn_time': int(get('TimeDisconMeter')),
+            'disconn_retries': int(get('RetryDisconMeter')),
+            'disconn_retry_interval': int(get('TimeRetryInterval')),
+            'meter_reg_data': get('MeterRegData'),
+            'report_format': get('ReportFormat'),
+            's26_content': get('S26Content'),
+            'values_check_delay': int(get('ValuesCheckDelay')),
+            'max_order_outdate': self.to_integer(get('MaxOrderOutdate')),
+            'restart_delay': self.to_integer(get('TimeDelayRestart')),
+            'ntp_max_deviation': ntp_max_deviation,
+            'session_timeout': session_timeout,
+            'max_sessions':  max_sessions
+        }
+        if hasattr(self.objectified, 'TP'):
+            tasks = []
+            for task in self.objectified.TP:
+                task_values = {
+                    'name': task.get('TpTar'),
+                    'priority': int(task.get('TpPrio')),
+                    'date_from': self._get_timestamp('TpHi', element=task),
+                    'periodicity': task.get('TpPer'),
+                    'complete': self.get_boolean('TpCompl', element=task),
+                    'meters': task.get('TpMet'),
+                }
+                task_data_values = []
+                for task_data in task.TpPro:
+                    task_data_value = {
+                        'request': task_data.get('TpReq'),
+                        'stg_send':
+                            self.get_boolean('TpSend', element=task_data),
+                        'store':
+                            self.get_boolean('TpStore', element=task_data),
+                        'attributes': task_data.get('TpAttr'),
+                    }
+                    task_data_values.append(task_data_value)
+                task_values['task_data'] = task_data_values
+                tasks.append(task_values)
+            values['tasks'] = tasks
+        else:
+            values['tasks'] = []
+        return [values]
+
+
 class Concentrator(object):
     """
     Base class for a concentrator.
@@ -578,6 +812,65 @@ class ConcentratorS05(ConcentratorWithMetersWithConcentratorName):
         return MeterS05
 
 
+class ConcentratorS12(Concentrator):
+    """
+    Class for a concentrator of report S12.
+    """
+
+    def __init__(self, objectified_concentrator, report_version):
+        """
+        Create a Concentrator object for the report S12.
+
+        :param objectified_concentrator: an lxml.objectify.StringElement \
+            representing a meter
+        :param concentrator_name: a string with the name of the concentrator
+        :return: a Meter object
+        """
+        super(ConcentratorS12, self).__init__(objectified_concentrator)
+        self.report_version = report_version
+
+    @property
+    def report_version(self):
+        """
+        The version of the report.
+
+        :return: a string with the version of the report
+        """
+        return self._report_version
+
+    @report_version.setter
+    def report_version(self, value):
+        """
+        Stores the report version.
+        :param value: a string with the version of the report
+        """
+        self._report_version = value
+
+    @property
+    def parameter(self):
+        """
+        Parameter set objects of this concentrator.
+
+        :return: a list of parameter set objects
+        """
+        parameters = []
+        for parameter in self.objectified.S12:
+            parameters.append(Parameter(parameter, self.report_version))
+        return parameters
+
+    @property
+    def values(self):
+        """
+        Values of the set of parameters of this concentrator.
+
+        :return: a list with de values of the meters
+        """
+        values = []
+        for parameter in self.parameter:
+            values.append(parameter.values)
+        return values
+
+
 class Report(object):
     """
     Report class to process MessageS
@@ -620,20 +913,46 @@ class Report(object):
         return self.message.objectified.get('IdRpt')
 
     @property
-    def concentrator_class(self):
+    def report_version(self):
         """
-        The class used to instance concentrators.
+        The report version.
 
-        :return: a class to instance concentrators
+        :return: a string with the report version
         """
-        concentrators = {
-            'S02': ConcentratorS02,
-            'S04': ConcentratorS04,
-            'S05': ConcentratorS05
+        return self.message.objectified.get('Version')
+
+    def get_concentrator(self, objectified_concentrator):
+        """
+        Instances a concentrator object
+
+        :return: a concentrator object
+        """
+        map = {
+            'S02': {
+                'class': ConcentratorS02,
+                'args': [objectified_concentrator]
+            },
+            'S04': {
+                'class': ConcentratorS04,
+                'args': [objectified_concentrator]
+            },
+            'S05': {
+                'class': ConcentratorS05,
+                'args': [objectified_concentrator]
+            },
+            'S12': {
+                'class': ConcentratorS12,
+                'args': [objectified_concentrator, self.report_version]
+            }
         }
-        if self.report_type not in concentrators:
+
+        if self.report_type not in map:
             raise NotImplementedError('Report type not implemented!')
-        return concentrators[self.report_type]
+
+        concentrator_class = map.get(self.report_type).get('class')
+        concentrator_args = map.get(self.report_type).get('args')
+        concentrator = concentrator_class(*concentrator_args)
+        return concentrator
 
     @property
     def concentrator(self):
@@ -644,7 +963,7 @@ class Report(object):
         """
         concentrators = []
         for concentrator in self.message.objectified.Cnc:
-            concentrators.append(self.concentrator_class(concentrator))
+            concentrators.append(self.get_concentrator(concentrator))
         return concentrators
 
     @property
