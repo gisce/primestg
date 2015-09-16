@@ -17,33 +17,34 @@ class Measure(object):
     Base class for a set of measures.
     """
 
-    def __init__(self, measure):
+    def __init__(self, objectified_measure):
         """
         Create a Measure object.
 
-        :param measure: an lxml.objectify.StringElement representing a measure
+        :param objectified_measure: an lxml.objectify.StringElement \
+            representing a measure
         :return: a Measure object
         """
-        self.measure = measure
+        self.objectified = objectified_measure
 
     @property
-    def measure(self):
+    def objectified(self):
         """
         The set of measures as an lxml.objectify.StringElement.
 
         :return: an lxml.objectify.StringElement representing a measure
         """
-        return self._measure
+        return self._objectified
 
-    @measure.setter
-    def measure(self, value):
+    @objectified.setter
+    def objectified(self, value):
         """
         Stores the set of measures.
 
         :param value: an lxml.objectify.StringElement representing a measure
         :return:
         """
-        self._measure = value
+        self._objectified = value
 
     def _get_timestamp(self, measure_name):
         """
@@ -53,7 +54,7 @@ class Measure(object):
         :return: a formatted string representing a timestamp \
             ('%Y-%m-%d %H:%M:%S')
         """
-        value = self.measure.get(measure_name)
+        value = self.objectified.get(measure_name)
         if len(value) > 15:
             date_value = value[0:14] + value[-1]
         else:
@@ -105,12 +106,12 @@ class MeasureS02(MeasureActiveReactive):
 
         :return: a dict with a set of measures of report S02
         """
-        value = self.active_reactive(self.measure, '')
+        value = self.active_reactive(self.objectified, '')
         value.update(
             {
                 'timestamp': self._get_timestamp('Fh'),
-                'season': self.measure.get('Fh')[-1:],
-                'bc': self.measure.get('Bc')
+                'season': self.objectified.get('Fh')[-1:],
+                'bc': self.objectified.get('Bc')
             }
         )
         return value
@@ -133,12 +134,12 @@ class MeasureS04(MeasureActiveReactive):
             'type': 'month',
             'date_begin': self._get_timestamp('Fhi'),
             'date_end': self._get_timestamp('Fhf'),
-            'contract': int(self.measure.get('Ctr')),
-            'period': int(self.measure.get('Pt')),
-            'max': int(self.measure.get('Mx')),
+            'contract': int(self.objectified.get('Ctr')),
+            'period': int(self.objectified.get('Pt')),
+            'max': int(self.objectified.get('Mx')),
             'date_max': self._get_timestamp('Fx')
         }
-        for s04_values in self.measure.Value:
+        for s04_values in self.objectified.Value:
             v = common_values.copy()
             if s04_values.get('AIa'):
                 measure_type = 'a'
@@ -169,11 +170,11 @@ class MeasureS05(MeasureActiveReactive):
             'value': 'a',
             'date_begin': timestamp,
             'date_end': timestamp,
-            'contract': int(self.measure.get('Ctr')),
-            'period': int(self.measure.get('Pt')),
+            'contract': int(self.objectified.get('Ctr')),
+            'period': int(self.objectified.get('Pt')),
         }
 
-        for s05_values in self.measure.Value:
+        for s05_values in self.objectified.Value:
             v.update(self.active_reactive(s05_values, 'a'))
             values.append(v)
 
