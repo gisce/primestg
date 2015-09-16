@@ -39,7 +39,7 @@ class Measure(object):
     @objectified.setter
     def objectified(self, value):
         """
-        Stores the set of measures.
+        Stores an lxml.objectify.StringElement representing a set of measures.
 
         :param value: an lxml.objectify.StringElement representing a measure
         :return:
