@@ -15,7 +15,7 @@ with description('Report S02 example'):
     with it('generates expected results for a value of the first meter of '
             'first contentrator'):
 
-        self.expected_first_value_first_meter = [
+        expected_first_value_first_meter = [
             dict(
                 ae=0.0,
                 bc='00',
@@ -42,7 +42,7 @@ with description('Report S02 example'):
                 first_value_first_meter.append(x)
 
         expect(first_value_first_meter)\
-            .to(equal(self.expected_first_value_first_meter))
+            .to(equal(expected_first_value_first_meter))
 
     with it('generates expected result for a meter with error'):
         result = Report(self.message_s).concentrator[0].meter[17].values
