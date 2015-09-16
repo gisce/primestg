@@ -401,6 +401,11 @@ class Report(object):
 
     @property
     def concentrator_class(self):
+        """
+        The class used to instance concentrators.
+
+        :return: a class to instance concentrators
+        """
         if self.report_type == 'S02':
             concentrator_class = ConcentratorS02
         else:
