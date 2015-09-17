@@ -114,21 +114,21 @@ class MeasureS02(MeasureActiveReactive):
     """
 
     @property
-    def value(self):
+    def values(self):
         """
         Set of measures of report S02.
 
         :return: a dict with a set of measures of report S02
         """
-        value = self.active_reactive(self.objectified, '')
-        value.update(
+        values = self.active_reactive(self.objectified, '')
+        values.update(
             {
                 'timestamp': self._get_timestamp('Fh'),
                 'season': self.objectified.get('Fh')[-1:],
                 'bc': self.objectified.get('Bc')
             }
         )
-        return value
+        return values
 
 
 class MeasureS04(MeasureActiveReactive):
@@ -137,7 +137,7 @@ class MeasureS04(MeasureActiveReactive):
     """
 
     @property
-    def value(self):
+    def values(self):
         """
         Set of measures of report S04.
 
@@ -171,7 +171,7 @@ class MeasureS05(MeasureActiveReactive):
     """
 
     @property
-    def value(self):
+    def values(self):
         """
         Set of measures of report S05.
 
@@ -278,7 +278,7 @@ class Meter(object):
         return Measure
 
     @property
-    def measure(self):
+    def measures(self):
         """
         Measure set objects of this meter.
 
@@ -291,14 +291,14 @@ class Meter(object):
         return measures
 
     @property
-    def value(self):
+    def values(self):
         """
         Values of measure sets of this meter.
 
         :return: a list with de values of the measure sets
         """
         values = []
-        for value in self.measure:
+        for value in self.measures:
             values.append(value.value())
         return values
 
@@ -327,7 +327,7 @@ class MeterS02(Meter):
         return MeasureS02
 
     @property
-    def value(self):
+    def values(self):
         """
         Values of measure sets of this meter of report S02, with the name of \
             meter and the magnitude.
@@ -335,8 +335,8 @@ class MeterS02(Meter):
         :return: a list with de values of the measure sets
         """
         values = []
-        for measure in self.measure:
-            v = measure.value.copy()
+        for measure in self.measures:
+            v = measure.values.copy()
             v['name'] = self.name
             v['magn'] = int(self.magnitude)
             values.append(v)
@@ -390,7 +390,7 @@ class MeterWithConcentratorName(Meter):
         self._concentrator_name = value
 
     @property
-    def value(self):
+    def values(self):
         """
         Values of measure sets of this meter of report that need the name of \
             the concentrator and the meter,
@@ -398,8 +398,8 @@ class MeterWithConcentratorName(Meter):
         :return: a list with de values of the measure sets
         """
         values = []
-        for measure in self.measure:
-            for subvalue in measure.value:
+        for measure in self.measures:
+            for subvalue in measure.values:
                 v = subvalue.copy()
                 v['name'] = self.name
                 v['cnc_name'] = self.concentrator_name
@@ -558,7 +558,7 @@ class Parameter(ValueWithTime):
         return returns
 
     @property
-    def value(self):
+    def values(self):
         """
         Set of parameters of report S12.
 
@@ -722,7 +722,7 @@ class Concentrator(object):
         return Meter
 
     @property
-    def meter(self):
+    def meters(self):
         """
         Meter objects of this concentrator.
 
@@ -740,15 +740,15 @@ class Concentrator(object):
         return self.objectified.get('Id')
 
     @property
-    def value(self):
+    def values(self):
         """
         Values of the meters of this concentrator.
 
         :return: a list with de values of the meters
         """
         values = []
-        for meter in self.meter:
-            values.append(meter.value)
+        for meter in self.meters:
+            values.append(meter.values)
         return values
 
 
@@ -774,7 +774,7 @@ class ConcentratorWithMetersWithConcentratorName(Concentrator):
     """
 
     @property
-    def meter(self):
+    def meters(self):
         """
         Meter objects of this concentrator. The name of concentrator is \
             passed to the meter.
@@ -852,7 +852,7 @@ class ConcentratorS12(Concentrator):
         self._report_version = value
 
     @property
-    def parameter(self):
+    def parameters(self):
         """
         Parameter set objects of this concentrator.
 
@@ -864,15 +864,15 @@ class ConcentratorS12(Concentrator):
         return parameters
 
     @property
-    def value(self):
+    def values(self):
         """
         Values of the set of parameters of this concentrator.
 
         :return: a list with de values of the meters
         """
         values = []
-        for parameter in self.parameter:
-            values.append(parameter.value)
+        for parameter in self.parameters:
+            values.append(parameter.values)
         return values
 
 
@@ -971,7 +971,7 @@ class Report(object):
         return concentrator
 
     @property
-    def concentrator(self):
+    def concentrators(self):
         """
         The concentrators of the report.
 
@@ -980,13 +980,13 @@ class Report(object):
         return map(self.get_concentrator, self.message.objectified.Cnc)
 
     @property
-    def value(self):
+    def values(self):
         """
         Values of the whole report.
 
         :return: a list with the values of the whole report
         """
         values = []
-        for concentrator in self.concentrator:
-            values.extend(concentrator.value)
+        for concentrator in self.concentrators:
+            values.extend(concentrator.values)
         return values
