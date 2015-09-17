@@ -291,7 +291,7 @@ class Meter(object):
         return measures
 
     @property
-    def values(self):
+    def value(self):
         """
         Values of measure sets of this meter.
 
@@ -327,7 +327,7 @@ class MeterS02(Meter):
         return MeasureS02
 
     @property
-    def values(self):
+    def value(self):
         """
         Values of measure sets of this meter of report S02, with the name of \
             meter and the magnitude.
@@ -390,7 +390,7 @@ class MeterWithConcentratorName(Meter):
         self._concentrator_name = value
 
     @property
-    def values(self):
+    def value(self):
         """
         Values of measure sets of this meter of report that need the name of \
             the concentrator and the meter,
@@ -558,7 +558,7 @@ class Parameter(ValueWithTime):
         return returns
 
     @property
-    def values(self):
+    def value(self):
         """
         Set of parameters of report S12.
 
@@ -740,7 +740,7 @@ class Concentrator(object):
         return self.objectified.get('Id')
 
     @property
-    def values(self):
+    def value(self):
         """
         Values of the meters of this concentrator.
 
@@ -748,7 +748,7 @@ class Concentrator(object):
         """
         values = []
         for meter in self.meter:
-            values.append(meter.values)
+            values.append(meter.value)
         return values
 
 
@@ -864,7 +864,7 @@ class ConcentratorS12(Concentrator):
         return parameters
 
     @property
-    def values(self):
+    def value(self):
         """
         Values of the set of parameters of this concentrator.
 
@@ -872,7 +872,7 @@ class ConcentratorS12(Concentrator):
         """
         values = []
         for parameter in self.parameter:
-            values.append(parameter.values)
+            values.append(parameter.value)
         return values
 
 
@@ -980,7 +980,7 @@ class Report(object):
         return map(self.get_concentrator, self.message.objectified.Cnc)
 
     @property
-    def values(self):
+    def value(self):
         """
         Values of the whole report.
 
@@ -988,5 +988,5 @@ class Report(object):
         """
         values = []
         for concentrator in self.concentrator:
-            values.extend(concentrator.values)
+            values.extend(concentrator.value)
         return values
