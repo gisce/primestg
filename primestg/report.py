@@ -1,3 +1,4 @@
+from primestg.message import MessageS
 from datetime import datetime
 
 
@@ -877,19 +878,20 @@ class Report(object):
     Report class to process MessageS
     """
 
-    def __init__(self, message):
+    def __init__(self, report):
         """
         Creates a Report object.
 
-        :param message: a MessageS object
+        :param report: a file object or a string with the XML or a MessageS \
+            object
         :return: an Report object
         """
-        self.message = message
+        self.message = report
 
     @property
     def message(self):
         """
-        A message as a MessageS.
+        A message as a MessageS object.
 
         :return: a MessageS object
         """
@@ -900,9 +902,18 @@ class Report(object):
         """
         Stores the message as a MessageS.
 
-        :param value: a MessageS object
+        :param value: a file object or a string with the XML or a MessageS \
+            object
         """
-        self._message = value
+        if isinstance(value, (file, basestring)):
+            message = MessageS(value)
+        elif isinstance(value, MessageS):
+            message = value
+        else:
+            error = 'must be file or basestring with XML or a MessageS'
+            raise TypeError(error)
+
+        self._message = message
 
     @property
     def report_type(self):
