@@ -16,12 +16,12 @@ for filename in data:
     type = message_tg.get_tipus_xml()
     concentrator = Concentrator(message_tg.obj.Cnc[0])
 
-    result = []
     if concentrator.has_meters:
+        result = []
         for meter in concentrator.get_meters():
             result.append(Values(meter, type, concentrator).get())
     else:
-        result.append(Values(concentrator, type, concentrator).get())
+        result = Values(concentrator, type, concentrator).get()
 
     with open('{}_result.txt'.format(filename), 'w') as result_file:
         result_file.write(str(result))
