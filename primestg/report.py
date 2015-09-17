@@ -939,7 +939,7 @@ class Report(object):
 
         :return: a concentrator object
         """
-        map = {
+        report_type_class = {
             'S02': {
                 'class': ConcentratorS02,
                 'args': [objectified_concentrator]
@@ -958,10 +958,10 @@ class Report(object):
             }
         }
 
-        if self.report_type not in map:
+        if self.report_type not in report_type_class:
             raise NotImplementedError('Report type not implemented!')
 
-        get = map.get(self.report_type).get
+        get = report_type_class.get(self.report_type).get
         concentrator_class = get('class')
         concentrator_args = get('args')
         concentrator = concentrator_class(*concentrator_args)
