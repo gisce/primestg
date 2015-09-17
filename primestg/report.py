@@ -675,7 +675,7 @@ class Parameter(ValueWithTime):
             values['tasks'] = tasks
         else:
             values['tasks'] = []
-        return [values]
+        return values
 
 
 class Concentrator(object):
