@@ -56,7 +56,7 @@ class Measure(ValueWithTime):
         Create a Measure object.
 
         :param objectified_measure: an lxml.objectify.StringElement \
-            representing a measure
+            representing a set of measures
         :return: a Measure object
         """
         self.objectified = objectified_measure
@@ -66,7 +66,7 @@ class Measure(ValueWithTime):
         """
         The set of measures as an lxml.objectify.StringElement.
 
-        :return: an lxml.objectify.StringElement representing a measure
+        :return: an lxml.objectify.StringElement representing a set of measures
         """
         return self._objectified
 
@@ -75,7 +75,8 @@ class Measure(ValueWithTime):
         """
         Stores an lxml.objectify.StringElement representing a set of measures.
 
-        :param value: an lxml.objectify.StringElement representing a measure
+        :param value: an lxml.objectify.StringElement representing a set of \
+            measures
         :return:
         """
         self._objectified = value
