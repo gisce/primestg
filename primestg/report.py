@@ -828,7 +828,7 @@ class ConcentratorS12(Concentrator):
 
         :param objectified_concentrator: an lxml.objectify.StringElement \
             representing a meter
-        :param concentrator_name: a string with the name of the concentrator
+        :param report_version: a string with the version of report
         :return: a Meter object
         """
         super(ConcentratorS12, self).__init__(objectified_concentrator)
