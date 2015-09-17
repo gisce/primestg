@@ -34,7 +34,7 @@ with description('Report S12 example'):
 
         concentrator = self.report.concentrators[0]
         parameter = concentrator.parameters[0]
-        first_task_first_concentrator = parameter.values[0]['tasks'][0]
+        first_task_first_concentrator = parameter.values['tasks'][0]
 
         expect(first_task_first_concentrator)\
             .to(equal(expected_first_task_first_concentrator))
