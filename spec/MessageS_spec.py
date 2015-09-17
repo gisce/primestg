@@ -17,6 +17,7 @@ with description('MessageS'):
         expect(message_s.objectified).to(be_a(ObjectifiedElement))
 
     with it('can parse an XML file'):
-        with open('spec/data/CIR4621247027_0_S02_0_20150901111051') as file:
+        filename = 'spec/data/CIR4621247027_0_S02_0_20150901111051'
+        with open(filename) as file:
             message_s = MessageS(file)
         expect(message_s.objectified).to(be_a(ObjectifiedElement))
