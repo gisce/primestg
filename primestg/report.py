@@ -286,8 +286,8 @@ class Meter(object):
         """
         measures = []
         if hasattr(self.objectified, self.report_type):
-            for measure in getattr(self.objectified, self.report_type):
-                measures.append(self.measure_class(measure))
+            objectified = getattr(self.objectified, self.report_type)
+            measures = map(self.measure_class, objectified)
         return measures
 
     @property
@@ -722,10 +722,7 @@ class Concentrator(object):
 
         :return: a list of meter objects
         """
-        meters = []
-        for meter in self.objectified.Cnt:
-            meters.append(self.meter_class(meter))
-        return meters
+        return map(self.meter_class, self.objectified.Cnt)
 
     @property
     def name(self):
@@ -974,10 +971,7 @@ class Report(object):
 
         :return: a list of concentrators of the report
         """
-        concentrators = []
-        for concentrator in self.message.objectified.Cnc:
-            concentrators.append(self.get_concentrator(concentrator))
-        return concentrators
+        return map(self.get_concentrator, self.message.objectified.Cnc)
 
     @property
     def values(self):
