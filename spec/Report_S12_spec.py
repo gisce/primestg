@@ -34,7 +34,7 @@ with description('Report S12 example'):
 
         concentrator = self.report.concentrator[0]
         parameter = concentrator.parameter[0]
-        first_task_first_concentrator = parameter.values[0]['tasks'][0]
+        first_task_first_concentrator = parameter.value[0]['tasks'][0]
 
         expect(first_task_first_concentrator)\
             .to(equal(expected_first_task_first_concentrator))
@@ -47,6 +47,6 @@ with description('Report S12 example'):
             result_string = result_file.read()
             self.expected_result = literal_eval(result_string)
 
-        result = self.report.values
+        result = self.report.value
 
         expect(result).to(equal(self.expected_result))

@@ -37,7 +37,7 @@ with description('Report S04 example'):
 
         concentrator = self.report.concentrator[0]
         meter = concentrator.meter[0]
-        values = meter.values
+        values = meter.value
 
         first_value_first_meter = []
         for x in values:
@@ -55,6 +55,6 @@ with description('Report S04 example'):
             result_string = result_file.read()
             self.expected_result = literal_eval(result_string)
 
-        result = self.report.values
+        result = self.report.value
 
         expect(result).to(equal(self.expected_result))
