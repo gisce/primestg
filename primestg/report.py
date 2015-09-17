@@ -298,8 +298,8 @@ class Meter(object):
         :return: a list with de values of the measure sets
         """
         values = []
-        for value in self.measures:
-            values.append(value.value())
+        for measure in self.measures:
+            values.append(measure.value())
         return values
 
 
