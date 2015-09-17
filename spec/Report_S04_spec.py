@@ -1,6 +1,5 @@
 from expects import expect, equal
 from primestg.report import Report
-from primestg.message import MessageS
 from ast import literal_eval
 
 
@@ -10,7 +9,7 @@ with description('Report S04 example'):
         self.data_filename = 'spec/data/CIR4621247027_0_S04_0_20150901110412'
 
         with open(self.data_filename) as data_file:
-            self.message_s = MessageS(data_file)
+            self.report = Report(data_file)
 
     with it('generates expected results for a value of the first meter of '
             'first concentrator'):
@@ -36,8 +35,7 @@ with description('Report S04 example'):
             }
         ]
 
-        report = Report(self.message_s)
-        concentrator = report.concentrator[0]
+        concentrator = self.report.concentrator[0]
         meter = concentrator.meter[0]
         values = meter.values
 
@@ -57,6 +55,6 @@ with description('Report S04 example'):
             result_string = result_file.read()
             self.expected_result = literal_eval(result_string)
 
-        result = Report(self.message_s).values
+        result = self.report.values
 
         expect(result).to(equal(self.expected_result))
