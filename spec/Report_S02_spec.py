@@ -30,9 +30,9 @@ with description('Report S02 example'):
             )
         ]
 
-        concentrator = self.report.concentrator[0]
-        meter = concentrator.meter[0]
-        values = meter.value
+        concentrator = self.report.concentrators[0]
+        meter = concentrator.meters[0]
+        values = meter.values
 
         first_value_first_meter = []
         for x in values:
@@ -43,7 +43,7 @@ with description('Report S02 example'):
             .to(equal(expected_first_value_first_meter))
 
     with it('generates expected result for a meter with error'):
-        result = self.report.concentrator[0].meter[17].value
+        result = self.report.concentrators[0].meters[17].values
         expect(result).to(equal({}))
 
     with it('generates the expected results for the whole report'):
@@ -54,6 +54,6 @@ with description('Report S02 example'):
             result_string = result_file.read()
             self.expected_result = literal_eval(result_string)
 
-        result = self.report.value
+        result = self.report.values
 
         expect(result).to(equal(self.expected_result))

@@ -33,9 +33,9 @@ with description('Report S05 example'):
             }
         ]
 
-        concentrator = self.report.concentrator[0]
-        meter = concentrator.meter[0]
-        values = meter.value
+        concentrator = self.report.concentrators[0]
+        meter = concentrator.meters[0]
+        values = meter.values
 
         first_value_first_meter = []
         for x in values:
@@ -53,6 +53,6 @@ with description('Report S05 example'):
             result_string = result_file.read()
             self.expected_result = literal_eval(result_string)
 
-        result = self.report.value
+        result = self.report.values
 
         expect(result).to(equal(self.expected_result))
