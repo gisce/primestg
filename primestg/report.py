@@ -352,6 +352,12 @@ class MeterWithConcentratorName(Meter):
         in the values, like S04 and S05.
     """
 
+    def report_type(self):
+        """
+        The type of report. To implement in child classes.
+        """
+        raise NotImplementedError('This method is not implemented!')
+
     def __init__(self, objectified_meter, concentrator_name):
         """
         Create a Meter object using Meter constructor and adding the \
