@@ -961,8 +961,9 @@ class Report(object):
         if self.report_type not in map:
             raise NotImplementedError('Report type not implemented!')
 
-        concentrator_class = map.get(self.report_type).get('class')
-        concentrator_args = map.get(self.report_type).get('args')
+        get = map.get(self.report_type).get
+        concentrator_class = get('class')
+        concentrator_args = get('args')
         concentrator = concentrator_class(*concentrator_args)
         return concentrator
 
