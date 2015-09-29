@@ -1,0 +1,69 @@
+[
+    [
+        {
+            # IdPet
+            'request_id': '2075918626',
+            # Version
+            'version': '3.1.c',
+            # Cnc
+            'concentrator': 'ZIV0004394488',
+            # Cnt
+            'meter': 'ZIV0040318130',
+            # Fh
+            'timestamp': '2015-09-29 10:03:45',
+            'season': 'S',
+            # NS
+            'serial_number': '0040318130',
+            # Fab
+            'manufacturer': ' Z',
+            # Mod
+            'model_type': 'NT',
+            # Af
+            'manufacturing_year': 15,
+            # Te
+            'equipment_type': 'contador  ',
+            # Vf
+            'firmware_version': 'VK013',
+            # VPrime
+            'prime_firmware_version': 'V2203',
+            # Pro
+            'protocol': 'DLMS0106',
+            # Idm
+            'id_multicast': '                        ',
+            # Mac
+            'mac': '40:40:22:67:34:B2',
+            # Tp
+            'primary_voltage': 2300,
+            # Ts
+            'secondary_voltage': 2300,
+            # Ip
+            'primary_current': 50,
+            # Is
+            'secondary_current': 50,
+            # Usag
+            'time_threshold_voltage_sags': 180,
+            # Uswell
+            'time_threshold_voltage_swells': 180,
+            # Per
+            'load_profile_period': 3600,
+            # Dctcp
+            'demand_close_contracted_power': '95.00',
+            # Vr
+            'reference_voltage': 230,
+            # Ut
+            'long_power_failure_threshold': 180,
+            # UsubT
+            'voltage_sag_threshold': '7.00',
+            # UsobT
+            'voltage_swell_threshold': '7.00',
+            # UcorteT
+            'voltage_cut-off_threshold': '50.00',
+            # AutMothBill
+            'automatic_monthly_billing': True,
+            # ScrollDispMode
+            'scroll_display_mode': 'A',
+            # ScrollDispTime
+            'time_scroll_display': 3
+        }
+    ]
+]
