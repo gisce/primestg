@@ -202,7 +202,7 @@ class Parameter(ValueWithTime):
 
     def __init__(self, objectified_parameter, report_version):
         """
-        Create a Measure object.
+        Create a Parameter object.
 
         :param objectified_parameter: an lxml.objectify.StringElement \
             representing a set of parameters
