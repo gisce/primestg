@@ -195,6 +195,115 @@ class MeasureS05(MeasureActiveReactive):
         return values
 
 
+class Parameter(ValueWithTime):
+    """
+    Base class for a set of parameters.
+    """
+
+    def __init__(self, objectified_parameter, report_version):
+        """
+        Create a Measure object.
+
+        :param objectified_parameter: an lxml.objectify.StringElement \
+            representing a set of parameters
+        :return: a Measure object
+        """
+        self.objectified = objectified_parameter
+        self.report_version = report_version
+
+    @property
+    def objectified(self):
+        """
+        The set of parameters as an lxml.objectify.StringElement.
+
+        :return: an lxml.objectify.StringElement representing a set of \
+            parameters
+        """
+        return self._objectified
+
+    @objectified.setter
+    def objectified(self, value):
+        """
+        Stores an lxml.objectify.StringElement representing a set of \
+            parameters.
+
+        :param value: an lxml.objectify.StringElement representing a set of \
+            parameters
+        :return:
+        """
+        self._objectified = value
+
+    @property
+    def report_version(self):
+        """
+        The version of the report.
+
+        :return: a string with the version of the report
+        """
+        return self._report_version
+
+    @report_version.setter
+    def report_version(self, value):
+        """
+        Stores the report version.
+        :param value: a string with the version of the report
+        """
+        self._report_version = value
+
+    def get_boolean(self, name, element=None):
+        """
+        Gets a boolean value from the name of value.
+
+        :param name: a string with the name
+        :param element: an lxml.objectify.StringElement, by default \
+            self.objectified
+        :return:
+        """
+        if element is None:
+            e = self.objectified
+        else:
+            e = element
+        if e.get(name) == 'Y':
+            returns = True
+        else:
+            returns = False
+        return returns
+
+    def to_integer(self, value):
+        """
+        Convert a value to an integer. If value is None then returns 0.
+
+        :param value: a string with the value
+        :return: an integer
+        """
+        if value is None:
+            returns = 0
+        else:
+            returns = int(value)
+        return returns
+
+    def filter_integer(self, value):
+        """
+        Filter the provided value. Returns the value if is an integer or \
+            returns 0 if not.
+
+        :param value: an integer or not
+        :return: an integer
+        """
+        if isinstance(value, int):
+            returns = value
+        else:
+            returns = 0
+        return returns
+
+    @property
+    def values(self):
+        """
+        Set of parameters.
+        """
+        raise NotImplementedError('This method is not implemented!')
+
+
 class Meter(object):
     """
     Base class for a meter.
@@ -456,107 +565,10 @@ class MeterS05(MeterWithConcentratorName):
         return MeasureS05
 
 
-class Parameter(ValueWithTime):
+class ParameterS12(Parameter):
     """
     Class for a set of parameters of report S12.
     """
-
-    def __init__(self, objectified_parameter, report_version):
-        """
-        Create a Measure object.
-
-        :param objectified_parameter: an lxml.objectify.StringElement \
-            representing a set of parameters
-        :return: a Measure object
-        """
-        self.objectified = objectified_parameter
-        self.report_version = report_version
-
-    @property
-    def objectified(self):
-        """
-        The set of parameters as an lxml.objectify.StringElement.
-
-        :return: an lxml.objectify.StringElement representing a set of \
-            parameters
-        """
-        return self._objectified
-
-    @objectified.setter
-    def objectified(self, value):
-        """
-        Stores an lxml.objectify.StringElement representing a set of \
-            parameters.
-
-        :param value: an lxml.objectify.StringElement representing a set of \
-            parameters
-        :return:
-        """
-        self._objectified = value
-
-    @property
-    def report_version(self):
-        """
-        The version of the report.
-
-        :return: a string with the version of the report
-        """
-        return self._report_version
-
-    @report_version.setter
-    def report_version(self, value):
-        """
-        Stores the report version.
-        :param value: a string with the version of the report
-        """
-        self._report_version = value
-
-    def get_boolean(self, name, element=None):
-        """
-        Gets a boolean value from the name of value.
-
-        :param name: a string with the name
-        :param element: an lxml.objectify.StringElement, by default \
-            self.objectified
-        :return:
-        """
-        if element is None:
-            e = self.objectified
-        else:
-            e = element
-        if e.get(name) == 'Y':
-            returns = True
-        else:
-            returns = False
-        return returns
-
-    def to_integer(self, value):
-        """
-        Convert a value to an integer. If value is None then returns 0.
-
-        :param value: a string with the value
-        :return: an integer
-        """
-        if value is None:
-            returns = 0
-        else:
-            returns = int(value)
-        return returns
-
-    def filter_integer(self, value):
-        """
-        Filter the provided value. Returns the value if is an integer or \
-            returns 0 if not.
-
-        :param value: an integer or not
-        :return: an integer
-        """
-        if isinstance(value, int):
-            returns = value
-        else:
-            returns = 0
-        return returns
-
     @property
     def values(self):
         """
@@ -860,7 +872,7 @@ class ConcentratorS12(Concentrator):
         """
         parameters = []
         for parameter in self.objectified.S12:
-            parameters.append(Parameter(parameter, self.report_version))
+            parameters.append(ParameterS12(parameter, self.report_version))
         return parameters
 
     @property
