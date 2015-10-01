@@ -308,6 +308,7 @@ class ParameterS12(Parameter):
     """
     Class for a set of parameters of report S12.
     """
+
     @property
     def values(self):
         """
@@ -529,7 +530,7 @@ class Meter(object):
         """
         Values of measure sets of this meter.
 
-        :return: a list with de values of the measure sets
+        :return: a list with the values of the measure sets
         """
         values = []
         for measure in self.measures:
@@ -566,7 +567,7 @@ class MeterS02(Meter):
         Values of measure sets of this meter of report S02, with the name of \
             meter and the magnitude.
 
-        :return: a list with de values of the measure sets
+        :return: a list with the values of the measure sets
         """
         values = []
         for measure in self.measures:
@@ -629,7 +630,7 @@ class MeterWithConcentratorName(Meter):
         Values of measure sets of this meter of report that need the name of \
             the concentrator and the meter,
 
-        :return: a list with de values of the measure sets
+        :return: a list with the values of the measure sets
         """
         values = []
         for measure in self.measures:
@@ -756,7 +757,7 @@ class Concentrator(object):
         """
         Values of the meters of this concentrator.
 
-        :return: a list with de values of the meters
+        :return: a list with the values of the meters
         """
         values = []
         for meter in self.meters:
@@ -880,7 +881,7 @@ class ConcentratorS12(Concentrator):
         """
         Values of the set of parameters of this concentrator.
 
-        :return: a list with de values of the meters
+        :return: a list with the values of the meters
         """
         values = []
         for parameter in self.parameters:
