@@ -308,6 +308,7 @@ class ParameterS12(Parameter):
     """
     Class for a set of parameters of report S12.
     """
+
     @property
     def values(self):
         """
