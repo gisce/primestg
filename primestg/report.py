@@ -540,7 +540,7 @@ class ParameterS12(Parameter):
                     'meters': task.get('TpMet'),
                 }
                 task_data_values = []
-                if hasattr(task, 'TpPro'):
+                if getattr(task, 'TpPro', None):
                     for task_data in task.TpPro:
                         task_data_value = {
                             'request': task_data.get('TpReq'),
