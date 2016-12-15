@@ -26,7 +26,8 @@ with description('Report S02 example'):
                 r1=11.0,
                 r2=0.0,
                 r3=0.0,
-                timestamp='2015-08-31 02:00:00'
+                timestamp='2015-08-31 02:00:00',
+                cnc_name='CIR4621247027'
             )
         ]
 
