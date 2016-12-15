@@ -672,6 +672,10 @@ class MeterS02(Meter):
     Class for a meter of report S02.
     """
 
+    def __init__(self, objectified_meter, cnc_name):
+        super(MeterS02, self).__init__(objectified_meter)
+        self.cnc_name = cnc_name
+
     @property
     def report_type(self):
         """
@@ -703,6 +707,7 @@ class MeterS02(Meter):
             v = measure.values.copy()
             v['name'] = self.name
             v['magn'] = int(self.magnitude)
+            v['cnc_name'] = self.cnc_name
             values.append(v)
         if values:
             return values
@@ -1003,6 +1008,18 @@ class ConcentratorS02(Concentrator):
         :return: a class to instance meters of report S02
         """
         return MeterS02
+
+    @property
+    def meters(self):
+        """
+        Meter objects with cnc_name
+
+        :return: a list of Meters objects
+        """
+        res = []
+        for cnt in self.objectified.Cnt:
+            res.append(self.meter_class(cnt, self.name))
+        return res
 
 
 class ConcentratorWithMetersWithConcentratorName(Concentrator):
