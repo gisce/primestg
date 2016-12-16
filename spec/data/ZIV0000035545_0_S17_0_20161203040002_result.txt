@@ -1,0 +1,1 @@
+[{'name': 'ZIV0000035545', 'event_code': 1, 'season': 'W', 'timestamp': '2016-12-02 13:12:40', 'data': 'D1: admin\nD2: HMI_write', 'event_group': 2}, {'name': 'ZIV0000035545', 'event_code': 2, 'season': 'W', 'timestamp': '2016-12-02 14:12:40', 'data': 'D1: admin\nD2: HMI_write', 'event_group': 2}]

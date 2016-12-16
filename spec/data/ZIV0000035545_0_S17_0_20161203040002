@@ -1,0 +1,12 @@
+<Report IdRpt="S17" IdPet="0" Version="3.1.c">
+<Cnc Id="ZIV0000035545">
+	<S17 Fh="20161202131240000W" Et="2" C="1">
+		<D1>admin</D1>
+		<D2>HMI_write</D2>
+	</S17>
+	<S17 Fh="20161202141240000W" Et="2" C="2">
+		<D1>admin</D1>
+		<D2>HMI_write</D2>
+	</S17>
+</Cnc>
+</Report>
