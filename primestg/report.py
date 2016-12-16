@@ -195,6 +195,40 @@ class MeasureS05(MeasureActiveReactive):
         return values
 
 
+class MeasureS09(Measure):
+    """
+    Class for a set of measures of report S09.
+    """
+
+    @property
+    def values(self):
+        """
+        Set of measures of report S09.
+
+        :return: a dict with a set of measures of report S09
+        """
+        values = []
+        timestamp = self._get_timestamp('Fh')
+        v = {
+            'timestamp': timestamp,
+            'event_group': int(self.objectified.get('Et')),
+            'season': self.objectified.get('Fh')[-1:],
+            'event_code': int(self.objectified.get('C')),
+        }
+        data = ''
+        d1s = ['D1: {}'.format(d)
+               for d in getattr(self.objectified, 'D1', [])]
+        d2s = ['D2: {}'.format(d)
+               for d in getattr(self.objectified, 'D2', [])]
+        data = '\n'.join(d1s + d2s)
+        if data:
+            v.update({'data': data})
+
+        values.append(v)
+
+        return values
+
+
 class Parameter(ValueWithTime):
     """
     Base class for a set of parameters.
@@ -921,6 +955,31 @@ class MeterS06(MeterWithConcentratorName):
         return values
 
 
+class MeterS09(MeterWithConcentratorName):
+    """
+    Class for a meter of report S09.
+    """
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S09.
+
+        :return: a string with 'S09'
+        """
+
+        return 'S09'
+
+    @property
+    def measure_class(self):
+        """
+        The class used to instance measure sets for report S09.
+
+        :return: a class to instance measure sets of report S09
+        """
+        return MeasureS09
+
+
 class Concentrator(object):
     """
     Base class for a concentrator.
@@ -1146,6 +1205,21 @@ class ConcentratorS06(ConcentratorWithMetersWithConcentratorName):
         return meters
 
 
+class ConcentratorS09(ConcentratorWithMetersWithConcentratorName):
+    """
+        Class for a concentrator of report S09.
+        """
+
+    @property
+    def meter_class(self):
+        """
+        The class used to instance meters for report S09.
+
+        :return: a class to instance meters of report S09
+        """
+        return MeterS09
+
+
 class ConcentratorS12(Concentrator):
     """
     Class for a concentrator of report S12.
@@ -1300,6 +1374,10 @@ class Report(object):
                     self.report_version,
                     self.request_id
                 ]
+            },
+            'S09': {
+                'class': ConcentratorS09,
+                'args': [objectified_concentrator]
             },
             'S12': {
                 'class': ConcentratorS12,
