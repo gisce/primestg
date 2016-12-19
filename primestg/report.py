@@ -466,6 +466,96 @@ class ParameterS06(Parameter):
         return values
 
 
+class ParameterS17(Parameter):
+    """
+    Class for a set of parameters of report S17.
+    """
+
+    def __init__(
+            self,
+            objectified_parameter,
+            report_version,
+            concentrator_name,
+            request_id
+    ):
+        """
+        Create a ParameterS17 object.
+
+        :param objectified_parameter: an lxml.objectify.StringElement \
+            representing a set of parameters
+        :return: a Measure object
+        """
+        super(ParameterS17, self).__init__(
+            objectified_parameter,
+            report_version
+        )
+        self.concentrator_name = concentrator_name
+        self.request_id = request_id
+
+    @property
+    def concentrator_name(self):
+        """
+        A string with the concentrator name.
+
+        :return: a string with the concentrator name
+        """
+        return self._concentrator_name
+
+    @concentrator_name.setter
+    def concentrator_name(self, value):
+        """
+        Stores a string with the concentrator name.
+
+        :param value: a string with the concentrator name
+        """
+        self._concentrator_name = value
+
+    @property
+    def request_id(self):
+        """
+        The request identification.
+
+        :return: a string with the request identification
+        """
+        return self._request_id
+
+    @request_id.setter
+    def request_id(self, value):
+        """
+        Stores the request identification.
+
+        :param value: a string with the version of the report
+        """
+        self._request_id = value
+
+    @property
+    def values(self):
+        """
+        Set of parameters of report S17.
+
+        :return: a dict with a set of parameters of report S17
+        """
+        get = self.objectified.get
+        values = {
+            'name': self.concentrator_name,
+            'event_code': int(get('C')),
+            'season': get('Fh')[-1:],
+            'timestamp': self._get_timestamp('Fh'),
+            'event_group': int(get('Et'))
+        }
+
+        data = ''
+        d1s = ['D1: {}'.format(d)
+               for d in getattr(self.objectified, 'D1', [])]
+        d2s = ['D2: {}'.format(d)
+               for d in getattr(self.objectified, 'D2', [])]
+        data = '\n'.join(d1s + d2s)
+        if data:
+            values.update({'data': data})
+
+        return values
+
+
 class ParameterS12(Parameter):
     """
     Class for a set of parameters of report S12.
@@ -1279,6 +1369,92 @@ class ConcentratorS12(Concentrator):
         return values
 
 
+class ConcentratorS17(Concentrator):
+    """
+    Class for a concentrator of report S17.
+    """
+
+    def __init__(self, objectified_concentrator, report_version, request_id):
+        """
+        Create a Concentrator object for the report S06 using \
+            ConcentratorWithMetersWithConcentratorName constructor and adding \
+            the report version and request identification.
+
+        :param objectified_concentrator: an lxml.objectify.StringElement \
+            representing a meter
+        :param report_version: a string with the version of report
+        :param request_id: a string with the request identification
+        :return: a Meter object
+        """
+        super(ConcentratorS17, self).__init__(objectified_concentrator)
+        self.report_version = report_version
+        self.request_id = request_id
+
+    @property
+    def report_version(self):
+        """
+        The version of the report.
+
+        :return: a string with the version of the report
+        """
+        return self._report_version
+
+    @report_version.setter
+    def report_version(self, value):
+        """
+        Stores the report version.
+        :param value: a string with the version of the report
+        """
+        self._report_version = value
+
+    @property
+    def request_id(self):
+        """
+        The request identification.
+
+        :return: a string with the request identification
+        """
+        return self._request_id
+
+    @request_id.setter
+    def request_id(self, value):
+        """
+        Stores the request identification.
+
+        :param value: a string with the version of the report
+        """
+        self._request_id = value
+
+    @property
+    def parameters(self):
+        """
+        Parameter set objects of this concentrator.
+
+        :return: a list of parameter set objects
+        """
+        parameters = []
+        for parameter in self.objectified.S17:
+            parameters.append(ParameterS17(
+                parameter,
+                self.report_version,
+                self.name,
+                self.request_id))
+        return parameters
+
+    @property
+    def values(self):
+        """
+        Values of the set of parameters of this concentrator.
+
+        :return: a list with the values of the meters
+        """
+        values = []
+
+        for parameter in self.parameters:
+            values.append(parameter.values)
+        return values
+
+
 class Report(object):
     """
     Report class to process MessageS
@@ -1382,6 +1558,14 @@ class Report(object):
             'S12': {
                 'class': ConcentratorS12,
                 'args': [objectified_concentrator, self.report_version]
+            },
+            'S17': {
+                'class': ConcentratorS17,
+                'args': [
+                    objectified_concentrator,
+                    self.report_version,
+                    self.request_id
+                ]
             }
         }
 
