@@ -5,17 +5,17 @@ from ast import literal_eval
 with description('Report S09 example'):
     with before.all:
 
-        self.data_filename_no_event_data = \
-            'spec/data/ZIV0000034180_0_S09_0_20161216104003'
-        # self.data_filename_with_event_data_D1 = \
-        #     'spec/data/ZIV0000034180_0_S09_0_20161216090401'
-        # self.data_filename_with_event_data_D1_and_D2 = \
-        #     'spec/data/ZIV0000034180_0_S09_0_20161216080308'
-        # self.data_filename_empty = \
-        #     'spec/data/ZIV0000034180_0_S09_0_20161216100401'
+        self.data_filenames = [
+            'spec/data/ZIV0000034180_0_S09_0_20161216104003',
+            'spec/data/ZIV0000034180_0_S09_0_20161216090401',
+            'spec/data/ZIV0000034180_0_S09_0_20161216080308',
+            # 'spec/data/ZIV0000034180_0_S09_0_20161216100401'
+        ]
 
-        with open(self.data_filename_no_event_data) as data_file:
-            self.report = Report(data_file)
+        self.report = []
+        for data_filename in self.data_filenames:
+            with open(data_filename) as data_file:
+                self.report.append(Report(data_file))
 
     with it('generates expected results for a value of the first meter of '
             'first concentrator'):
@@ -31,7 +31,7 @@ with description('Report S09 example'):
             }
         ]
 
-        concentrator = self.report.concentrators[0]
+        concentrator = self.report[0].concentrators[0]
         meter = concentrator.meters[0]
         values = meter.values
 
@@ -46,15 +46,17 @@ with description('Report S09 example'):
 
     with it('generates the expected results for the whole report'):
 
-        result_filename = '{}_result.txt'.format(self.
-                                                 data_filename_no_event_data)
+        result_filenames = []
+        for data_filename in self.data_filenames:
+            result_filenames.append('{}_result.txt'.format(data_filename))
 
-        with open(result_filename) as result_file:
-            result_string = result_file.read()
-            self.expected_result = literal_eval(result_string)
+        for key, result_filename in enumerate(result_filenames):
+            with open(result_filename) as result_file:
+                result_string = result_file.read()
+                expected_result = literal_eval(result_string)
 
-        result = self.report.values
+            result = self.report[key].values
 
-        expect(result).to(equal(self.expected_result))
+            expect(result).to(equal(expected_result))
 
 
