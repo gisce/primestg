@@ -991,7 +991,7 @@ class Concentrator(object):
         """
         values = []
         for meter in self.meters:
-            values.append(meter.values)
+            values.extend(meter.values)
         return values
 
 
