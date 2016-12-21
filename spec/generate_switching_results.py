@@ -5,7 +5,8 @@ data = [
     'data/CIR4621247027_0_S02_0_20150901111051',
     'data/CIR4621247027_0_S04_0_20150901110412',
     'data/CIR4621247027_0_S05_0_20150901072044',
-    'data/CIR4621247027_0_S12_0_20150903140000'
+    'data/CIR4621247027_0_S12_0_20150903140000',
+    'data/ZIV0004338053_0_S12_0_20160309235002'
 ]
 
 for filename in data:
@@ -19,7 +20,7 @@ for filename in data:
     if concentrator.has_meters:
         result = []
         for meter in concentrator.get_meters():
-            result.append(Values(meter, type, concentrator).get())
+            result.extend(Values(meter, type, concentrator).get())
     else:
         result = Values(concentrator, type, concentrator).get()
 
