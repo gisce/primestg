@@ -27,7 +27,7 @@ for filename in data:
     if concentrator.has_meters:
         result = []
         for meter in concentrator.get_meters():
-            result.append(Values(meter, type, concentrator).get())
+            result.extend(Values(meter, type, concentrator).get())
     else:
         result = Values(concentrator, type, concentrator).get()
 

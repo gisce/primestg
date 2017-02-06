@@ -16,16 +16,16 @@ with description('Report S02 example'):
 
         expected_first_value_first_meter = [
             dict(
-                ae=0.0,
+                ae=0,
                 bc='00',
-                ai=19.0,
+                ai=19,
                 season='S',
                 magn=1,
                 name='CIR0141433184',
-                r4=0.0,
-                r1=11.0,
-                r2=0.0,
-                r3=0.0,
+                r4=0,
+                r1=11,
+                r2=0,
+                r3=0,
                 timestamp='2015-08-31 02:00:00',
                 cnc_name='CIR4621247027'
             )
@@ -45,7 +45,7 @@ with description('Report S02 example'):
 
     with it('generates expected result for a meter with error'):
         result = self.report.concentrators[0].meters[17].values
-        expect(result).to(equal({}))
+        expect(result).to(equal([]))
 
     with it('generates the expected results for the whole report'):
 
