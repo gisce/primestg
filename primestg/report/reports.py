@@ -1,6 +1,6 @@
 from primestg.report.base import (
     MeasureActiveReactive, Parameter, MeterWithConcentratorName,
-    ConcentratorWithMetersWithConcentratorName, Concentrator
+    ConcentratorWithMetersWithConcentratorName, Concentrator, Measure,
 )
 from primestg.message import MessageS
 
