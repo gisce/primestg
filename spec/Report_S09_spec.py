@@ -55,8 +55,12 @@ with description('Report S09 example'):
                 result_string = result_file.read()
                 expected_result = literal_eval(result_string)
 
+            expected_final = []
+            for res in expected_result:
+                expected_final.extend(res)
+
             result = self.report[key].values
 
-            expect(result).to(equal(expected_result))
+            expect(result).to(equal(expected_final))
 
 
