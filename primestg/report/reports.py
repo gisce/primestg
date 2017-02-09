@@ -254,96 +254,6 @@ class ParameterS06(Parameter):
         return values
 
 
-class ParameterS17(Parameter):
-    """
-    Class for a set of parameters of report S17.
-    """
-
-    def __init__(
-            self,
-            objectified_parameter,
-            report_version,
-            concentrator_name,
-            request_id
-    ):
-        """
-        Create a ParameterS17 object.
-
-        :param objectified_parameter: an lxml.objectify.StringElement \
-            representing a set of parameters
-        :return: a Measure object
-        """
-        super(ParameterS17, self).__init__(
-            objectified_parameter,
-            report_version
-        )
-        self.concentrator_name = concentrator_name
-        self.request_id = request_id
-
-    @property
-    def concentrator_name(self):
-        """
-        A string with the concentrator name.
-
-        :return: a string with the concentrator name
-        """
-        return self._concentrator_name
-
-    @concentrator_name.setter
-    def concentrator_name(self, value):
-        """
-        Stores a string with the concentrator name.
-
-        :param value: a string with the concentrator name
-        """
-        self._concentrator_name = value
-
-    @property
-    def request_id(self):
-        """
-        The request identification.
-
-        :return: a string with the request identification
-        """
-        return self._request_id
-
-    @request_id.setter
-    def request_id(self, value):
-        """
-        Stores the request identification.
-
-        :param value: a string with the version of the report
-        """
-        self._request_id = value
-
-    @property
-    def values(self):
-        """
-        Set of parameters of report S17.
-
-        :return: a dict with a set of parameters of report S17
-        """
-        get = self.objectified.get
-        values = {
-            'name': self.concentrator_name,
-            'event_code': int(get('C')),
-            'season': get('Fh')[-1:],
-            'timestamp': self._get_timestamp('Fh'),
-            'event_group': int(get('Et'))
-        }
-
-        data = ''
-        d1s = ['D1: {}'.format(d)
-               for d in getattr(self.objectified, 'D1', [])]
-        d2s = ['D2: {}'.format(d)
-               for d in getattr(self.objectified, 'D2', [])]
-        data = '\n'.join(d1s + d2s)
-        if data:
-            values.update({'data': data})
-
-        return values
-
-
 class ParameterS12(Parameter):
     """
     Class for a set of parameters of report S12.
@@ -468,6 +378,96 @@ class ParameterS12(Parameter):
             values['tasks'] = tasks
         else:
             values['tasks'] = []
+        return values
+
+
+class ParameterConcentratorEvents(Parameter):
+    """
+    Class for a set of parameters of report S17.
+    """
+
+    def __init__(
+            self,
+            objectified_parameter,
+            report_version,
+            concentrator_name,
+            request_id
+    ):
+        """
+        Create a ParameterS17 object.
+
+        :param objectified_parameter: an lxml.objectify.StringElement \
+            representing a set of parameters
+        :return: a Measure object
+        """
+        super(ParameterConcentratorEvents, self).__init__(
+            objectified_parameter,
+            report_version
+        )
+        self.concentrator_name = concentrator_name
+        self.request_id = request_id
+
+    @property
+    def concentrator_name(self):
+        """
+        A string with the concentrator name.
+
+        :return: a string with the concentrator name
+        """
+        return self._concentrator_name
+
+    @concentrator_name.setter
+    def concentrator_name(self, value):
+        """
+        Stores a string with the concentrator name.
+
+        :param value: a string with the concentrator name
+        """
+        self._concentrator_name = value
+
+    @property
+    def request_id(self):
+        """
+        The request identification.
+
+        :return: a string with the request identification
+        """
+        return self._request_id
+
+    @request_id.setter
+    def request_id(self, value):
+        """
+        Stores the request identification.
+
+        :param value: a string with the version of the report
+        """
+        self._request_id = value
+
+    @property
+    def values(self):
+        """
+        Set of parameters of report S17.
+
+        :return: a dict with a set of parameters of report S17
+        """
+        get = self.objectified.get
+        values = {
+            'name': self.concentrator_name,
+            'event_code': int(get('C')),
+            'season': get('Fh')[-1:],
+            'timestamp': self._get_timestamp('Fh'),
+            'event_group': int(get('Et'))
+        }
+
+        data = ''
+        d1s = ['D1: {}'.format(d)
+               for d in getattr(self.objectified, 'D1', [])]
+        d2s = ['D2: {}'.format(d)
+               for d in getattr(self.objectified, 'D2', [])]
+        data = '\n'.join(d1s + d2s)
+        if data:
+            values.update({'data': data})
+
         return values
 
 
