@@ -274,15 +274,6 @@ class Meter(object):
         return self.objectified.get('Id')
 
     @property
-    def magnitude(self):
-        """
-        The magnitude of the meter measures.
-
-        :return: a int with the magnitude of the meter measures
-        """
-        return int(self.objectified.get('Magn'))
-
-    @property
     def report_type(self):
         """
         The type of report. To implement in child classes.
@@ -383,6 +374,18 @@ class MeterWithConcentratorName(Meter):
                 v['cnc_name'] = self.concentrator_name
                 values.append(v)
         return values
+
+
+class MeterWithMagnitude(MeterWithConcentratorName):
+
+    @property
+    def magnitude(self):
+        """
+        The magnitude of the meter measures.
+
+        :return: a int with the magnitude of the meter measures
+        """
+        return int(self.objectified.get('Magn'))
 
 
 class Concentrator(object):
