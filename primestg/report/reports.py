@@ -826,7 +826,7 @@ class ConcentratorS06(ConcentratorWithMetersWithConcentratorName):
 class ConcentratorS09(ConcentratorWithMetersWithConcentratorName):
     """
         Class for a concentrator of report S09.
-        """
+    """
 
     @property
     def meter_class(self):
@@ -895,6 +895,21 @@ class ConcentratorS12(Concentrator):
         for parameter in self.parameters:
             values.append(parameter.values)
         return values
+
+
+class ConcentratorS13(ConcentratorWithMetersWithConcentratorName):
+    """
+        Class for a concentrator of report S13.
+    """
+
+    @property
+    def meter_class(self):
+        """
+        The class used to instance meters for report S09.
+
+        :return: a class to instance meters of report S09
+        """
+        return MeterS13
 
 
 class ConcentratorEvents(Concentrator):
@@ -1125,6 +1140,10 @@ class Report(object):
             },
             'S09': {
                 'class': ConcentratorS09,
+                'args': [objectified_concentrator]
+            },
+            'S13': {
+                'class': ConcentratorS13,
                 'args': [objectified_concentrator]
             },
             'S12': {
