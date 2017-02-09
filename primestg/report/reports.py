@@ -93,7 +93,7 @@ class MeasureS05(MeasureActiveReactive):
         return values
 
 
-class MeasureS09(Measure):
+class MeasureEvents(Measure):
     """
     Class for a set of measures of report S09.
     """
@@ -676,7 +676,32 @@ class MeterS09(MeterWithConcentratorName):
 
         :return: a class to instance measure sets of report S09
         """
-        return MeasureS09
+        return MeasureEvents
+
+
+class MeterS13(MeterWithConcentratorName):
+    """
+    Class for a meter of report S09.
+    """
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S09.
+
+        :return: a string with 'S09'
+        """
+
+        return 'S13'
+
+    @property
+    def measure_class(self):
+        """
+        The class used to instance measure sets for report S09.
+
+        :return: a class to instance measure sets of report S09
+        """
+        return MeasureEvents
 
 
 class ConcentratorS02(ConcentratorWithMetersWithConcentratorName):
