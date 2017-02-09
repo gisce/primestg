@@ -91,6 +91,7 @@ class MeasureS05(MeasureActiveReactive):
 
         return values
 
+
 class MeasureS09(Measure):
     """
     Class for a set of measures of report S09.
@@ -123,6 +124,7 @@ class MeasureS09(Measure):
         values.append(v)
 
         return values
+
 
 class ParameterS06(Parameter):
     """
@@ -869,7 +871,7 @@ class ConcentratorS12(Concentrator):
         return values
 
 
-class ConcentratorS17(Concentrator):
+class ConcentratorEvents(Concentrator):
     """
     Class for a concentrator of report S17.
     """
@@ -886,7 +888,7 @@ class ConcentratorS17(Concentrator):
         :param request_id: a string with the request identification
         :return: a Meter object
         """
-        super(ConcentratorS17, self).__init__(objectified_concentrator)
+        super(ConcentratorEvents, self).__init__(objectified_concentrator)
         self.report_version = report_version
         self.request_id = request_id
 
@@ -926,22 +928,6 @@ class ConcentratorS17(Concentrator):
         self._request_id = value
 
     @property
-    def parameters(self):
-        """
-        Parameter set objects of this concentrator.
-
-        :return: a list of parameter set objects
-        """
-        parameters = []
-        for parameter in self.objectified.S17:
-            parameters.append(ParameterS17(
-                parameter,
-                self.report_version,
-                self.name,
-                self.request_id))
-        return parameters
-
-    @property
     def values(self):
         """
         Values of the set of parameters of this concentrator.
@@ -953,6 +939,66 @@ class ConcentratorS17(Concentrator):
         for parameter in self.parameters:
             values.append(parameter.values)
         return values
+
+
+class ConcentratorS15(ConcentratorEvents):
+
+    def __init__(self, objectified_concentrator, report_version, request_id,
+                 report_type):
+        """
+
+        """
+        super(ConcentratorS15, self).__init__(objectified_concentrator,
+                                              report_version, request_id)
+        self.report_version = report_version
+        self.request_id = request_id
+        self.report_type = report_type
+
+    @property
+    def parameters(self):
+        """
+        Parameter set objects of this concentrator.
+
+        :return: a list of parameter set objects
+        """
+        parameters = []
+        for parameter in self.objectified.S15:
+            parameters.append(ParameterConcentratorEvents(
+                parameter,
+                self.report_version,
+                self.name,
+                self.request_id))
+        return parameters
+
+
+class ConcentratorS17(ConcentratorEvents):
+
+    def __init__(self, objectified_concentrator, report_version, request_id,
+                 report_type):
+        """
+
+        """
+        super(ConcentratorS17, self).__init__(objectified_concentrator,
+                                              report_version, request_id)
+        self.report_version = report_version
+        self.request_id = request_id
+        self.report_type = report_type
+
+    @property
+    def parameters(self):
+        """
+        Parameter set objects of this concentrator.
+
+        :return: a list of parameter set objects
+        """
+        parameters = []
+        for parameter in self.objectified.S17:
+            parameters.append(ParameterConcentratorEvents(
+                parameter,
+                self.report_version,
+                self.name,
+                self.request_id))
+        return parameters
 
 
 class Report(object):
@@ -1064,7 +1110,17 @@ class Report(object):
                 'args': [
                     objectified_concentrator,
                     self.report_version,
-                    self.request_id
+                    self.request_id,
+                    self.report_type
+                ]
+            },
+            'S15': {
+                'class': ConcentratorS15,
+                'args': [
+                    objectified_concentrator,
+                    self.report_version,
+                    self.request_id,
+                    self.report_type
                 ]
             }
         }
