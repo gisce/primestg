@@ -1,6 +1,7 @@
 from primestg.report.base import (
-    MeasureActiveReactive, Parameter, MeterWithConcentratorName,
+    MeasureActiveReactive, Parameter, MeterWithMagnitude,
     ConcentratorWithMetersWithConcentratorName, Concentrator, Measure,
+    MeterWithConcentratorName,
 )
 from primestg.message import MessageS
 
@@ -471,7 +472,7 @@ class ParameterConcentratorEvents(Parameter):
         return values
 
 
-class MeterS02(MeterWithConcentratorName):
+class MeterS02(MeterWithMagnitude):
     """
     Class for a meter of report S02.
     """
@@ -508,7 +509,7 @@ class MeterS02(MeterWithConcentratorName):
         return values
 
 
-class MeterS04(MeterWithConcentratorName):
+class MeterS04(MeterWithMagnitude):
     """
     Class for a meter of report S04.
     """
@@ -532,7 +533,7 @@ class MeterS04(MeterWithConcentratorName):
         return MeasureS04
 
 
-class MeterS05(MeterWithConcentratorName):
+class MeterS05(MeterWithMagnitude):
     """
     Class for a meter of report S05.
     """
@@ -557,7 +558,7 @@ class MeterS05(MeterWithConcentratorName):
         return MeasureS05
 
 
-class MeterS06(MeterWithConcentratorName):
+class MeterS06(MeterWithMagnitude):
     """
     Class for a meter of report S06.
     """
