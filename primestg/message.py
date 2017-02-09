@@ -21,7 +21,7 @@ class BaseMessage(object):
 
         :return: the XML objectified
         """
-        return self._objectifyed
+        return self._objectified
 
     @objectified.setter
     def objectified(self, value):
@@ -34,7 +34,7 @@ class BaseMessage(object):
         if isinstance(value, file):
             value = value.read()
         self._xml = value
-        self._objectifyed = fromstring(self._xml)
+        self._objectified = fromstring(self._xml)
 
 
 class MessageS(BaseMessage):
