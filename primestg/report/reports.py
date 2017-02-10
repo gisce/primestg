@@ -1003,12 +1003,13 @@ class ConcentratorS15(ConcentratorEvents):
         :return: a list of parameter set objects
         """
         parameters = []
-        for parameter in self.objectified.S15:
-            parameters.append(ParameterConcentratorEvents(
-                parameter,
-                self.report_version,
-                self.name,
-                self.request_id))
+        if getattr(self.objectified, 'S15', None) is not None:
+            for parameter in self.objectified.S15:
+                parameters.append(ParameterConcentratorEvents(
+                    parameter,
+                    self.report_version,
+                    self.name,
+                    self.request_id))
         return parameters
 
 
@@ -1033,12 +1034,13 @@ class ConcentratorS17(ConcentratorEvents):
         :return: a list of parameter set objects
         """
         parameters = []
-        for parameter in self.objectified.S17:
-            parameters.append(ParameterConcentratorEvents(
-                parameter,
-                self.report_version,
-                self.name,
-                self.request_id))
+        if getattr(self.objectified, 'S17', None) is not None:
+            for parameter in self.objectified.S17:
+                parameters.append(ParameterConcentratorEvents(
+                    parameter,
+                    self.report_version,
+                    self.name,
+                    self.request_id))
         return parameters
 
 
