@@ -9,7 +9,7 @@ with description('Report S09 example'):
             'spec/data/ZIV0000034180_0_S09_0_20161216104003',
             'spec/data/ZIV0000034180_0_S09_0_20161216090401',
             'spec/data/ZIV0000034180_0_S09_0_20161216080308',
-            # 'spec/data/ZIV0000034180_0_S09_0_20161216100401'
+            'spec/data/ZIV0000034180_0_S09_0_201612160empty',
         ]
 
         self.report = []

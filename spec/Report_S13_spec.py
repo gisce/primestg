@@ -9,6 +9,7 @@ with description('Report S13 example'):
             'spec/data/ZIV0000034180_0_S13_0_20161216104003',
             'spec/data/ZIV0000034180_0_S13_0_20161216090401',
             'spec/data/ZIV0000034180_0_S13_0_20161216080308',
+            'spec/data/ZIV0000034180_0_S13_0_201612160empty',
         ]
 
         self.report = []
