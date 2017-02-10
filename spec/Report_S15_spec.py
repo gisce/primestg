@@ -6,7 +6,9 @@ with description('Report S15 examples'):
     with before.all:
 
         self.data_filenames = [
-            'spec/data/S15_test',
+            'spec/data/ZIV0000035545_0_S15_0_20161203040002',
+            'spec/data/ZIV0000035536_0_S15_0_20161204040002',
+            'spec/data/ZIV0004311822_0_S15_0_20161215040002',
         ]
 
         self.report = []
