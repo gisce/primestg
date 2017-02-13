@@ -881,8 +881,9 @@ class ConcentratorS12(Concentrator):
         :return: a list of parameter set objects
         """
         parameters = []
-        for parameter in self.objectified.S12:
-            parameters.append(ParameterS12(parameter, self.report_version))
+        if getattr(self.objectified, 'S12', None) is not None:
+            for parameter in self.objectified.S12:
+                parameters.append(ParameterS12(parameter, self.report_version))
         return parameters
 
     @property
