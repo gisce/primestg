@@ -6,10 +6,15 @@ from ast import literal_eval
 with description('Report S02 example'):
     with before.all:
 
-        self.data_filename = 'spec/data/CIR4621247027_0_S02_0_20150901111051'
+        self.data_filenames = [
+            'spec/data/CIR4621247027_0_S02_0_20150901111051',
+            'spec/data/CIR4621247027_0_S02_0_201509011empty',
+        ]
 
-        with open(self.data_filename) as data_file:
-            self.report = Report(data_file)
+        self.report = []
+        for data_filename in self.data_filenames:
+            with open(data_filename) as data_file:
+                self.report.append(Report(data_file))
 
     with it('generates expected results for a value of the first meter of '
             'first concentrator'):
@@ -31,7 +36,7 @@ with description('Report S02 example'):
             )
         ]
 
-        concentrator = self.report.concentrators[0]
+        concentrator = self.report[0].concentrators[0]
         meter = concentrator.meters[0]
         values = meter.values
 
@@ -44,17 +49,20 @@ with description('Report S02 example'):
             .to(equal(expected_first_value_first_meter))
 
     with it('generates expected result for a meter with error'):
-        result = self.report.concentrators[0].meters[17].values
+        result = self.report[0].concentrators[0].meters[17].values
         expect(result).to(equal([]))
 
     with it('generates the expected results for the whole report'):
 
-        result_filename = '{}_result.txt'.format(self.data_filename)
+        result_filenames = []
+        for data_filename in self.data_filenames:
+            result_filenames.append('{}_result.txt'.format(data_filename))
 
-        with open(result_filename) as result_file:
-            result_string = result_file.read()
-            self.expected_result = literal_eval(result_string)
+        for key, result_filename in enumerate(result_filenames):
+            with open(result_filename) as result_file:
+                result_string = result_file.read()
+                expected_result = literal_eval(result_string)
 
-        result = self.report.values
+        result = self.report[key].values
 
-        expect(result).to(equal(self.expected_result))
+        expect(result).to(equal(expected_result))
