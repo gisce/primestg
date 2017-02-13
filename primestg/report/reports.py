@@ -813,13 +813,14 @@ class ConcentratorS06(ConcentratorWithMetersWithConcentratorName):
         :return: a list of meter objects
         """
         meters = []
-        for meter in self.objectified.Cnt:
-            meters.append(MeterS06(
-                meter,
-                self.name,
-                self.report_version,
-                self.request_id
-            ))
+        if getattr(self.objectified, 'Cnt', None) is not None:
+            for meter in self.objectified.Cnt:
+                meters.append(MeterS06(
+                    meter,
+                    self.name,
+                    self.report_version,
+                    self.request_id
+                ))
         return meters
 
 
