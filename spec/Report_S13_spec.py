@@ -2,13 +2,14 @@ from expects import expect, equal
 from primestg.report import Report
 from ast import literal_eval
 
-
-with description('Report S05 example'):
+with description('Report S13 example'):
     with before.all:
 
         self.data_filenames = [
-            'spec/data/CIR4621247027_0_S05_0_20150901072044',
-            'spec/data/CIR4621247027_0_S05_0_201509010empty'
+            'spec/data/ZIV0000034180_0_S13_0_20161216104003',
+            'spec/data/ZIV0000034180_0_S13_0_20161216090401',
+            'spec/data/ZIV0000034180_0_S13_0_20161216080308',
+            'spec/data/ZIV0000034180_0_S13_0_201612160empty',
         ]
 
         self.report = []
@@ -21,20 +22,12 @@ with description('Report S05 example'):
 
         expected_first_value_first_meter = [
             {
-                'r4': 2,
-                'date_begin': '2015-09-01 00:00:00',
-                'name': 'CIR0141433184',
-                'r2': 0,
-                'r3': 0,
-                'ai': 308,
-                'date_end': '2015-09-01 00:00:00',
-                'period': 0,
-                'contract': 1,
-                'cnc_name': 'CIR4621247027',
-                'value': 'a',
-                'ae': 0,
-                'type': 'day',
-                'r1': 185
+                'name': 'ZIV0034631235',
+                'timestamp': '2016-12-15 05:25:06',
+                'cnc_name': 'ZIV0000034180',
+                'season': 'W',
+                'event_code': 1,
+                'event_group': 6,
             }
         ]
 
@@ -44,7 +37,8 @@ with description('Report S05 example'):
 
         first_value_first_meter = []
         for x in values:
-            if x['name'] == 'CIR0141433184' and x['period'] == 0:
+            if x['name'] == 'ZIV0034631235' and x['timestamp'] == \
+                    '2016-12-15 05:25:06':
                 first_value_first_meter.append(x)
 
         expect(first_value_first_meter)\
@@ -64,3 +58,5 @@ with description('Report S05 example'):
             result = self.report[key].values
 
             expect(result).to(equal(expected_result))
+
+

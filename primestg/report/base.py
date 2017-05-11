@@ -274,15 +274,6 @@ class Meter(object):
         return self.objectified.get('Id')
 
     @property
-    def magnitude(self):
-        """
-        The magnitude of the meter measures.
-
-        :return: a int with the magnitude of the meter measures
-        """
-        return int(self.objectified.get('Magn'))
-
-    @property
     def report_type(self):
         """
         The type of report. To implement in child classes.
@@ -384,6 +375,19 @@ class MeterWithConcentratorName(Meter):
                 values.append(v)
         return values
 
+
+class MeterWithMagnitude(MeterWithConcentratorName):
+
+    @property
+    def magnitude(self):
+        """
+        The magnitude of the meter measures.
+
+        :return: a int with the magnitude of the meter measures
+        """
+        return int(self.objectified.get('Magn'))
+
+
 class Concentrator(object):
     """
     Base class for a concentrator.
@@ -419,6 +423,18 @@ class Concentrator(object):
         self._objectified = value
 
     @property
+    def name(self):
+        """
+        The name of the concentrator.
+
+        :return: a string with the name of the concentrator
+        """
+        return self.objectified.get('Id')
+
+
+class ConcentratorWithMeters(Concentrator):
+
+    @property
     def meter_class(self):
         """
         The class to instance meters.
@@ -437,15 +453,6 @@ class Concentrator(object):
         return map(self.meter_class, self.objectified.Cnt)
 
     @property
-    def name(self):
-        """
-        The name of the concentrator.
-
-        :return: a string with the name of the concentrator
-        """
-        return self.objectified.get('Id')
-
-    @property
     def values(self):
         """
         Values of the meters of this concentrator.
@@ -458,7 +465,7 @@ class Concentrator(object):
         return values
 
 
-class ConcentratorWithMetersWithConcentratorName(Concentrator):
+class ConcentratorWithMetersWithConcentratorName(ConcentratorWithMeters):
     """
     Base class for a concentrator of report that need the name of the \
         concentrator in the values, like S04 and S05.
@@ -473,6 +480,7 @@ class ConcentratorWithMetersWithConcentratorName(Concentrator):
         :return: a list of meter objects
         """
         meters = []
-        for meter in self.objectified.Cnt:
-            meters.append(self.meter_class(meter, self.name))
+        if getattr(self.objectified, 'Cnt', None) is not None:
+            for meter in self.objectified.Cnt:
+                meters.append(self.meter_class(meter, self.name))
         return meters

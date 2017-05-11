@@ -1,6 +1,7 @@
 from primestg.report.base import (
-    MeasureActiveReactive, Parameter, MeterWithConcentratorName,
-    ConcentratorWithMetersWithConcentratorName, Concentrator
+    MeasureActiveReactive, Parameter, MeterWithMagnitude,
+    ConcentratorWithMetersWithConcentratorName, Concentrator, Measure,
+    MeterWithConcentratorName,
 )
 from primestg.message import MessageS
 
@@ -88,6 +89,40 @@ class MeasureS05(MeasureActiveReactive):
         for s05_values in self.objectified.Value:
             v.update(self.active_reactive(s05_values, 'a'))
             values.append(v)
+
+        return values
+
+
+class MeasureEvents(Measure):
+    """
+    Class for a set of measures of report S09.
+    """
+
+    @property
+    def values(self):
+        """
+        Set of measures of report S09.
+
+        :return: a dict with a set of measures of report S09
+        """
+        values = []
+        timestamp = self._get_timestamp('Fh')
+        v = {
+            'timestamp': timestamp,
+            'event_group': int(self.objectified.get('Et')),
+            'season': self.objectified.get('Fh')[-1:],
+            'event_code': int(self.objectified.get('C')),
+        }
+        data = ''
+        d1s = ['D1: {}'.format(d)
+               for d in getattr(self.objectified, 'D1', [])]
+        d2s = ['D2: {}'.format(d)
+               for d in getattr(self.objectified, 'D2', [])]
+        data = '\n'.join(d1s + d2s)
+        if data:
+            v.update({'data': data})
+
+        values.append(v)
 
         return values
 
@@ -347,7 +382,97 @@ class ParameterS12(Parameter):
         return values
 
 
-class MeterS02(MeterWithConcentratorName):
+class ParameterConcentratorEvents(Parameter):
+    """
+    Class for a set of parameters of report S17.
+    """
+
+    def __init__(
+            self,
+            objectified_parameter,
+            report_version,
+            concentrator_name,
+            request_id
+    ):
+        """
+        Create a ParameterS17 object.
+
+        :param objectified_parameter: an lxml.objectify.StringElement \
+            representing a set of parameters
+        :return: a Measure object
+        """
+        super(ParameterConcentratorEvents, self).__init__(
+            objectified_parameter,
+            report_version
+        )
+        self.concentrator_name = concentrator_name
+        self.request_id = request_id
+
+    @property
+    def concentrator_name(self):
+        """
+        A string with the concentrator name.
+
+        :return: a string with the concentrator name
+        """
+        return self._concentrator_name
+
+    @concentrator_name.setter
+    def concentrator_name(self, value):
+        """
+        Stores a string with the concentrator name.
+
+        :param value: a string with the concentrator name
+        """
+        self._concentrator_name = value
+
+    @property
+    def request_id(self):
+        """
+        The request identification.
+
+        :return: a string with the request identification
+        """
+        return self._request_id
+
+    @request_id.setter
+    def request_id(self, value):
+        """
+        Stores the request identification.
+
+        :param value: a string with the version of the report
+        """
+        self._request_id = value
+
+    @property
+    def values(self):
+        """
+        Set of parameters of report S17.
+
+        :return: a dict with a set of parameters of report S17
+        """
+        get = self.objectified.get
+        values = {
+            'name': self.concentrator_name,
+            'event_code': int(get('C')),
+            'season': get('Fh')[-1:],
+            'timestamp': self._get_timestamp('Fh'),
+            'event_group': int(get('Et'))
+        }
+
+        data = ''
+        d1s = ['D1: {}'.format(d)
+               for d in getattr(self.objectified, 'D1', [])]
+        d2s = ['D2: {}'.format(d)
+               for d in getattr(self.objectified, 'D2', [])]
+        data = '\n'.join(d1s + d2s)
+        if data:
+            values.update({'data': data})
+
+        return values
+
+
+class MeterS02(MeterWithMagnitude):
     """
     Class for a meter of report S02.
     """
@@ -384,7 +509,7 @@ class MeterS02(MeterWithConcentratorName):
         return values
 
 
-class MeterS04(MeterWithConcentratorName):
+class MeterS04(MeterWithMagnitude):
     """
     Class for a meter of report S04.
     """
@@ -408,7 +533,7 @@ class MeterS04(MeterWithConcentratorName):
         return MeasureS04
 
 
-class MeterS05(MeterWithConcentratorName):
+class MeterS05(MeterWithMagnitude):
     """
     Class for a meter of report S05.
     """
@@ -433,7 +558,7 @@ class MeterS05(MeterWithConcentratorName):
         return MeasureS05
 
 
-class MeterS06(MeterWithConcentratorName):
+class MeterS06(MeterWithMagnitude):
     """
     Class for a meter of report S06.
     """
@@ -527,6 +652,56 @@ class MeterS06(MeterWithConcentratorName):
         for parameter in self.parameters:
             values.append(parameter.values)
         return values
+
+
+class MeterS09(MeterWithConcentratorName):
+    """
+    Class for a meter of report S09.
+    """
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S09.
+
+        :return: a string with 'S09'
+        """
+
+        return 'S09'
+
+    @property
+    def measure_class(self):
+        """
+        The class used to instance measure sets for report S09.
+
+        :return: a class to instance measure sets of report S09
+        """
+        return MeasureEvents
+
+
+class MeterS13(MeterWithConcentratorName):
+    """
+    Class for a meter of report S09.
+    """
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S09.
+
+        :return: a string with 'S09'
+        """
+
+        return 'S13'
+
+    @property
+    def measure_class(self):
+        """
+        The class used to instance measure sets for report S09.
+
+        :return: a class to instance measure sets of report S09
+        """
+        return MeasureEvents
 
 
 class ConcentratorS02(ConcentratorWithMetersWithConcentratorName):
@@ -638,14 +813,30 @@ class ConcentratorS06(ConcentratorWithMetersWithConcentratorName):
         :return: a list of meter objects
         """
         meters = []
-        for meter in self.objectified.Cnt:
-            meters.append(MeterS06(
-                meter,
-                self.name,
-                self.report_version,
-                self.request_id
-            ))
+        if getattr(self.objectified, 'Cnt', None) is not None:
+            for meter in self.objectified.Cnt:
+                meters.append(MeterS06(
+                    meter,
+                    self.name,
+                    self.report_version,
+                    self.request_id
+                ))
         return meters
+
+
+class ConcentratorS09(ConcentratorWithMetersWithConcentratorName):
+    """
+        Class for a concentrator of report S09.
+    """
+
+    @property
+    def meter_class(self):
+        """
+        The class used to instance meters for report S09.
+
+        :return: a class to instance meters of report S09
+        """
+        return MeterS09
 
 
 class ConcentratorS12(Concentrator):
@@ -690,8 +881,9 @@ class ConcentratorS12(Concentrator):
         :return: a list of parameter set objects
         """
         parameters = []
-        for parameter in self.objectified.S12:
-            parameters.append(ParameterS12(parameter, self.report_version))
+        if getattr(self.objectified, 'S12', None) is not None:
+            for parameter in self.objectified.S12:
+                parameters.append(ParameterS12(parameter, self.report_version))
         return parameters
 
     @property
@@ -705,6 +897,153 @@ class ConcentratorS12(Concentrator):
         for parameter in self.parameters:
             values.append(parameter.values)
         return values
+
+
+class ConcentratorS13(ConcentratorWithMetersWithConcentratorName):
+    """
+        Class for a concentrator of report S13.
+    """
+
+    @property
+    def meter_class(self):
+        """
+        The class used to instance meters for report S09.
+
+        :return: a class to instance meters of report S09
+        """
+        return MeterS13
+
+
+class ConcentratorEvents(Concentrator):
+    """
+    Class for a concentrator of report S17.
+    """
+
+    def __init__(self, objectified_concentrator, report_version, request_id):
+        """
+        Create a Concentrator object for the report S06 using \
+            ConcentratorWithMetersWithConcentratorName constructor and adding \
+            the report version and request identification.
+
+        :param objectified_concentrator: an lxml.objectify.StringElement \
+            representing a meter
+        :param report_version: a string with the version of report
+        :param request_id: a string with the request identification
+        :return: a Meter object
+        """
+        super(ConcentratorEvents, self).__init__(objectified_concentrator)
+        self.report_version = report_version
+        self.request_id = request_id
+
+    @property
+    def report_version(self):
+        """
+        The version of the report.
+
+        :return: a string with the version of the report
+        """
+        return self._report_version
+
+    @report_version.setter
+    def report_version(self, value):
+        """
+        Stores the report version.
+        :param value: a string with the version of the report
+        """
+        self._report_version = value
+
+    @property
+    def request_id(self):
+        """
+        The request identification.
+
+        :return: a string with the request identification
+        """
+        return self._request_id
+
+    @request_id.setter
+    def request_id(self, value):
+        """
+        Stores the request identification.
+
+        :param value: a string with the version of the report
+        """
+        self._request_id = value
+
+    @property
+    def values(self):
+        """
+        Values of the set of parameters of this concentrator.
+
+        :return: a list with the values of the meters
+        """
+        values = []
+
+        for parameter in self.parameters:
+            values.append(parameter.values)
+        return values
+
+
+class ConcentratorS15(ConcentratorEvents):
+
+    def __init__(self, objectified_concentrator, report_version, request_id,
+                 report_type):
+        """
+
+        """
+        super(ConcentratorS15, self).__init__(objectified_concentrator,
+                                              report_version, request_id)
+        self.report_version = report_version
+        self.request_id = request_id
+        self.report_type = report_type
+
+    @property
+    def parameters(self):
+        """
+        Parameter set objects of this concentrator.
+
+        :return: a list of parameter set objects
+        """
+        parameters = []
+        if getattr(self.objectified, 'S15', None) is not None:
+            for parameter in self.objectified.S15:
+                parameters.append(ParameterConcentratorEvents(
+                    parameter,
+                    self.report_version,
+                    self.name,
+                    self.request_id))
+        return parameters
+
+
+class ConcentratorS17(ConcentratorEvents):
+
+    def __init__(self, objectified_concentrator, report_version, request_id,
+                 report_type):
+        """
+
+        """
+        super(ConcentratorS17, self).__init__(objectified_concentrator,
+                                              report_version, request_id)
+        self.report_version = report_version
+        self.request_id = request_id
+        self.report_type = report_type
+
+    @property
+    def parameters(self):
+        """
+        Parameter set objects of this concentrator.
+
+        :return: a list of parameter set objects
+        """
+        parameters = []
+        if getattr(self.objectified, 'S17', None) is not None:
+            for parameter in self.objectified.S17:
+                parameters.append(ParameterConcentratorEvents(
+                    parameter,
+                    self.report_version,
+                    self.name,
+                    self.request_id))
+        return parameters
 
 
 class Report(object):
@@ -803,9 +1142,35 @@ class Report(object):
                     self.request_id
                 ]
             },
+            'S09': {
+                'class': ConcentratorS09,
+                'args': [objectified_concentrator]
+            },
+            'S13': {
+                'class': ConcentratorS13,
+                'args': [objectified_concentrator]
+            },
             'S12': {
                 'class': ConcentratorS12,
                 'args': [objectified_concentrator, self.report_version]
+            },
+            'S17': {
+                'class': ConcentratorS17,
+                'args': [
+                    objectified_concentrator,
+                    self.report_version,
+                    self.request_id,
+                    self.report_type
+                ]
+            },
+            'S15': {
+                'class': ConcentratorS15,
+                'args': [
+                    objectified_concentrator,
+                    self.report_version,
+                    self.request_id,
+                    self.report_type
+                ]
             }
         }
 

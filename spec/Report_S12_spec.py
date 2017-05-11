@@ -8,7 +8,8 @@ with description('Report S12 examples'):
 
         self.data_filenames = [
             'spec/data/CIR4621247027_0_S12_0_20150903140000',
-            'spec/data/ZIV0004338053_0_S12_0_20160309235002'
+            'spec/data/ZIV0004338053_0_S12_0_20160309235002',
+            'spec/data/ZIV0000034169_0_S12_0_201612090empty',
         ]
 
         self.report = []
