@@ -1184,6 +1184,13 @@ class Report(object):
         return concentrator
 
     @property
+    def supported(self):
+        if self.report_type in 'S06':
+            return True
+        else:
+            return False
+
+    @property
     def concentrators(self):
         """
         The concentrators of the report.
