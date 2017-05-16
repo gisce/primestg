@@ -5,6 +5,9 @@ from primestg.report.base import (
 )
 from primestg.message import MessageS
 
+SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S15',
+                     'S17']
+
 
 class MeasureS02(MeasureActiveReactive):
     """
@@ -1185,8 +1188,7 @@ class Report(object):
 
     @property
     def supported(self):
-        if self.report_type in ('S02', 'S04', 'S05', 'S06', 'S09', 'S12',
-                                'S13', 'S15', 'S17'):
+        if self.report_type in SUPPORTED_REPORTS:
             return True
         else:
             return False
