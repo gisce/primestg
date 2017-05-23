@@ -1188,10 +1188,7 @@ class Report(object):
 
     @property
     def supported(self):
-        if self.report_type in SUPPORTED_REPORTS:
-            return True
-        else:
-            return False
+        return self.report_type in SUPPORTED_REPORTS
 
     @property
     def concentrators(self):
