@@ -5,6 +5,9 @@ from primestg.report.base import (
 )
 from primestg.message import MessageS
 
+SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S15',
+                     'S17']
+
 
 class MeasureS02(MeasureActiveReactive):
     """
@@ -1182,6 +1185,10 @@ class Report(object):
         concentrator_args = get('args')
         concentrator = concentrator_class(*concentrator_args)
         return concentrator
+
+    @property
+    def supported(self):
+        return self.report_type in SUPPORTED_REPORTS
 
     @property
     def concentrators(self):
