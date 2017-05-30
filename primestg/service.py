@@ -9,28 +9,26 @@ import xml.etree.ElementTree as ET
 
 class Service(object):
     def __init__(self):
-        self.DC_service = None
+        self.DC_service = self.create_service()
         self.result = {}
 
     def send(self, report_id, meters, date_from, date_to):
-        if self.DC_service is None:
-            self.DC_service = self.create_service()
         # crida als webservices segons els parametres que em passin,
         # que seran els del metode concret de cada report
-        results = []
-        results.append(self.DC_service.Request(0002, report_id, date_from,
-                                               date_to, meters, 2))
-        for rep_res in results:
-            root = ET.fromstring(rep_res)
-            print '=========================================='
-            print(ET.tostring(root))
-            print '=========================================='
+        results = self.DC_service.Request(0002, report_id, date_from,
+                                               date_to, meters, 2)
+        # for rep_res in results:
+        # root = ET.fromstring(results)
+        # print '=========================================='
+        # print(ET.tostring(root))
+        # print '=========================================='
+        return results
 
     def create_service(self):
-        binding = '####'
+        binding = '{http://www.asais.fr/ns/Saturne/DC/ws}WS_DCSoap'
         client = Client(
-            wsdl='####')
-        client.set_ns_prefix(None, '####')
+            wsdl='/home/miquel/codi/primestg/primestg/data/WS_DC.wsdl')
+        client.set_ns_prefix(None, 'http://www.asais.fr/ns/Saturne/DC/ws')
         return client.create_service(binding, 'http://cct.gisce.lan:8080')
 
     def get_daily_incremental(self, meters, date_from, date_to):
@@ -40,8 +38,5 @@ class Service(object):
         :return: an S02 report for the corresponding meters
         """
         if isinstance(meters, list):
-           meters = ','.join(meters)
-        self.send('S02', meters, date_from, date_to)
-
-s = Service()
-s.get_daily_incremental('ZIV0040318130', '20170514010000', '20170515000000')
+            meters = ','.join(meters)
+        return self.send('S02', meters, date_from, date_to)
