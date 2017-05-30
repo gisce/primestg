@@ -13,7 +13,11 @@ def hello():
 
 @app.route("/cnc/dailyincremental/meters/")
 def S02_all():
-    return "Hola!"
+    date_from = request.args.get('from')
+    date_to = request.args.get('to')
+    s = Service()
+    rep = s.get_daily_incremental('', date_from, date_to)
+    return Response(rep, mimetype="text/plain")
 
 
 @app.route("/cnc/dailyincremental/meters/<string:meter_id>/")
