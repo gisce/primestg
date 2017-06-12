@@ -31,3 +31,51 @@ class Service(object):
         if isinstance(meters, list):
             meters = ','.join(meters)
         return self.send('S02', meters, date_from, date_to)
+
+    def get_all_daily_incremental(self, date_from, date_to):
+        """
+        If meter is empty list do it for all meters.
+        :param meters: either meter_id, list of meter_id's or empty list
+        :return: an S02 report for the corresponding meters
+        """
+        return self.send('S02', '', date_from, date_to)
+
+    def get_monthly_billing(self, meters, date_from, date_to):
+        """
+        If meter is empty list do it for all meters.
+        :param meters: either meter_id, list of meter_id's or empty list
+        :return: an S04 report for the corresponding meters
+        """
+        if isinstance(meters, list):
+            meters = ','.join(meters)
+        return self.send('S04', meters, date_from, date_to)
+
+    def get_daily_absolute(self, meters, date_from, date_to):
+        """
+        If meter is empty list do it for all meters.
+        :param meters: either meter_id, list of meter_id's or empty list
+        :return: an S05 report for the corresponding meters
+        """
+        if isinstance(meters, list):
+            meters = ','.join(meters)
+        return self.send('S05', meters, date_from, date_to)
+
+    def get_meter_events(self, meters, date_from, date_to):
+        """
+        If meter is empty list do it for all meters.
+        :param meters: either meter_id, list of meter_id's or empty list
+        :return: an S09 report for the corresponding meters
+        """
+        if isinstance(meters, list):
+            meters = ','.join(meters)
+        return self.send('S09', meters, date_from, date_to)
+
+    def get_meter_parameters(self, meters, date_from, date_to):
+        """
+        If meter is empty list do it for all meters.
+        :param meters: either meter_id, list of meter_id's or empty list
+        :return: an S06 report for the corresponding meters
+        """
+        if isinstance(meters, list):
+            meters = ','.join(meters)
+        return self.send('S06', meters, date_from, date_to)
