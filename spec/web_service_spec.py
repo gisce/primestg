@@ -57,8 +57,18 @@ with description('Web services run'):
             rsps.add(responses.POST, 'http://cct.gisce.lan:8080/',
                      body='{"error": "expected S05 error"}', status=404)
             try:
+                resp = self.s.get_daily_absolute('ZIV0040318130',
+                                                 '20170609010000',
+                                                 '20170611000000')
+            except TransportError as te:
+                assert 'expected S05 error' in te.message
+
+    with it('asking for S05 report for all meters with mocked connection'):
+        with responses.RequestsMock() as rsps:
+            rsps.add(responses.POST, 'http://cct.gisce.lan:8080/',
+                     body='{"error": "expected S05 error"}', status=404)
+            try:
                 resp = self.s.get_all_daily_absolute('20170609010000',
                                                      '20170611000000')
-
             except TransportError as te:
                 assert 'expected S05 error' in te.message
