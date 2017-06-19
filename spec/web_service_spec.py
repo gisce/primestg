@@ -18,7 +18,6 @@ with description('Web services run'):
                 resp = self.s.get_daily_incremental('ZIV0040318130',
                                                     '20170610010000',
                                                     '20170611000000')
-
             except TransportError as te:
                 assert 'expected S02 error' in te.message
 
@@ -29,7 +28,6 @@ with description('Web services run'):
             try:
                 resp = self.s.get_all_daily_incremental('20170610010000',
                                                         '20170611000000')
-
             except TransportError as te:
                 assert 'expected S02 error' in te.message
 
@@ -41,7 +39,16 @@ with description('Web services run'):
                 resp = self.s.get_monthly_billing('ZIV0040318130',
                                                   '20170600010000',
                                                   '20170631000000')
+            except TransportError as te:
+                assert 'expected S04 error' in te.message
 
+    with it('asking for S04 report for all meters with mocked connection'):
+        with responses.RequestsMock() as rsps:
+            rsps.add(responses.POST, 'http://cct.gisce.lan:8080/',
+                     body='{"error": "expected S04 error"}', status=404)
+            try:
+                resp = self.s.get_all_monthly_billing('20170600010000',
+                                                      '20170631000000')
             except TransportError as te:
                 assert 'expected S04 error' in te.message
 
