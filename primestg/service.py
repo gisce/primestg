@@ -50,6 +50,14 @@ class Service(object):
             meters = ','.join(meters)
         return self.send('S04', meters, date_from, date_to)
 
+    def get_all_monthly_billing(self, date_from, date_to):
+        """
+        If meter is empty list do it for all meters.
+        :param meters: either meter_id, list of meter_id's or empty list
+        :return: an S04 report for the corresponding meters
+        """
+        return self.send('S04', '', date_from, date_to)
+
     def get_daily_absolute(self, meters, date_from, date_to):
         """
         If meter is empty list do it for all meters.
