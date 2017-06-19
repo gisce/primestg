@@ -72,3 +72,25 @@ with description('Web services run'):
                                                      '20170611000000')
             except TransportError as te:
                 assert 'expected S05 error' in te.message
+
+    with it('asking for S09 report with mocked connection'):
+        with responses.RequestsMock() as rsps:
+            rsps.add(responses.POST, 'http://cct.gisce.lan:8080/',
+                     body='{"error": "expected S09 error"}', status=404)
+            try:
+                resp = self.s.get_meter_events('ZIV0040318130',
+                                                     '20170609010000',
+                                                     '20170611000000')
+            except TransportError as te:
+                assert 'expected S09 error' in te.message
+
+    with it('asking for S06 report with mocked connection'):
+        with responses.RequestsMock() as rsps:
+            rsps.add(responses.POST, 'http://cct.gisce.lan:8080/',
+                     body='{"error": "expected S06 error"}', status=404)
+            try:
+                resp = self.s.get_meter_events('ZIV0040318130',
+                                               '20170609010000',
+                                               '20170611000000')
+            except TransportError as te:
+                assert 'expected S06 error' in te.message
