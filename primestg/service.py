@@ -4,13 +4,14 @@ from zeep import Client
 
 
 class Service(object):
-    def __init__(self):
+    def __init__(self, fact_id):
         self.DC_service = self.create_service()
-        self.result = {}
+        self.fact_id = fact_id
 
     def send(self, report_id, meters, date_from, date_to):
         # TODO: need tocheck which report to demand and which parameters to send
-        results = self.DC_service.Request(0002, report_id, date_from,
+        results = self.DC_service.Request(self.fact_id, report_id,
+                                          date_from,
                                           date_to, meters, 2)
 
         return results
