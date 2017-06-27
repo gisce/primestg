@@ -4,9 +4,10 @@ from zeep import Client
 
 
 class Service(object):
-    def __init__(self, fact_id):
-        self.DC_service = self.create_service()
+    def __init__(self, fact_id, cnc_url):
+        self.cnc_url = cnc_url
         self.fact_id = fact_id
+        self.DC_service = self.create_service()
 
     def send(self, report_id, meters, date_from, date_to):
         # TODO: need tocheck which report to demand and which parameters to send
@@ -21,7 +22,7 @@ class Service(object):
         client = Client(
             wsdl='XXXXX')
         client.set_ns_prefix(None, 'XXXXX')
-        return client.create_service(binding, 'XXXXX')
+        return client.create_service(binding, self.cnc_url)
 
     def get_daily_incremental(self, meters, date_from, date_to):
         """
