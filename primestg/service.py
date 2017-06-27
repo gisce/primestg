@@ -26,9 +26,9 @@ class Service(object):
 
     def get_daily_incremental(self, meters, date_from, date_to):
         """
-        If meter is empty list do it for all meters.
-        :param meters: either meter_id, list of meter_id's or empty list
-        :return: an S02 report for the corresponding meters
+        Asks for a S02 report to the specified meter.
+        :param meters: a meter_id
+        :return: an S02 report for the corresponding meter
         """
         if isinstance(meters, list):
             meters = ','.join(meters)
@@ -36,17 +36,16 @@ class Service(object):
 
     def get_all_daily_incremental(self, date_from, date_to):
         """
-        If meter is empty list do it for all meters.
-        :param meters: either meter_id, list of meter_id's or empty list
-        :return: an S02 report for the corresponding meters
+        Asks for a S02 report to all meters.
+        :return: an S02 report from every meter
         """
         return self.send('S02', '', date_from, date_to)
 
     def get_monthly_billing(self, meters, date_from, date_to):
         """
-        If meter is empty list do it for all meters.
-        :param meters: either meter_id, list of meter_id's or empty list
-        :return: an S04 report for the corresponding meters
+        Asks for a S04 report to the specified meter.
+        :param meters: a meter_id
+        :return: an S04 report for the corresponding meter
         """
         if isinstance(meters, list):
             meters = ','.join(meters)
@@ -54,17 +53,16 @@ class Service(object):
 
     def get_all_monthly_billing(self, date_from, date_to):
         """
-        If meter is empty list do it for all meters.
-        :param meters: either meter_id, list of meter_id's or empty list
-        :return: an S04 report for the corresponding meters
+        Asks for a S04 report to all meters.
+        :return: an S04 report from every meter
         """
         return self.send('S04', '', date_from, date_to)
 
     def get_daily_absolute(self, meters, date_from, date_to):
         """
-        If meter is empty list do it for all meters.
-        :param meters: either meter_id, list of meter_id's or empty list
-        :return: an S05 report for the corresponding meters
+        Asks for a S05 report to the specified meter.
+        :param meters: a meter_id
+        :return: an S05 report for the corresponding meter
         """
         if isinstance(meters, list):
             meters = ','.join(meters)
@@ -72,17 +70,16 @@ class Service(object):
 
     def get_all_daily_absolute(self, date_from, date_to):
         """
-        If meter is empty list do it for all meters.
-        :param meters: either meter_id, list of meter_id's or empty list
-        :return: an S05 report for the corresponding meters
+        Asks for a S05 report to all meters.
+        :return: an S05 report from every meter
         """
         return self.send('S05', '', date_from, date_to)
 
     def get_meter_events(self, meters, date_from, date_to):
         """
-        If meter is empty list do it for all meters.
-        :param meters: either meter_id, list of meter_id's or empty list
-        :return: an S09 report for the corresponding meters
+        Asks for a S09 report to the specified meter.
+        :param meters: a meter_id
+        :return: an S09 report for the corresponding meter
         """
         if isinstance(meters, list):
             meters = ','.join(meters)
@@ -90,9 +87,9 @@ class Service(object):
 
     def get_meter_parameters(self, meters, date_from, date_to):
         """
-        If meter is empty list do it for all meters.
-        :param meters: either meter_id, list of meter_id's or empty list
-        :return: an S06 report for the corresponding meters
+        Asks for a S06 report to the specified meter.
+        :param meters: a meter_id
+        :return: an S06 report for the corresponding meter
         """
         if isinstance(meters, list):
             meters = ','.join(meters)
