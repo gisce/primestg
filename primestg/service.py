@@ -85,6 +85,13 @@ class Service(object):
             meters = ','.join(meters)
         return self.send('S09', meters, date_from, date_to)
 
+    def get_all_meter_events(self, date_from, date_to):
+        """
+        Asks for a S09 report to all meters.
+        :return: an S09 report from every meter
+        """
+        return self.send('S09', '', date_from, date_to)
+
     def get_meter_parameters(self, meters, date_from, date_to):
         """
         Asks for a S06 report to the specified meter.
@@ -94,3 +101,10 @@ class Service(object):
         if isinstance(meters, list):
             meters = ','.join(meters)
         return self.send('S06', meters, date_from, date_to)
+
+    def get_all_meter_parameters(self, date_from, date_to):
+        """
+        Asks for a S06 report to all meters.
+        :return: an S06 report from every meter
+        """
+        return self.send('S06', '', date_from, date_to)
