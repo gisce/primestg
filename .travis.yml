@@ -9,4 +9,4 @@ script:
 - mamba
 before_install:
 - openssl aes-256-cbc -K $encrypted_b6b988576cbe_key -iv $encrypted_b6b988576cbe_iv
-  -in WS_DC.wsdl.enc -out WS_DC.wsdl -d
+  -in primestg/data/WS_DC.wsdl.enc -out primestg/data/WS_DC.wsdl -d
