@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 from zeep import Client
+import primestg
 
 
 class Service(object):
@@ -18,10 +19,9 @@ class Service(object):
         return results
 
     def create_service(self):
-        binding = 'XXXXXX'
-        client = Client(
-            wsdl='XXXXX')
-        client.set_ns_prefix(None, 'XXXXX')
+        binding = '{http://www.asais.fr/ns/Saturne/DC/ws}WS_DCSoap'
+        client = Client(wsdl=primestg.get_data('WS_DC.wsdl'))
+        client.set_ns_prefix(None, 'http://www.asais.fr/ns/Saturne/DC/ws')
         return client.create_service(binding, self.cnc_url)
 
     def get_daily_incremental(self, meters, date_from, date_to):
