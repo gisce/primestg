@@ -5,16 +5,22 @@ import primestg
 
 
 class Service(object):
-    def __init__(self, fact_id, cnc_url):
+    def __init__(self, fact_id, cnc_url, sync):
         self.cnc_url = cnc_url
         self.fact_id = fact_id
+        self.sync = sync
         self.DC_service = self.create_service()
 
     def send(self, report_id, meters, date_from, date_to):
         # TODO: need tocheck which report to demand and which parameters to send
-        results = self.DC_service.Request(self.fact_id, report_id,
-                                          date_from,
-                                          date_to, meters, 2)
+
+        if self.sync:
+            results = self.DC_service.Request(self.fact_id, report_id,
+                                              date_from, date_to, meters, 2)
+        else:
+            results = self.DC_service.AsynchRequest(self.fact_id, report_id,
+                                                    date_from, date_to,
+                                                    meters, 2)
 
         return results
 
