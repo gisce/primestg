@@ -5,14 +5,14 @@ import primestg
 
 
 class Service(object):
-    def __init__(self, fact_id, cnc_url, sync):
+    def __init__(self, fact_id, cnc_url, sync=True, source='DCF'):
         self.cnc_url = cnc_url
         self.fact_id = fact_id
         self.sync = sync
+        self.source = source  # By default it doesn't look to the meter for data
         self.DC_service = self.create_service()
 
     def send(self, report_id, meters, date_from, date_to):
-        # TODO: need tocheck which report to demand and which parameters to send
 
         if self.sync:
             results = self.DC_service.Request(self.fact_id, report_id,
@@ -20,7 +20,7 @@ class Service(object):
         else:
             results = self.DC_service.AsynchRequest(self.fact_id, report_id,
                                                     date_from, date_to,
-                                                    meters, 2)
+                                                    meters, 2, self.source)
 
         return results
 
