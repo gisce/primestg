@@ -5,11 +5,14 @@ import primestg
 
 
 class Service(object):
-    def __init__(self, fact_id, cnc_url, sync=True, source='DCF'):
+    def __init__(self, fact_id, cnc_url, sync=True, source=None):
         self.cnc_url = cnc_url
         self.fact_id = fact_id
         self.sync = sync
-        self.source = source  # By default it doesn't look to the meter for data
+        if not source:
+            self.source = 'DCF'  # By default it doesn't look to the meter for data
+        else:
+            self.source = source
         self.DC_service = self.create_service()
 
     def send(self, report_id, meters, date_from, date_to):
