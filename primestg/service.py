@@ -117,3 +117,10 @@ class Service(object):
         :return: an S06 report from every meter
         """
         return self.send('S06', '', date_from, date_to)
+
+    def get_concentrator_parameters(self, dc, date_from, date_to):
+        """
+        Asks for a S12 report to the concentrator.
+        :return: an S12 report from the concentrator.
+        """
+        return self.send('S12', dc, date_from, date_to)
