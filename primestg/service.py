@@ -33,6 +33,16 @@ class Service(object):
         client.set_ns_prefix(None, 'http://www.asais.fr/ns/Saturne/DC/ws')
         return client.create_service(binding, self.cnc_url)
 
+    def get_instant_data(self, meters):
+        """
+        Asks for a S01 report to the specified meter.
+        :param meters: a meter_id
+        :return: an S01 report for the corresponding meter
+        """
+        if isinstance(meters, list):
+            meters = ','.join(meters)
+        return self.send('S01', meters)
+
     def get_daily_incremental(self, meters, date_from, date_to):
         """
         Asks for a S02 report to the specified meter.
