@@ -15,7 +15,7 @@ class Service(object):
             self.source = source
         self.DC_service = self.create_service()
 
-    def send(self, report_id, meters, date_from, date_to):
+    def send(self, report_id, meters, date_from='', date_to=''):
 
         if self.sync:
             results = self.DC_service.Request(self.fact_id, report_id,
