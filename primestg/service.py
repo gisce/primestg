@@ -15,7 +15,7 @@ class Service(object):
             self.source = source
         self.DC_service = self.create_service()
 
-    def send(self, report_id, meters, date_from, date_to):
+    def send(self, report_id, meters, date_from='', date_to=''):
 
         if self.sync:
             results = self.DC_service.Request(self.fact_id, report_id,
@@ -32,6 +32,16 @@ class Service(object):
         client = Client(wsdl=primestg.get_data('WS_DC.wsdl'))
         client.set_ns_prefix(None, 'http://www.asais.fr/ns/Saturne/DC/ws')
         return client.create_service(binding, self.cnc_url)
+
+    def get_instant_data(self, meters):
+        """
+        Asks for a S01 report to the specified meter.
+        :param meters: a meter_id
+        :return: an S01 report for the corresponding meter
+        """
+        if isinstance(meters, list):
+            meters = ','.join(meters)
+        return self.send('S01', meters)
 
     def get_daily_incremental(self, meters, date_from, date_to):
         """
