@@ -1,9 +1,12 @@
 sudo: false
 language: python
 python:
-  - "2.7"
+- '2.7'
 install:
-  - "pip install -r requirements-dev.txt"
-  - "pip install -e ."
+- pip install -r requirements-dev.txt
+- pip install -e .
 script:
-  - mamba
+- mamba
+before_install:
+- openssl aes-256-cbc -K $encrypted_b6b988576cbe_key -iv $encrypted_b6b988576cbe_iv
+  -in primestg/data/WS_DC.wsdl.enc -out primestg/data/WS_DC.wsdl -d

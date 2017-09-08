@@ -10,7 +10,8 @@ setup(
     author='GISCE-TI, S.L.',
     author_email='devel@gisce.net',
     install_requires=[
-        'lxml'
+        'lxml',
+        'zeep'
     ],
     description='Prime STG-DC Interface Specification'
 )
