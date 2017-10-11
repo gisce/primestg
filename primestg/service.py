@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 from zeep import Client
+from zeep.transports import Transport
 import primestg
 
 
@@ -33,7 +34,11 @@ class Service(object):
 
     def create_service(self):
         binding = '{http://www.asais.fr/ns/Saturne/DC/ws}WS_DCSoap'
-        client = Client(wsdl=primestg.get_data('WS_DC.wsdl'))
+        if self.session:
+            client = Client(wsdl=primestg.get_data('WS_DC.wsdl'),
+                            transport=Transport(session=self.session))
+        else:
+            client = Client(wsdl=primestg.get_data('WS_DC.wsdl'))
         client.set_ns_prefix(None, 'http://www.asais.fr/ns/Saturne/DC/ws')
         return client.create_service(binding, self.cnc_url)
 
