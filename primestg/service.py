@@ -5,14 +5,18 @@ import primestg
 
 
 class Service(object):
-    def __init__(self, fact_id, cnc_url, sync=True, source=None):
-        self.cnc_url = cnc_url
-        self.fact_id = fact_id
-        self.sync = sync
-        if not source:
+    def __init__(self, dc_vals):
+        self.cnc_url = dc_vals['url']
+        self.fact_id = dc_vals['request_id']
+        self.sync = dc_vals['sync']
+        if dc_vals.get('source', False):
             self.source = 'DCF'  # By default it doesn't look to the meter for data
         else:
-            self.source = source
+            self.source = dc_vals['source']
+        if dc_vals.get('session', False):
+            self.session = dc_vals['session']
+        else:
+            self.session = False
         self.DC_service = self.create_service()
 
     def send(self, report_id, meters, date_from='', date_to=''):
