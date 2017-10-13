@@ -2,6 +2,8 @@
 
 from zeep import Client
 from zeep.transports import Transport
+from requests import Session
+from requests.auth import HTTPBasicAuth
 import primestg
 
 
@@ -37,8 +39,10 @@ class Service(object):
     def create_service(self):
         binding = '{http://www.asais.fr/ns/Saturne/DC/ws}WS_DCSoap'
         if self.auth:
+            session = Session()
+            session.auth = HTTPBasicAuth(self.user, self.password)
             client = Client(wsdl=primestg.get_data('WS_DC.wsdl'),
-                            transport=Transport(session=self.auth))
+                            transport=Transport(session=session))
         else:
             client = Client(wsdl=primestg.get_data('WS_DC.wsdl'))
         client.set_ns_prefix(None, 'http://www.asais.fr/ns/Saturne/DC/ws')
