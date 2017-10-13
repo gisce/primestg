@@ -14,10 +14,12 @@ class Service(object):
             self.source = 'DCF'  # By default it doesn't look to the meter for data
         else:
             self.source = dc_vals['source']
-        if dc_vals.get('session', False):
-            self.session = dc_vals['session']
+        if dc_vals.get('user', False):
+            self.auth = True
+            self.user = dc_vals['user']
+            self.password = dc_vals['password']
         else:
-            self.session = False
+            self.auth = False
         self.DC_service = self.create_service()
 
     def send(self, report_id, meters, date_from='', date_to=''):
@@ -34,9 +36,9 @@ class Service(object):
 
     def create_service(self):
         binding = '{http://www.asais.fr/ns/Saturne/DC/ws}WS_DCSoap'
-        if self.session:
+        if self.auth:
             client = Client(wsdl=primestg.get_data('WS_DC.wsdl'),
-                            transport=Transport(session=self.session))
+                            transport=Transport(session=self.auth))
         else:
             client = Client(wsdl=primestg.get_data('WS_DC.wsdl'))
         client.set_ns_prefix(None, 'http://www.asais.fr/ns/Saturne/DC/ws')
