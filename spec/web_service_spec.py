@@ -4,7 +4,13 @@ from zeep.exceptions import TransportError
 
 with description('Web services run'):
     with before.all:
-        self.s = Service(1, 'http://cct.gisce.lan:8080/')
+        vals = {
+            'url': 'http://cct.gisce.lan:8080/',
+            'request_id': 12,
+            'sync': False,
+            'source': 'DCF',
+        }
+        self.s = Service(vals)
 
     with it('asking for S02 report with mocked connection'):
         with responses.RequestsMock() as rsps:
