@@ -13,10 +13,10 @@ class Service(object):
         self.fact_id = dc_vals['request_id']
         self.sync = dc_vals['sync']
         if dc_vals.get('source', False):
-            self.source = 'DCF'  # By default it doesn't look to the meter for data
-        else:
             self.source = dc_vals['source']
-        if dc_vals.get('user', False):
+        else:
+            self.source = 'DCF'  # By default it doesn't look to the meter for data
+        if dc_vals.get('user', False) and dc_vals.get('password', False):
             self.auth = True
             self.user = dc_vals['user']
             self.password = dc_vals['password']
