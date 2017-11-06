@@ -31,7 +31,7 @@ with description('Report S13 example'):
             }
         ]
 
-        concentrator = self.report[0].concentrators[0]
+        concentrator = list(self.report[0].concentrators)[0]
         meter = concentrator.meters[0]
         values = meter.values
 

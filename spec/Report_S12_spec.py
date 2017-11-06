@@ -38,7 +38,7 @@ with description('Report S12 examples'):
                 'complete': True
             }
 
-        concentrator = self.report[0].concentrators[0]
+        concentrator = list(self.report[0].concentrators)[0]
         parameter = concentrator.parameters[0]
         first_task_first_concentrator = parameter.values['tasks'][0]
 
