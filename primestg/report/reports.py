@@ -1081,7 +1081,7 @@ class Report(object):
         :param value: a file object or a string with the XML or a MessageS \
             object
         """
-        if isinstance(value, (file, basestring)):
+        if hasattr(value, 'read') or isinstance(value, str):
             message = MessageS(value)
         elif isinstance(value, MessageS):
             message = value

@@ -31,7 +31,7 @@ class BaseMessage(object):
         :param value: a file object or string with the XML
         """
 
-        if isinstance(value, file):
+        if hasattr(value, 'read'):
             value = value.read()
         self._xml = value
         self._objectified = fromstring(self._xml)

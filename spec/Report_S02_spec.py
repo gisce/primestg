@@ -36,7 +36,7 @@ with description('Report S02 example'):
             )
         ]
 
-        concentrator = self.report[0].concentrators[0]
+        concentrator = list(self.report[0].concentrators)[0]
         meter = concentrator.meters[0]
         values = meter.values
 
@@ -49,7 +49,8 @@ with description('Report S02 example'):
             .to(equal(expected_first_value_first_meter))
 
     with it('generates expected result for a meter with error'):
-        result = self.report[0].concentrators[0].meters[17].values
+        concentrator = list(self.report[0].concentrators)[0]
+        result = concentrator.meters[17].values
         expect(result).to(equal([]))
 
     with it('generates the expected results for the whole report'):
