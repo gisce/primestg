@@ -9,6 +9,14 @@ SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S15',
                      'S17']
 
 
+def get_integer_value(param):
+    try:
+        result = int(param)
+    except ValueError as e:
+        result = 0
+    return result
+
+
 class MeasureS02(MeasureActiveReactive):
     """
     Class for a set of measures of report S02.
@@ -231,29 +239,29 @@ class ParameterS06(Parameter):
             'serial_number': get('NS'),
             'manufacturer': get('Fab'),
             'model_type': get('Mod'),
-            'manufacturing_year': int(get('Af')),
+            'manufacturing_year': get_integer_value(get('Af')),
             'equipment_type': get('Te'),
             'firmware_version': get('Vf'),
             'prime_firmware_version': get('VPrime'),
             'protocol': get('Pro'),
             'id_multicast': get('Idm'),
             'mac': get('Mac'),
-            'primary_voltage': int(get('Tp')),
-            'secondary_voltage': int(get('Ts')),
-            'primary_current': int(get('Ip')),
-            'secondary_current': int(get('Is')),
-            'time_threshold_voltage_sags': int(get('Usag')),
-            'time_threshold_voltage_swells': int(get('Uswell')),
-            'load_profile_period': int(get('Per')),
+            'primary_voltage': get_integer_value(get('Tp')),
+            'secondary_voltage': get_integer_value(get('Ts')),
+            'primary_current': get_integer_value(get('Ip')),
+            'secondary_current': get_integer_value(get('Is')),
+            'time_threshold_voltage_sags': get_integer_value(get('Usag')),
+            'time_threshold_voltage_swells': get_integer_value(get('Uswell')),
+            'load_profile_period': get_integer_value(get('Per')),
             'demand_close_contracted_power': get('Dctcp'),
-            'reference_voltage': int(get('Vr')),
-            'long_power_failure_threshold': int(get('Ut')),
+            'reference_voltage': get_integer_value(get('Vr')),
+            'long_power_failure_threshold': get_integer_value(get('Ut')),
             'voltage_sag_threshold': get('UsubT'),
             'voltage_swell_threshold': get('UsobT'),
             'voltage_cut-off_threshold': get('UcorteT'),
             'automatic_monthly_billing': self.get_boolean('AutMothBill'),
             'scroll_display_mode': get('ScrollDispMode'),
-            'time_scroll_display': int(get('ScrollDispTime'))
+            'time_scroll_display': get_integer_value(get('ScrollDispTime'))
         }
         return values
 
