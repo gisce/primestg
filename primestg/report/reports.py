@@ -165,6 +165,7 @@ class ParameterS06(Parameter):
         self.concentrator_name = concentrator_name
         self.request_id = request_id
         self.meter_name = meter_name
+        self.warnings_list = []
 
     @property
     def concentrator_name(self):
@@ -227,43 +228,58 @@ class ParameterS06(Parameter):
 
         :return: a dict with a set of parameters of report S06
         """
-        get = self.objectified.get
+        values = {}
+        try:
+            get = self.objectified.get
 
-        values = {
-            'request_id': self.request_id,
-            'version': self.report_version,
-            'concentrator': self.concentrator_name,
-            'meter': self.meter_name,
-            'timestamp': self._get_timestamp('Fh'),
-            'season': get('Fh')[-1:],
-            'serial_number': get('NS'),
-            'manufacturer': get('Fab'),
-            'model_type': get('Mod'),
-            'manufacturing_year': get_integer_value(get('Af')),
-            'equipment_type': get('Te'),
-            'firmware_version': get('Vf'),
-            'prime_firmware_version': get('VPrime'),
-            'protocol': get('Pro'),
-            'id_multicast': get('Idm'),
-            'mac': get('Mac'),
-            'primary_voltage': get_integer_value(get('Tp')),
-            'secondary_voltage': get_integer_value(get('Ts')),
-            'primary_current': get_integer_value(get('Ip')),
-            'secondary_current': get_integer_value(get('Is')),
-            'time_threshold_voltage_sags': get_integer_value(get('Usag')),
-            'time_threshold_voltage_swells': get_integer_value(get('Uswell')),
-            'load_profile_period': get_integer_value(get('Per')),
-            'demand_close_contracted_power': get('Dctcp'),
-            'reference_voltage': get_integer_value(get('Vr')),
-            'long_power_failure_threshold': get_integer_value(get('Ut')),
-            'voltage_sag_threshold': get('UsubT'),
-            'voltage_swell_threshold': get('UsobT'),
-            'voltage_cut-off_threshold': get('UcorteT'),
-            'automatic_monthly_billing': self.get_boolean('AutMothBill'),
-            'scroll_display_mode': get('ScrollDispMode'),
-            'time_scroll_display': get_integer_value(get('ScrollDispTime'))
-        }
+            values = {
+                'request_id': self.request_id,
+                'version': self.report_version,
+                'concentrator': self.concentrator_name,
+                'meter': self.meter_name,
+                'timestamp': self._get_timestamp('Fh'),
+                'season': get('Fh')[-1:],
+                'serial_number': get('NS'),
+                'manufacturer': get('Fab'),
+                'model_type': get('Mod'),
+                'manufacturing_year': get_integer_value(get('Af')),
+                'equipment_type': get('Te'),
+                'firmware_version': get('Vf'),
+                'prime_firmware_version': get('VPrime'),
+                'protocol': get('Pro'),
+                'id_multicast': get('Idm'),
+                'mac': get('Mac'),
+                'primary_voltage': get_integer_value(get('Tp')),
+                'secondary_voltage': get_integer_value(get('Ts')),
+                'primary_current': get_integer_value(get('Ip')),
+                'secondary_current': get_integer_value(get('Is')),
+                'time_threshold_voltage_sags': get_integer_value(get('Usag')),
+                'time_threshold_voltage_swells': get_integer_value(get('Uswell')),
+                'load_profile_period': get_integer_value(get('Per')),
+                'demand_close_contracted_power': get('Dctcp'),
+                'reference_voltage': get_integer_value(get('Vr')),
+                'long_power_failure_threshold': get_integer_value(get('Ut')),
+                'voltage_sag_threshold': get('UsubT'),
+                'voltage_swell_threshold': get('UsobT'),
+                'voltage_cut-off_threshold': get('UcorteT'),
+                'automatic_monthly_billing': self.get_boolean('AutMothBill'),
+                'scroll_display_mode': get('ScrollDispMode'),
+                'time_scroll_display': get_integer_value(get('ScrollDispTime'))
+            }
+        except Exception as e:
+            self.warnings_list.append('ERROR: Cnc({}), Meter({}). Thrown '
+                                      'exception: {}'.format(
+                self.concentrator_name, self.meter_name, e.message))
         return values
+
+    @property
+    def warnings(self):
+        """
+        Warnings of this meter.
+
+        :return: a list with the errors found while reading
+        """
+        return self.warnings_list
 
 
 class ParameterS12(Parameter):
@@ -597,6 +613,7 @@ class MeterS06(MeterWithMagnitude):
         super(MeterS06, self).__init__(objectified_meter, concentrator_name)
         self.report_version = report_version
         self.request_id = request_id
+        self.warnings_list = []
 
     @property
     def report_version(self):
@@ -662,7 +679,17 @@ class MeterS06(MeterWithMagnitude):
         values = []
         for parameter in self.parameters:
             values.append(parameter.values)
+            self.warnings_list.extend(parameter.warnings)
         return values
+
+    @property
+    def warnings(self):
+        """
+        Warnings of this meter.
+
+        :return: a list with the errors found reading the meter
+        """
+        return self.warnings_list
 
 
 class MeterS09(MeterWithConcentratorName):
