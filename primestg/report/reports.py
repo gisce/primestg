@@ -165,7 +165,7 @@ class ParameterS06(Parameter):
         self.concentrator_name = concentrator_name
         self.request_id = request_id
         self.meter_name = meter_name
-        self.warnings_list = []
+        self._warnings = []
 
     @property
     def concentrator_name(self):
@@ -267,8 +267,8 @@ class ParameterS06(Parameter):
                 'time_scroll_display': get_integer_value(get('ScrollDispTime'))
             }
         except Exception as e:
-            self.warnings_list.append('ERROR: Cnc({}), Meter({}). Thrown '
-                                      'exception: {}'.format(
+            self._warnings.append('ERROR: Cnc({}), Meter({}). Thrown '
+                                  'exception: {}'.format(
                 self.concentrator_name, self.meter_name, e.message))
         return values
 
@@ -279,7 +279,7 @@ class ParameterS06(Parameter):
 
         :return: a list with the errors found while reading
         """
-        return self.warnings_list
+        return self._warnings
 
 
 class ParameterS12(Parameter):
@@ -613,7 +613,7 @@ class MeterS06(MeterWithMagnitude):
         super(MeterS06, self).__init__(objectified_meter, concentrator_name)
         self.report_version = report_version
         self.request_id = request_id
-        self.warnings_list = []
+        self._warnings = []
 
     @property
     def report_version(self):
@@ -679,7 +679,7 @@ class MeterS06(MeterWithMagnitude):
         values = []
         for parameter in self.parameters:
             values.append(parameter.values)
-            self.warnings_list.extend(parameter.warnings)
+            self._warnings.extend(parameter.warnings)
         return values
 
     @property
@@ -689,7 +689,7 @@ class MeterS06(MeterWithMagnitude):
 
         :return: a list with the errors found reading the meter
         """
-        return self.warnings_list
+        return self._warnings
 
 
 class MeterS09(MeterWithConcentratorName):
