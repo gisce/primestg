@@ -269,7 +269,7 @@ class ParameterS06(Parameter):
         except Exception as e:
             self._warnings.append('ERROR: Cnc({}), Meter({}). Thrown '
                                   'exception: {}'.format(
-                self.concentrator_name, self.meter_name, e.message))
+                self.concentrator_name, self.meter_name, e))
         return values
 
     @property
