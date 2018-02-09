@@ -691,6 +691,10 @@ class MeterS06(MeterWithMagnitude):
         """
         return self._warnings
 
+    @warnings.setter
+    def warnings(self, message):
+        self._warnings.append(message)
+
 
 class MeterS09(MeterWithConcentratorName):
     """
