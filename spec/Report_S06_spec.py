@@ -8,6 +8,7 @@ with description('Report S06 example'):
 
         self.data_filenames = [
             'spec/data/S06.xml',
+            'spec/data/S06_with_error.xml',
             # 'spec/data/S06_empty.xml'
         ]
 
@@ -19,22 +20,27 @@ with description('Report S06 example'):
     with it('generates the expected results for the whole report'):
 
         result_filenames = []
+        warnings = []
         for data_filename in self.data_filenames:
             result_filenames.append('{}_result.txt'.format(data_filename))
 
         for key, result_filename in enumerate(result_filenames):
+            result = []
             with open(result_filename) as result_file:
                 result_string = result_file.read()
                 expected_result = literal_eval(result_string)
+            for cnc in self.report[key].concentrators:
+                if cnc.meters:
+                    for meter in cnc.meters:
+                        for value in meter.values:
+                            result.append(value)
+                        warnings.append(meter.warnings)
 
-        result = self.report[key].values
-        expect(result).to(equal(expected_result))
-        # result_filename = '{}_result.txt'.format(self.data_filename)
-        #
-        # with open(result_filename) as result_file:
-        #     result_string = result_file.read()
-        #     self.expected_result = literal_eval(result_string)
-        #
-        # result = self.report.values
-        #
-        # expect(result).to(equal(self.expected_result))
+            print('Result: {} \n Expected result: {} \n Warnings: {}'.format(
+                result, expected_result, warnings))
+
+            expect(result).to(equal(expected_result))
+        expected_warnings = [[], ["ERROR: Cnc(CIR4621704174), "
+                                  "Meter(ZIV42553686). Thrown exception: "
+                                  "object of type 'NoneType' has no len()"], []]
+        expect(warnings).to(equal(expected_warnings))
