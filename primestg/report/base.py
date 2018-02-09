@@ -42,7 +42,12 @@ class ValueWithTime(object):
         if date_value.upper() == 'FFFFFFFFFFFFFFW':
             date_value = '19000101000000W'
 
-        time = datetime.strptime(date_value[:-1], '%Y%m%d%H%M%S')
+        try:
+            time = datetime.strptime(date_value[:-1],
+                                     '%Y%m%d%H%M%S')
+        except ValueError as e:
+            now = datetime.now().strftime("%Y%m%d%H%M%S")
+            time = datetime.strptime(now, '%Y%m%d%H%M%S')
         return time.strftime('%Y-%m-%d %H:%M:%S')
 
 
