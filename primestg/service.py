@@ -1,18 +1,27 @@
 # -*- coding: UTF-8 -*-
 
 from zeep import Client
+from zeep.transports import Transport
+from requests import Session
+from requests.auth import HTTPBasicAuth
 import primestg
 
 
 class Service(object):
-    def __init__(self, fact_id, cnc_url, sync=True, source=None):
-        self.cnc_url = cnc_url
-        self.fact_id = fact_id
-        self.sync = sync
-        if not source:
-            self.source = 'DCF'  # By default it doesn't look to the meter for data
+    def __init__(self, dc_vals):
+        self.cnc_url = dc_vals['url']
+        self.fact_id = dc_vals['request_id']
+        self.sync = dc_vals['sync']
+        if dc_vals.get('source', False):
+            self.source = dc_vals['source']
         else:
-            self.source = source
+            self.source = 'DCF'  # By default it doesn't look to the meter for data
+        if dc_vals.get('user', False) and dc_vals.get('password', False):
+            self.auth = True
+            self.user = dc_vals['user']
+            self.password = dc_vals['password']
+        else:
+            self.auth = False
         self.DC_service = self.create_service()
 
     def send(self, report_id, meters, date_from='', date_to=''):
@@ -29,7 +38,13 @@ class Service(object):
 
     def create_service(self):
         binding = '{http://www.asais.fr/ns/Saturne/DC/ws}WS_DCSoap'
-        client = Client(wsdl=primestg.get_data('WS_DC.wsdl'))
+        if self.auth:
+            session = Session()
+            session.auth = HTTPBasicAuth(self.user, self.password)
+            client = Client(wsdl=primestg.get_data('WS_DC.wsdl'),
+                            transport=Transport(session=session))
+        else:
+            client = Client(wsdl=primestg.get_data('WS_DC.wsdl'))
         client.set_ns_prefix(None, 'http://www.asais.fr/ns/Saturne/DC/ws')
         return client.create_service(binding, self.cnc_url)
 

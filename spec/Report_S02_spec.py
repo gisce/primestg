@@ -63,7 +63,5 @@ with description('Report S02 example'):
             with open(result_filename) as result_file:
                 result_string = result_file.read()
                 expected_result = literal_eval(result_string)
-
-        result = self.report[key].values
-
-        expect(result).to(equal(expected_result))
+                result = self.report[key].values
+                expect(result).to(equal(expected_result))
