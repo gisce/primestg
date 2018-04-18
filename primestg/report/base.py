@@ -46,8 +46,8 @@ class ValueWithTime(object):
             time = datetime.strptime(date_value[:-1],
                                      '%Y%m%d%H%M%S')
         except ValueError as e:
-            now = datetime.now().strftime("%Y%m%d%H%M%S")
-            time = datetime.strptime(now, '%Y%m%d%H%M%S')
+            raise ValueError("Date out of range: {} ({}) {}".format(
+                date_value, name, e))
         return time.strftime('%Y-%m-%d %H:%M:%S')
 
 
