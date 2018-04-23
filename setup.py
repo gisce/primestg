@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='primestg',
-    version='1.5.1',
+    version='1.6.0',
     packages=find_packages(),
     url='https://github.com/gisce/primestg',
     license='GNU Affero General Public License v3',
