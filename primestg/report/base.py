@@ -46,8 +46,8 @@ class ValueWithTime(object):
             time = datetime.strptime(date_value[:-1],
                                      '%Y%m%d%H%M%S')
         except ValueError as e:
-            now = datetime.now().strftime("%Y%m%d%H%M%S")
-            time = datetime.strptime(now, '%Y%m%d%H%M%S')
+            raise ValueError("Date out of range: {} ({}) {}".format(
+                date_value, name, e))
         return time.strftime('%Y-%m-%d %H:%M:%S')
 
 
@@ -65,6 +65,7 @@ class Measure(ValueWithTime):
         :return: a Measure object
         """
         self.objectified = objectified_measure
+        self._warnings = []
 
     @property
     def objectified(self):
@@ -85,6 +86,15 @@ class Measure(ValueWithTime):
         :return:
         """
         self._objectified = value
+
+    @property
+    def warnings(self):
+        """
+        Warnings of these measures.
+
+        :return: a list with the errors found while reading
+        """
+        return self._warnings
 
 
 class MeasureActiveReactive(Measure):
@@ -235,6 +245,7 @@ class Meter(object):
         :return: a Meter object
         """
         self.objectified = objectified_meter
+        self._warnings = []
 
     @property
     def objectified(self):
@@ -317,7 +328,17 @@ class Meter(object):
         values = []
         for measure in self.measures:
             values.append(measure.value())
+            self._warnings.extend(measure.warnings)
         return values
+
+    @property
+    def warnings(self):
+        """
+        Warnings of this meter.
+
+        :return: a list with the errors found while reading
+        """
+        return self._warnings
 
 
 class MeterWithConcentratorName(Meter):
@@ -378,6 +399,8 @@ class MeterWithConcentratorName(Meter):
                 v['name'] = self.name
                 v['cnc_name'] = self.concentrator_name
                 values.append(v)
+            for warning in measure.warnings:
+                self._warnings.append("WARNING: {}".format(warning))
         return values
 
 

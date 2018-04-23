@@ -53,24 +53,27 @@ class MeasureS04(MeasureActiveReactive):
         :return: a dict with a set of measures of report S04
         """
         values = []
-        common_values = {
-            'type': 'month',
-            'date_begin': self._get_timestamp('Fhi'),
-            'date_end': self._get_timestamp('Fhf'),
-            'contract': int(self.objectified.get('Ctr')),
-            'period': int(self.objectified.get('Pt')),
-            'max': int(self.objectified.get('Mx')),
-            'date_max': self._get_timestamp('Fx')
-        }
-        for s04_values in self.objectified.Value:
-            v = common_values.copy()
-            if s04_values.get('AIa'):
-                measure_type = 'a'
-            else:
-                measure_type = 'i'
-            v.update(self.active_reactive(s04_values, measure_type))
-            v['value'] = measure_type
-            values.append(v)
+        try:
+            common_values = {
+                'type': 'month',
+                'date_begin': self._get_timestamp('Fhi'),
+                'date_end': self._get_timestamp('Fhf'),
+                'contract': int(self.objectified.get('Ctr')),
+                'period': int(self.objectified.get('Pt')),
+                'max': int(self.objectified.get('Mx')),
+                'date_max': self._get_timestamp('Fx')
+            }
+            for s04_values in self.objectified.Value:
+                v = common_values.copy()
+                if s04_values.get('AIa'):
+                    measure_type = 'a'
+                else:
+                    measure_type = 'i'
+                v.update(self.active_reactive(s04_values, measure_type))
+                v['value'] = measure_type
+                values.append(v)
+        except Exception as e:
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
         return values
 
 
