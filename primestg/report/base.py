@@ -440,6 +440,7 @@ class Concentrator(object):
         :return: a Concentrator object
         """
         self.objectified = objectified_concentrator
+        self._warnings = []
 
     @property
     def objectified(self):
@@ -468,6 +469,15 @@ class Concentrator(object):
         :return: a string with the name of the concentrator
         """
         return self.objectified.get('Id')
+
+    @property
+    def warnings(self):
+        """
+        Warnings of this concentrator.
+
+        :return: a list with the errors found while reading
+        """
+        return self._warnings
 
 
 class ConcentratorWithMeters(Concentrator):
