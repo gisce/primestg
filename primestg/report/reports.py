@@ -9,6 +9,10 @@ SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S15',
                      'S17']
 
 
+def is_supported(report_code):
+    return report_code in SUPPORTED_REPORTS
+
+
 def get_integer_value(param):
     try:
         result = int(param)
