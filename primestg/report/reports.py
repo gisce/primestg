@@ -176,7 +176,6 @@ class ParameterS06(Parameter):
         self.concentrator_name = concentrator_name
         self.request_id = request_id
         self.meter_name = meter_name
-        self._warnings = []
 
     @property
     def concentrator_name(self):
@@ -279,18 +278,9 @@ class ParameterS06(Parameter):
             }
         except Exception as e:
             self._warnings.append('ERROR: Cnc({}), Meter({}). Thrown '
-                                  'exception: {}'.format(
-                self.concentrator_name, self.meter_name, e))
+                                  'exception: {}'.format(self.concentrator_name,
+                                                         self.meter_name, e))
         return values
-
-    @property
-    def warnings(self):
-        """
-        Warnings of this meter.
-
-        :return: a list with the errors found while reading
-        """
-        return self._warnings
 
 
 class ParameterS12(Parameter):
@@ -624,7 +614,6 @@ class MeterS06(MeterWithMagnitude):
         super(MeterS06, self).__init__(objectified_meter, concentrator_name)
         self.report_version = report_version
         self.request_id = request_id
-        self._warnings = []
 
     @property
     def report_version(self):
@@ -701,10 +690,6 @@ class MeterS06(MeterWithMagnitude):
         :return: a list with the errors found reading the meter
         """
         return self._warnings
-
-    @warnings.setter
-    def warnings(self, message):
-        self._warnings.append(message)
 
 
 class MeterS09(MeterWithConcentratorName):
