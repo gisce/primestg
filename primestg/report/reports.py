@@ -29,7 +29,7 @@ class MeasureS02(MeasureActiveReactive):
 
         :return: a dict with a set of measures of report S02
         """
-        values = None
+        values = {}
         try:
             values = self.active_reactive(self.objectified, '')
             values.update(
@@ -41,6 +41,7 @@ class MeasureS02(MeasureActiveReactive):
             )
         except Exception as e:
             self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+            return []
 
         return [values]
 
