@@ -338,7 +338,8 @@ class Meter(object):
         values = []
         for measure in self.measures:
             values.append(measure.value())
-            self._warnings.extend(measure.warnings)
+            if measure.warnings:
+                self._warnings.extend(measure.warnings)
         return values
 
     @property
@@ -409,8 +410,8 @@ class MeterWithConcentratorName(Meter):
                 v['name'] = self.name
                 v['cnc_name'] = self.concentrator_name
                 values.append(v)
-            for warning in measure.warnings:
-                self._warnings.append("WARNING: {}".format(warning))
+            if measure.warnings:
+                self._warnings.append("WARNING: {}".format(measure.warnings))
         return values
 
 

@@ -685,7 +685,8 @@ class MeterS06(MeterWithMagnitude):
         values = []
         for parameter in self.parameters:
             values.append(parameter.values)
-            self._warnings.extend(parameter.warnings)
+            if parameter.warnings:
+                self._warnings.extend(parameter.warnings)
         return values
 
     @property
