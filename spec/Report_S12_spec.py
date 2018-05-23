@@ -10,6 +10,7 @@ with description('Report S12 examples'):
             'spec/data/CIR4621247027_0_S12_0_20150903140000',
             'spec/data/ZIV0004338053_0_S12_0_20160309235002',
             'spec/data/ZIV0000034169_0_S12_0_201612090empty',
+            'spec/data/CIR4621247027_0_S12_0_20150903140000_warnings',
         ]
 
         self.report = []
@@ -48,14 +49,21 @@ with description('Report S12 examples'):
     with it('generates the expected results for the whole report'):
 
         result_filenames = []
+        warnings = []
         for data_filename in self.data_filenames:
             result_filenames.append('{}_result.txt'.format(data_filename))
 
         for key, result_filename in enumerate(result_filenames):
+            result = []
             with open(result_filename) as result_file:
                 result_string = result_file.read()
                 expected_result = literal_eval(result_string)
-
-            result = self.report[key].values
-
-            expect(result).to(equal(expected_result))
+            for cnc in self.report[key].concentrators:
+                for value in cnc.values:
+                    result.append(value)
+                if cnc.warnings:
+                    warnings.append(cnc.warnings)
+                    expect(result).to(equal(expected_result))
+        expected_warnings = [["ERROR: Reading S12 report. Thrown exception: inv"
+                              "alid literal for int() with base 10: 'A'"]]
+        expect(warnings).to(equal(expected_warnings))

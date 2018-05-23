@@ -54,7 +54,7 @@ with description('Report S02 example'):
         result = concentrator.meters[17].values
         expect(result).to(equal([]))
 
-    with fit('generates the expected results for the whole report'):
+    with it('generates the expected results for the whole report'):
 
         result_filenames = []
         warnings = []
