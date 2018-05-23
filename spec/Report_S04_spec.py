@@ -9,6 +9,7 @@ with description('Report S04 example'):
         self.data_filenames = [
             'spec/data/CIR4621247027_0_S04_0_20150901110412',
             'spec/data/CIR4621247027_0_S04_0_201509011empty',
+            'spec/data/CIR4621247027_0_S04_0_20150901110412_warnings',
         ]
 
         self.report = []
@@ -55,14 +56,37 @@ with description('Report S04 example'):
     with it('generates the expected results for the whole report'):
 
         result_filenames = []
+        warnings = []
         for data_filename in self.data_filenames:
             result_filenames.append('{}_result.txt'.format(data_filename))
 
         for key, result_filename in enumerate(result_filenames):
+            result = []
             with open(result_filename) as result_file:
                 result_string = result_file.read()
                 expected_result = literal_eval(result_string)
-
-            result = self.report[key].values
-
+            for cnc in self.report[key].concentrators:
+                if cnc.meters:
+                    for meter in cnc.meters:
+                        for value in meter.values:
+                            result.append(value)
+                        if meter.warnings:
+                            warnings.append(meter.warnings)
             expect(result).to(equal(expected_result))
+        expected_warnings = [["WARNING: ['ERROR: Thrown exception: Date out of "
+                             "range: 00001228230000W (Fhi) year is out of range"
+                             "']", "WARNING: ['ERROR: Thrown exception: Date "
+                             "out of range: 00001228230000W (Fhi) year is out "
+                             "of range']", "WARNING: ['ERROR: Thrown exception:"
+                             " Date out of range: 00001228230000W (Fhi) year is"
+                             " out of range']", "WARNING: ['ERROR: Thrown "
+                             "exception: Date out of range: 00001228230000W "
+                             "(Fhi) year is out of range']", "WARNING: ['ERROR:"
+                             " Thrown exception: Date out of range: 00001228230"
+                             "000W (Fhi) year is out of range']", "WARNING: "
+                             "['ERROR: Thrown exception: Date out of range: "
+                             "00001228230000W (Fhi) year is out of range']",
+                             "WARNING: ['ERROR: Thrown exception: Date out of "
+                             "range: 00001228230000W (Fhi) year is out of "
+                             "range']"]]
+        expect(warnings). to(equal(expected_warnings))

@@ -34,13 +34,11 @@ with description('Report S06 example'):
                     for meter in cnc.meters:
                         for value in meter.values:
                             result.append(value)
-                        warnings.append(meter.warnings)
-
-            print('Result: {} \n Expected result: {} \n Warnings: {}'.format(
-                result, expected_result, warnings))
+                        if meter.warnings:
+                            warnings.append(meter.warnings)
 
             expect(result).to(equal(expected_result))
-        expected_warnings = [[], ["ERROR: Cnc(CIR4621704174), "
-                                  "Meter(ZIV42553686). Thrown exception: "
-                                  "object of type 'NoneType' has no len()"], []]
+        expected_warnings = [["ERROR: Cnc(CIR4621704174), "
+                              "Meter(ZIV42553686). Thrown exception: "
+                              "object of type 'NoneType' has no len()"]]
         expect(warnings).to(equal(expected_warnings))
