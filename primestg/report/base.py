@@ -137,6 +137,7 @@ class Parameter(ValueWithTime):
         """
         self.objectified = objectified_parameter
         self.report_version = report_version
+        self._warnings = []
 
     @property
     def objectified(self):
@@ -229,6 +230,15 @@ class Parameter(ValueWithTime):
         Set of parameters.
         """
         raise NotImplementedError('This method is not implemented!')
+
+    @property
+    def warnings(self):
+        """
+        Warnings of these parameters.
+
+        :return: a list with the errors found while reading
+        """
+        return self._warnings
 
 
 class Meter(object):
