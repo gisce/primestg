@@ -29,14 +29,19 @@ class MeasureS02(MeasureActiveReactive):
 
         :return: a dict with a set of measures of report S02
         """
-        values = self.active_reactive(self.objectified, '')
-        values.update(
-            {
-                'timestamp': self._get_timestamp('Fh'),
-                'season': self.objectified.get('Fh')[-1:],
-                'bc': self.objectified.get('Bc')
-            }
-        )
+        values = None
+        try:
+            values = self.active_reactive(self.objectified, '')
+            values.update(
+                {
+                    'timestamp': self._get_timestamp('Fh'),
+                    'season': self.objectified.get('Fh')[-1:],
+                    'bc': self.objectified.get('Bc')
+                }
+            )
+        except Exception as e:
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+
         return [values]
 
 
@@ -90,19 +95,22 @@ class MeasureS05(MeasureActiveReactive):
         :return: a dict with a set of measures of report S05
         """
         values = []
-        timestamp = self._get_timestamp('Fh')
-        v = {
-            'type': 'day',
-            'value': 'a',
-            'date_begin': timestamp,
-            'date_end': timestamp,
-            'contract': int(self.objectified.get('Ctr')),
-            'period': int(self.objectified.get('Pt')),
-        }
+        try:
+            timestamp = self._get_timestamp('Fh')
+            v = {
+                'type': 'day',
+                'value': 'a',
+                'date_begin': timestamp,
+                'date_end': timestamp,
+                'contract': int(self.objectified.get('Ctr')),
+                'period': int(self.objectified.get('Pt')),
+            }
 
-        for s05_values in self.objectified.Value:
-            v.update(self.active_reactive(s05_values, 'a'))
-            values.append(v)
+            for s05_values in self.objectified.Value:
+                v.update(self.active_reactive(s05_values, 'a'))
+                values.append(v)
+        except Exception as e:
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
 
         return values
 
