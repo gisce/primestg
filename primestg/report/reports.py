@@ -129,23 +129,27 @@ class MeasureEvents(Measure):
         :return: a dict with a set of measures of report S09
         """
         values = []
-        timestamp = self._get_timestamp('Fh')
-        v = {
-            'timestamp': timestamp,
-            'event_group': int(self.objectified.get('Et')),
-            'season': self.objectified.get('Fh')[-1:],
-            'event_code': int(self.objectified.get('C')),
-        }
-        data = ''
-        d1s = ['D1: {}'.format(d)
-               for d in getattr(self.objectified, 'D1', [])]
-        d2s = ['D2: {}'.format(d)
-               for d in getattr(self.objectified, 'D2', [])]
-        data = '\n'.join(d1s + d2s)
-        if data:
-            v.update({'data': data})
+        try:
+            timestamp = self._get_timestamp('Fh')
+            v = {
+                'timestamp': timestamp,
+                'event_group': int(self.objectified.get('Et')),
+                'season': self.objectified.get('Fh')[-1:],
+                'event_code': int(self.objectified.get('C')),
+            }
+            data = ''
+            d1s = ['D1: {}'.format(d)
+                   for d in getattr(self.objectified, 'D1', [])]
+            d2s = ['D2: {}'.format(d)
+                   for d in getattr(self.objectified, 'D2', [])]
+            data = '\n'.join(d1s + d2s)
+            if data:
+                v.update({'data': data})
 
-        values.append(v)
+            values.append(v)
+        except Exception as e:
+            self._warnings.append('ERROR: Reading a meter event. Thrown '
+                                  'exception: {}'.format(e))
 
         return values
 
