@@ -7,9 +7,10 @@ with description('Report S09 example'):
 
         self.data_filenames = [
             'spec/data/ZIV0000034180_0_S09_0_20161216104003',
-            'spec/data/ZIV0000034180_0_S09_0_20161216090401',
-            'spec/data/ZIV0000034180_0_S09_0_20161216080308',
-            'spec/data/ZIV0000034180_0_S09_0_201612160empty',
+            # 'spec/data/ZIV0000034180_0_S09_0_20161216090401',
+            # 'spec/data/ZIV0000034180_0_S09_0_20161216080308',
+            # 'spec/data/ZIV0000034180_0_S09_0_201612160empty',
+            'spec/data/ZIV0000034180_0_S09_0_20161216090401_warnings',
         ]
 
         self.report = []
@@ -47,16 +48,30 @@ with description('Report S09 example'):
     with it('generates the expected results for the whole report'):
 
         result_filenames = []
+        warnings = []
         for data_filename in self.data_filenames:
             result_filenames.append('{}_result.txt'.format(data_filename))
 
         for key, result_filename in enumerate(result_filenames):
+            result = []
             with open(result_filename) as result_file:
                 result_string = result_file.read()
                 expected_result = literal_eval(result_string)
-
-            result = self.report[key].values
+            for cnc in self.report[key].concentrators:
+                if cnc.meters:
+                    for meter in cnc.meters:
+                        for value in meter.values:
+                            result.append(value)
+                        if meter.warnings:
+                            warnings.append(meter.warnings)
 
             expect(result).to(equal(expected_result))
+        expected_warnings = [["WARNING: ['ERROR: Reading a meter event. Thrown "
+                              "exception: Date out of range: 00001228230000W (F"
+                              "h) year is out of range']", "WARNING: ['ERROR: R"
+                              "eading a meter event. Thrown exception: Date out"
+                              " of range: 00001228230000W (Fh) year is out of r"
+                              "ange']"]]
 
+        expect(warnings).to(equal(expected_warnings))
 
