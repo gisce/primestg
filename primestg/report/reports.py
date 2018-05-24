@@ -490,23 +490,29 @@ class ParameterConcentratorEvents(Parameter):
 
         :return: a dict with a set of parameters of report S17
         """
-        get = self.objectified.get
-        values = {
-            'name': self.concentrator_name,
-            'event_code': int(get('C')),
-            'season': get('Fh')[-1:],
-            'timestamp': self._get_timestamp('Fh'),
-            'event_group': int(get('Et'))
-        }
+        values = []
+        try:
+            get = self.objectified.get
+            values = {
+                'name': self.concentrator_name,
+                'event_code': int(get('C')),
+                'season': get('Fh')[-1:],
+                'timestamp': self._get_timestamp('Fh'),
+                'event_group': int(get('Et'))
+            }
 
-        data = ''
-        d1s = ['D1: {}'.format(d)
-               for d in getattr(self.objectified, 'D1', [])]
-        d2s = ['D2: {}'.format(d)
-               for d in getattr(self.objectified, 'D2', [])]
-        data = '\n'.join(d1s + d2s)
-        if data:
-            values.update({'data': data})
+            data = ''
+            d1s = ['D1: {}'.format(d)
+                   for d in getattr(self.objectified, 'D1', [])]
+            d2s = ['D2: {}'.format(d)
+                   for d in getattr(self.objectified, 'D2', [])]
+            data = '\n'.join(d1s + d2s)
+            if data:
+                values.update({'data': data})
+        except Exception as e:
+            self._warnings.append('ERROR: Reading a concentrator event. Thrown '
+                                  'exception: {}'.format(e))
+            return []
 
         return values
 
@@ -1029,9 +1035,11 @@ class ConcentratorEvents(Concentrator):
         :return: a list with the values of the meters
         """
         values = []
-
         for parameter in self.parameters:
-            values.append(parameter.values)
+            if parameter.values:
+                values.append(parameter.values)
+            if parameter.warnings:
+                self._warnings.extend(parameter.warnings)
         return values
 
 
