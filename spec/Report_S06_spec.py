@@ -40,9 +40,9 @@ with description('Report S06 example'):
         meter_found = 0
         for warning in warnings:
             if warning.get('ZIV42553686', False):
-                expect(len(warning.values()[0])).to(equal(1))
+                expect(len(list(warning.values())[0])).to(equal(1))
                 meter_found += 1
             if warning.get('ZIV42554578', False):
-                expect(len(warning.values()[0])).to(equal(1))
+                expect(len(list(warning.values())[0])).to(equal(1))
                 meter_found += 1
         expect(meter_found).to(equal(2))

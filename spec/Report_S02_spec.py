@@ -77,9 +77,9 @@ with description('Report S02 example'):
         meter_found = 0
         for warning in warnings:
             if warning.get('CIR0141433184', False):
-                expect(len(warning.values()[0])).to(equal(4))
+                expect(len(list(warning.values())[0])).to(equal(4))
                 meter_found += 1
             if warning.get('CIR0308247071', False):
-                expect(len(warning.values()[0])).to(equal(1))
+                expect(len(list(warning.values())[0])).to(equal(1))
                 meter_found += 1
         expect(meter_found).to(equal(2))
