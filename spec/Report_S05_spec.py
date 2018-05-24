@@ -69,11 +69,10 @@ with description('Report S05 example'):
                             result.append(value)
                         if meter.warnings:
                             warnings.append(meter.warnings)
-
             expect(result).to(equal(expected_result))
-        expected_warnings = [["WARNING: ['ERROR: Thrown exception: Date out of "
-                              "range: 00001228230000W (Fh) year is out of range"
-                              "']", "WARNING: ['ERROR: Thrown exception: Date o"
-                              "ut of range: 00001228230000W (Fh) year is out of"
-                              " range']"]]
-        expect(warnings).to(equal(expected_warnings))
+        meter_found = 0
+        for warning in warnings:
+            if warning.get('CIR0141433184', False):
+                expect(len(warning.values()[0])).to(equal(2))
+                meter_found += 1
+        expect(meter_found).to(equal(1))

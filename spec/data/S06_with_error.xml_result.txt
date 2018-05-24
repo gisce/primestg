@@ -34,5 +34,7 @@
         'time_scroll_display': 3,
         'voltage_sag_threshold': '7.00',
         'long_power_failure_threshold': 180
+    },
+    {
     }
 ]

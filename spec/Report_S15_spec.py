@@ -56,7 +56,5 @@ with description('Report S15 examples'):
                 if cnc.warnings:
                     warnings.append(cnc.warnings)
                 expect(result).to(equal(expected_result))
-        expected_warnings = [['ERROR: Reading a concentrator event. Thrown exce'
-                              'ption: Date out of range: 00001228230000W (Fh) y'
-                              'ear is out of range']]
-        expect(warnings).to(equal(expected_warnings))
+
+        expect(len(warnings)).to(equal(1))

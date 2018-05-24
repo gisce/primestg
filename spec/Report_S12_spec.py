@@ -63,7 +63,5 @@ with description('Report S12 examples'):
                     result.append(value)
                 if cnc.warnings:
                     warnings.append(cnc.warnings)
-                    expect(result).to(equal(expected_result))
-        expected_warnings = [["ERROR: Reading S12 report. Thrown exception: inv"
-                              "alid literal for int() with base 10: 'A'"]]
-        expect(warnings).to(equal(expected_warnings))
+                expect(result).to(equal(expected_result))
+        expect(len(warnings)).to(equal(1))

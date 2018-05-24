@@ -66,12 +66,13 @@ with description('Report S09 example'):
                             warnings.append(meter.warnings)
 
             expect(result).to(equal(expected_result))
-        expected_warnings = [["WARNING: ['ERROR: Reading a meter event. Thrown "
-                              "exception: Date out of range: 00001228230000W (F"
-                              "h) year is out of range']", "WARNING: ['ERROR: R"
-                              "eading a meter event. Thrown exception: Date out"
-                              " of range: 00001228230000W (Fh) year is out of r"
-                              "ange']"]]
-
-        expect(warnings).to(equal(expected_warnings))
+        meter_found = 0
+        for warning in warnings:
+            if warning.get('ZIV0034631229', False):
+                expect(len(warning.values()[0])).to(equal(2))
+                meter_found += 1
+            if warning.get('ZIV0034631234', False):
+                expect(len(warning.values()[0])).to(equal(1))
+                meter_found += 1
+        expect(meter_found).to(equal(2))
 

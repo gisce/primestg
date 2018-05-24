@@ -36,9 +36,13 @@ with description('Report S06 example'):
                             result.append(value)
                         if meter.warnings:
                             warnings.append(meter.warnings)
-
             expect(result).to(equal(expected_result))
-        expected_warnings = [["ERROR: Cnc(CIR4621704174), "
-                              "Meter(ZIV42553686). Thrown exception: "
-                              "object of type 'NoneType' has no len()"]]
-        expect(warnings).to(equal(expected_warnings))
+        meter_found = 0
+        for warning in warnings:
+            if warning.get('ZIV42553686', False):
+                expect(len(warning.values()[0])).to(equal(1))
+                meter_found += 1
+            if warning.get('ZIV42554578', False):
+                expect(len(warning.values()[0])).to(equal(1))
+                meter_found += 1
+        expect(meter_found).to(equal(2))
