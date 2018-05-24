@@ -1,0 +1,1 @@
+[{'name': 'ZIV0000035545', 'event_code': 1, 'timestamp': '2016-12-02 13:12:40', 'season': 'W', 'data': 'D1: MeterID\nD2: Switch states', 'event_group': 2}]

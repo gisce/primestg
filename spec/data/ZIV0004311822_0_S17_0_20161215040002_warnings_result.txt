@@ -1,0 +1,1 @@
+[{'season': 'W', 'event_group': 1, 'name': 'ZIV0004311822', 'event_code': 1, 'timestamp': '2016-12-14 12:37:36'}, {'name': 'ZIV0004311822', 'event_code': 8, 'timestamp': '2016-12-14 12:37:32', 'season': 'W', 'data': 'D1: 20161214123733000W\nD2: 20161214123732000W', 'event_group': 1}]
