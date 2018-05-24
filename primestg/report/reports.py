@@ -399,7 +399,7 @@ class ParameterS12(Parameter):
                         'meters': task.get('TpMet'),
                     }
                     task_data_values = []
-                    if getattr(task, 'TpPro', None):
+                    if getattr(task, 'TpPro', None) is not None:
                         for task_data in task.TpPro:
                             task_data_value = {
                                 'request': task_data.get('TpReq'),
@@ -697,7 +697,10 @@ class MeterS06(MeterWithMagnitude):
         for parameter in self.parameters:
             values.append(parameter.values)
             if parameter.warnings:
-                self._warnings.extend(parameter.warnings)
+                if self._warnings.get(self.name, False):
+                    self._warnings[self.name].extend(parameter.warnings)
+                else:
+                    self._warnings.update({self.name: parameter.warnings})
         return values
 
     @property
@@ -877,6 +880,8 @@ class ConcentratorS06(ConcentratorWithMetersWithConcentratorName):
                     self.report_version,
                     self.request_id
                 ))
+            for meter in meters:
+                self._warnings.append(meter.warnings)
         return meters
 
 

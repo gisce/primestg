@@ -255,7 +255,7 @@ class Meter(object):
         :return: a Meter object
         """
         self.objectified = objectified_meter
-        self._warnings = []
+        self._warnings = {}
 
     @property
     def objectified(self):
@@ -338,8 +338,6 @@ class Meter(object):
         values = []
         for measure in self.measures:
             values.append(measure.value())
-            if measure.warnings:
-                self._warnings.extend(measure.warnings)
         return values
 
     @property
@@ -411,7 +409,10 @@ class MeterWithConcentratorName(Meter):
                 v['cnc_name'] = self.concentrator_name
                 values.append(v)
             if measure.warnings:
-                self._warnings.append("WARNING: {}".format(measure.warnings))
+                if self._warnings.get(self.name, False):
+                    self._warnings[self.name].extend(measure.warnings)
+                else:
+                    self._warnings.update({self.name: measure.warnings})
         return values
 
 
@@ -532,4 +533,6 @@ class ConcentratorWithMetersWithConcentratorName(ConcentratorWithMeters):
         if getattr(self.objectified, 'Cnt', None) is not None:
             for meter in self.objectified.Cnt:
                 meters.append(self.meter_class(meter, self.name))
+            for meter in meters:
+                self._warnings.append(meter.warnings)
         return meters
