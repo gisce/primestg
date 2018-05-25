@@ -1234,7 +1234,7 @@ class Report(object):
 
     @property
     def supported(self):
-        return self.report_type in SUPPORTED_REPORTS
+        return is_supported(self.report_type)
 
     @property
     def concentrators(self):
