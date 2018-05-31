@@ -137,6 +137,7 @@ class Parameter(ValueWithTime):
         """
         self.objectified = objectified_parameter
         self.report_version = report_version
+        self._warnings = []
 
     @property
     def objectified(self):
@@ -230,6 +231,15 @@ class Parameter(ValueWithTime):
         """
         raise NotImplementedError('This method is not implemented!')
 
+    @property
+    def warnings(self):
+        """
+        Warnings of these parameters.
+
+        :return: a list with the errors found while reading
+        """
+        return self._warnings
+
 
 class Meter(object):
     """
@@ -245,7 +255,7 @@ class Meter(object):
         :return: a Meter object
         """
         self.objectified = objectified_meter
-        self._warnings = []
+        self._warnings = {}
 
     @property
     def objectified(self):
@@ -328,7 +338,6 @@ class Meter(object):
         values = []
         for measure in self.measures:
             values.append(measure.value())
-            self._warnings.extend(measure.warnings)
         return values
 
     @property
@@ -399,8 +408,11 @@ class MeterWithConcentratorName(Meter):
                 v['name'] = self.name
                 v['cnc_name'] = self.concentrator_name
                 values.append(v)
-            for warning in measure.warnings:
-                self._warnings.append("WARNING: {}".format(warning))
+            if measure.warnings:
+                if self._warnings.get(self.name, False):
+                    self._warnings[self.name].extend(measure.warnings)
+                else:
+                    self._warnings.update({self.name: measure.warnings})
         return values
 
 
@@ -430,6 +442,7 @@ class Concentrator(object):
         :return: a Concentrator object
         """
         self.objectified = objectified_concentrator
+        self._warnings = []
 
     @property
     def objectified(self):
@@ -458,6 +471,15 @@ class Concentrator(object):
         :return: a string with the name of the concentrator
         """
         return self.objectified.get('Id')
+
+    @property
+    def warnings(self):
+        """
+        Warnings of this concentrator.
+
+        :return: a list with the errors found while reading
+        """
+        return self._warnings
 
 
 class ConcentratorWithMeters(Concentrator):
@@ -511,4 +533,6 @@ class ConcentratorWithMetersWithConcentratorName(ConcentratorWithMeters):
         if getattr(self.objectified, 'Cnt', None) is not None:
             for meter in self.objectified.Cnt:
                 meters.append(self.meter_class(meter, self.name))
+            for meter in meters:
+                self._warnings.append(meter.warnings)
         return meters

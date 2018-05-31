@@ -9,7 +9,7 @@ with description('Report S06 example'):
         self.data_filenames = [
             'spec/data/S06.xml',
             'spec/data/S06_with_error.xml',
-            # 'spec/data/S06_empty.xml'
+            'spec/data/S06_empty.xml'
         ]
 
         self.report = []
@@ -34,13 +34,15 @@ with description('Report S06 example'):
                     for meter in cnc.meters:
                         for value in meter.values:
                             result.append(value)
-                        warnings.append(meter.warnings)
-
-            print('Result: {} \n Expected result: {} \n Warnings: {}'.format(
-                result, expected_result, warnings))
-
+                        if meter.warnings:
+                            warnings.append(meter.warnings)
             expect(result).to(equal(expected_result))
-        expected_warnings = [[], ["ERROR: Cnc(CIR4621704174), "
-                                  "Meter(ZIV42553686). Thrown exception: "
-                                  "object of type 'NoneType' has no len()"], []]
-        expect(warnings).to(equal(expected_warnings))
+        meter_found = 0
+        for warning in warnings:
+            if warning.get('ZIV42553686', False):
+                expect(len(list(warning.values())[0])).to(equal(1))
+                meter_found += 1
+            if warning.get('ZIV42554578', False):
+                expect(len(list(warning.values())[0])).to(equal(1))
+                meter_found += 1
+        expect(meter_found).to(equal(2))
