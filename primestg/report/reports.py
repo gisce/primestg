@@ -497,6 +497,7 @@ class ParameterS24(Parameter):
             values = {
                 'timestamp': timestamp,
                 'season': self.objectified.get('Fh')[-1:],
+                'cnc_name': self.concentrator_name,
                 'meters': []
             }
             for s24_meters in self.objectified.Meter:
