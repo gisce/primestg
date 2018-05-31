@@ -18,8 +18,8 @@ with description('Report S24 examples'):
 
     with it('generates result with the expected fields'):
 
-        expected_first_value_first_concentrator = ['meters', 'season',
-                                                   'timestamp']
+        expected_first_value_first_concentrator = ['cnc_name', 'meters',
+                                                   'season', 'timestamp']
 
         concentrator = list(self.report[0].concentrators)[0]
         parameter = concentrator.parameters[0]

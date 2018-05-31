@@ -1,4 +1,5 @@
-[{'meters': [{'active': True,
+[{'cnc_name': 'CIR4621511030',
+  'meters': [{'active': True,
     'name': 'CIR0141406756',
     'season': 'S',
     'status': 2,
