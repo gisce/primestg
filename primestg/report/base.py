@@ -147,14 +147,19 @@ class Parameter(ValueWithTime):
             availability of the meter at a certain hour
             :return: a dict with the availability of the meter and hour
         """
-        timestamp = self._get_timestamp('Date', element=meter)
-        return {
-            'name': meter.get('MeterId'),
-            'status': int(meter.get('ComStatus')),
-            'timestamp': timestamp,
-            'season': meter.get('Date')[-1:],
-            'active': self.get_boolean('Active', element=meter),
-        }
+        values = {}
+        try:
+            timestamp = self._get_timestamp('Date', element=meter)
+            values = {
+                'name': meter.get('MeterId'),
+                'status': int(meter.get('ComStatus')),
+                'timestamp': timestamp,
+                'season': meter.get('Date')[-1:],
+                'active': self.get_boolean('Active', element=meter),
+            }
+        except Exception as e:
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+        return values
 
     @property
     def objectified(self):

@@ -1236,10 +1236,8 @@ class ConcentratorS24(Concentrator):
         """
         values = []
         for parameter in self.parameters:
-            if parameter.values:
-                values.append(parameter.values)
-            if parameter.warnings:
-                self._warnings.extend(parameter.warnings)
+            values.append(parameter.values)
+            self._warnings.extend(parameter.warnings)
         return values
 
 
