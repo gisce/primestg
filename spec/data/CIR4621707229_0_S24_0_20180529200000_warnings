@@ -1,0 +1,17 @@
+<Report IdRpt="S24" IdPet="0" Version="3.1.c">
+        <Cnc Id="CIR4621707229">
+                <S24 Fh="20180529200000000S">
+                        <Meter MeterId="CIR0501407341" ComStatus="2" Date="20180529195939000S" Active="Y"/>
+                        <Meter MeterId="CIR0501701201" ComStatus="2" Date="20180529195918000S" Active="Y"/>
+                        <Meter MeterId="CIR0501701209" ComStatus="2" Date="20180529195935000S" Active="Y"/>
+                        <Meter MeterId="CIR0501701426" ComStatus="2" Date="00001228230000000W" Active="Y"/>
+                        <Meter MeterId="CIR0501701428" ComStatus="2" Date="20180529195931000S" Active="Y"/>
+                        <Meter MeterId="CIR2081707282" ComStatus="2" Date="20180529182856000S" Active="Y"/>
+                        <Meter MeterId="SAG0165790033" ComStatus="A" Date="20180529195927000S" Active="Y"/>
+                        <Meter MeterId="SAG0165790092" ComStatus="2" Date="20180529195915000S" Active="Y"/>
+                        <Meter MeterId="SAG0165790094" ComStatus="2" Date="20180529195929000S" Active="Y"/>
+                        <Meter MeterId="SAG0175811896" ComStatus="2" Date="20180529195923000S" Active="Y"/>
+                        <Meter MeterId="SAG0176451405" ComStatus="2" Date="20180529195906000S" Active="Y"/>
+                </S24>
+        </Cnc>
+</Report>
