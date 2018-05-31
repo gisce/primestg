@@ -6,7 +6,7 @@ from primestg.report.base import (
 from primestg.message import MessageS
 
 SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S15',
-                     'S17']
+                     'S17', 'S24']
 
 
 def is_supported(report_code):
@@ -422,6 +422,92 @@ class ParameterS12(Parameter):
         except Exception as e:
             self._warnings.append('ERROR: Reading S12 report. Thrown '
                                   'exception: {}'.format(e))
+        return values
+
+
+class ParameterS24(Parameter):
+    """
+    Class for a set of parameters of report S24.
+    """
+
+    def __init__(
+            self,
+            objectified_parameter,
+            report_version,
+            concentrator_name,
+            request_id
+    ):
+        """
+        Create a ParameterS24 object.
+
+        :param objectified_parameter: an lxml.objectify.StringElement \
+            representing a set of parameters
+        :return: a Measure object
+        """
+        super(ParameterS24, self).__init__(
+            objectified_parameter,
+            report_version
+        )
+        self.concentrator_name = concentrator_name
+        self.request_id = request_id
+
+    @property
+    def concentrator_name(self):
+        """
+        A string with the concentrator name.
+
+        :return: a string with the concentrator name
+        """
+        return self._concentrator_name
+
+    @concentrator_name.setter
+    def concentrator_name(self, value):
+        """
+        Stores a string with the concentrator name.
+
+        :param value: a string with the concentrator name
+        """
+        self._concentrator_name = value
+
+    @property
+    def request_id(self):
+        """
+        The request identification.
+
+        :return: a string with the request identification
+        """
+        return self._request_id
+
+    @request_id.setter
+    def request_id(self, value):
+        """
+        Stores the request identification.
+
+        :param value: a string with the version of the report
+        """
+        self._request_id = value
+
+    @property
+    def values(self):
+        """
+        Set of parameters of report S24.
+
+        :return: a dict with a set of parameters of report S24
+        """
+        values = {}
+
+        try:
+            timestamp = self._get_timestamp('Fh')
+            values = {
+                'timestamp': timestamp,
+                'season': self.objectified.get('Fh')[-1:],
+                'cnc_name': self.concentrator_name,
+                'meters': []
+            }
+            for s24_meters in self.objectified.Meter:
+                values['meters'].append(self.meter_availability(s24_meters))
+        except Exception as e:
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
         return values
 
 
@@ -1114,6 +1200,52 @@ class ConcentratorS17(ConcentratorEvents):
         return parameters
 
 
+class ConcentratorS24(Concentrator):
+    """
+        Class for a concentrator of report S24.
+    """
+
+    def __init__(self, objectified_concentrator, report_version, request_id,
+                 report_type):
+        """
+
+        """
+        super(ConcentratorS24, self).__init__(objectified_concentrator)
+        self.report_version = report_version
+        self.request_id = request_id
+        self.report_type = report_type
+
+    @property
+    def parameters(self):
+        """
+        Parameter set objects of this concentrator.
+
+        :return: a list of parameter set objects
+        """
+        parameters = []
+        if getattr(self.objectified, 'S24', None) is not None:
+            for parameter in self.objectified.S24:
+                parameters.append(ParameterS24(
+                    parameter,
+                    self.report_version,
+                    self.name,
+                    self.request_id))
+        return parameters
+
+    @property
+    def values(self):
+        """
+        Values of the set of parameters of this concentrator.
+
+        :return: a list with the values of the meters
+        """
+        values = []
+        for parameter in self.parameters:
+            values.append(parameter.values)
+            self._warnings.extend(parameter.warnings)
+        return values
+
+
 class Report(object):
     """
     Report class to process MessageS
@@ -1239,7 +1371,16 @@ class Report(object):
                     self.request_id,
                     self.report_type
                 ]
-            }
+            },
+            'S24': {
+                'class': ConcentratorS24,
+                'args': [
+                    objectified_concentrator,
+                    self.report_version,
+                    self.request_id,
+                    self.report_type
+                ]
+            },
         }
 
         if self.report_type not in report_type_class:
