@@ -33,7 +33,7 @@ with description('Report S27 example'):
                 'cnc_name': 'ZIV0004394488',
                 'value': 'a',
                 'ae': 0,
-                'type': 'day',
+                'type': 'manual',
                 'r1': 0,
                 'max': 0,
                 'date_max': '2017-07-14 08:39:00'
@@ -66,7 +66,7 @@ with description('Report S27 example'):
                 'cnc_name': 'ZIV0004395680',
                 'value': 'a',
                 'ae': 0,
-                'type': 'day',
+                'type': 'manual',
                 'r1': 2688,
                 'max': 4744,
                 'date_max': '2018-10-06 23:15:00'
