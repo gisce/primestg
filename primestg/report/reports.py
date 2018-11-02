@@ -6,7 +6,7 @@ from primestg.report.base import (
 from primestg.message import MessageS
 
 SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S15',
-                     'S17', 'S24']
+                     'S17', 'S24', 'S27']
 
 
 def is_supported(report_code):
@@ -113,6 +113,42 @@ class MeasureS05(MeasureActiveReactive):
 
             for s05_values in self.objectified.Value:
                 v.update(self.active_reactive(s05_values, 'a'))
+                values.append(v)
+        except Exception as e:
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+
+        return values
+
+
+class MeasureS27(MeasureActiveReactive):
+    """
+    Class for a set of measures of report S27.
+    """
+
+    @property
+    def values(self):
+        """
+        Set of measures of report S27.
+
+        :return: a dict with a set of measures of report S27
+        """
+        values = []
+        try:
+            timestamp = self._get_timestamp('Fh')
+            timestamp_max = self._get_timestamp('Fx')
+            v = {
+                'type': 'manual',
+                'value': 'a',
+                'date_begin': timestamp,
+                'date_end': timestamp,
+                'contract': int(self.objectified.get('Ctr')),
+                'period': int(self.objectified.get('Pt')),
+                'max': int(self.objectified.get('Mx')),
+                'date_max': timestamp_max
+            }
+
+            for s27_values in self.objectified.Value:
+                v.update(self.active_reactive(s27_values, 'a'))
                 values.append(v)
         except Exception as e:
             self._warnings.append('ERROR: Thrown exception: {}'.format(e))
@@ -693,6 +729,31 @@ class MeterS05(MeterWithMagnitude):
         return MeasureS05
 
 
+class MeterS27(MeterWithMagnitude):
+    """
+    Class for a meter of report S27.
+    """
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S27.
+
+        :return: a string with 'S27'
+        """
+
+        return 'S27'
+
+    @property
+    def measure_class(self):
+        """
+        The class used to instance measure sets for report S27.
+
+        :return: a class to instance measure sets of report S27
+        """
+        return MeasureS27
+
+
 class MeterS06(MeterWithMagnitude):
     """
     Class for a meter of report S06.
@@ -896,6 +957,21 @@ class ConcentratorS05(ConcentratorWithMetersWithConcentratorName):
         :return: a class to instance meters of report S05
         """
         return MeterS05
+
+
+class ConcentratorS27(ConcentratorWithMetersWithConcentratorName):
+    """
+    Class for a concentrator of report S27.
+    """
+
+    @property
+    def meter_class(self):
+        """
+        The class used to instance meters for report S27.
+
+        :return: a class to instance meters of report S27
+        """
+        return MeterS27
 
 
 class ConcentratorS06(ConcentratorWithMetersWithConcentratorName):
@@ -1380,6 +1456,10 @@ class Report(object):
                     self.request_id,
                     self.report_type
                 ]
+            },
+            'S27': {
+                'class': ConcentratorS27,
+                'args': [objectified_concentrator]
             },
         }
 
