@@ -137,7 +137,7 @@ class MeasureS27(MeasureActiveReactive):
             timestamp = self._get_timestamp('Fh')
             timestamp_max = self._get_timestamp('Fx')
             v = {
-                'type': 'day',
+                'type': 'manual',
                 'value': 'a',
                 'date_begin': timestamp,
                 'date_end': timestamp,
