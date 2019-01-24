@@ -39,8 +39,6 @@ class Service(object):
         :param meters: a meter_id
         :return: an S01 report for the corresponding meter
         """
-        if isinstance(meters, list):
-            meters = ','.join(meters)
         return self.send('S01', meters)
 
     def get_daily_incremental(self, meters, date_from, date_to):
@@ -49,8 +47,6 @@ class Service(object):
         :param meters: a meter_id
         :return: an S02 report for the corresponding meter
         """
-        if isinstance(meters, list):
-            meters = ','.join(meters)
         return self.send('S02', meters, date_from, date_to)
 
     def get_all_daily_incremental(self, date_from, date_to):
@@ -66,8 +62,6 @@ class Service(object):
         :param meters: a meter_id
         :return: an S04 report for the corresponding meter
         """
-        if isinstance(meters, list):
-            meters = ','.join(meters)
         return self.send('S04', meters, date_from, date_to)
 
     def get_all_monthly_billing(self, date_from, date_to):
@@ -83,8 +77,6 @@ class Service(object):
         :param meters: a meter_id
         :return: an S05 report for the corresponding meter
         """
-        if isinstance(meters, list):
-            meters = ','.join(meters)
         return self.send('S05', meters, date_from, date_to)
 
     def get_all_daily_absolute(self, date_from, date_to):
@@ -100,8 +92,6 @@ class Service(object):
         :param meters: a meter_id
         :return: an S09 report for the corresponding meter
         """
-        if isinstance(meters, list):
-            meters = ','.join(meters)
         return self.send('S09', meters, date_from, date_to)
 
     def get_all_meter_events(self, date_from, date_to):
@@ -117,8 +107,6 @@ class Service(object):
         :param meters: a meter_id
         :return: an S06 report for the corresponding meter
         """
-        if isinstance(meters, list):
-            meters = ','.join(meters)
         return self.send('S06', meters, date_from, date_to)
 
     def get_all_meter_parameters(self, date_from, date_to):
