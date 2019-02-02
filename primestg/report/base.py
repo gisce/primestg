@@ -11,6 +11,8 @@ MAGNITUDE_KW = 1000
 Magnitude value (1000) for measures represented in kW.
 """
 
+SAGE_BAD_TIMESTAMP = ['FFFFFFFF000000000S', 'FFFFFFFFFFFFFFW', '00000000000000W']
+
 
 class ValueWithTime(object):
     """
@@ -39,7 +41,7 @@ class ValueWithTime(object):
 
         # Fix for SAGECOM which puts this timestamp when the period doesn't
         # affect the contracted tariff
-        if date_value.upper() == 'FFFFFFFFFFFFFFW':
+        if date_value.upper() in  SAGE_BAD_TIMESTAMP:
             date_value = '19000101000000W'
 
         try:
