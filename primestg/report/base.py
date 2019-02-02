@@ -13,8 +13,8 @@ Magnitude value (1000) for measures represented in kW.
 
 SAGE_BAD_TIMESTAMP = [
     'FFFFFFFFFFFFFFW',
-    'FFFFFFFF000000000S',
-    '00000000000000000W'
+    'FFFFFFFF000000S',
+    '00000000000000W'
 ]
 
 
