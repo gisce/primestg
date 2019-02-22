@@ -10,6 +10,8 @@ with description('Report S05 example'):
             'spec/data/CIR4621247027_0_S05_0_20150901072044',
             'spec/data/CIR4621247027_0_S05_0_201509010empty',
             'spec/data/CIR4621247027_0_S05_0_20150901072044_warnings',
+            'spec/data/CIR4621802303_4F39_S05_0_20190221014548',
+            'spec/data/CIR4621802303_4F39_S05_1_20190221014548', # Compressed
         ]
 
         self.report = []

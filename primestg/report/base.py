@@ -1,4 +1,5 @@
 from datetime import datetime
+import binascii
 
 
 MAGNITUDE_W = 1
