@@ -1,4 +1,5 @@
 from datetime import datetime
+import binascii
 
 
 MAGNITUDE_W = 1
@@ -10,6 +11,12 @@ MAGNITUDE_KW = 1000
 """
 Magnitude value (1000) for measures represented in kW.
 """
+
+SAGE_BAD_TIMESTAMP = [
+    'FFFFFFFFFFFFFFW',
+    'FFFFFFFF000000S',
+    '00000000000000W'
+]
 
 
 class ValueWithTime(object):
@@ -39,10 +46,15 @@ class ValueWithTime(object):
 
         # Fix for SAGECOM which puts this timestamp when the period doesn't
         # affect the contracted tariff
-        if date_value.upper() == 'FFFFFFFFFFFFFFW':
+        if date_value.upper() in  SAGE_BAD_TIMESTAMP:
             date_value = '19000101000000W'
 
-        time = datetime.strptime(date_value[:-1], '%Y%m%d%H%M%S')
+        try:
+            time = datetime.strptime(date_value[:-1],
+                                     '%Y%m%d%H%M%S')
+        except ValueError as e:
+            raise ValueError("Date out of range: {} ({}) {}".format(
+                date_value, name, e))
         return time.strftime('%Y-%m-%d %H:%M:%S')
 
 
@@ -60,6 +72,7 @@ class Measure(ValueWithTime):
         :return: a Measure object
         """
         self.objectified = objectified_measure
+        self._warnings = []
 
     @property
     def objectified(self):
@@ -80,6 +93,15 @@ class Measure(ValueWithTime):
         :return:
         """
         self._objectified = value
+
+    @property
+    def warnings(self):
+        """
+        Warnings of these measures.
+
+        :return: a list with the errors found while reading
+        """
+        return self._warnings
 
 
 class MeasureActiveReactive(Measure):
@@ -122,6 +144,29 @@ class Parameter(ValueWithTime):
         """
         self.objectified = objectified_parameter
         self.report_version = report_version
+        self._warnings = []
+
+    def meter_availability(self, meter):
+        """
+            Get meter availability.
+
+            :param meter: an lxml.objectify.StringElement representing a the
+            availability of the meter at a certain hour
+            :return: a dict with the availability of the meter and hour
+        """
+        values = {}
+        try:
+            timestamp = self._get_timestamp('Date', element=meter)
+            values = {
+                'name': meter.get('MeterId'),
+                'status': int(meter.get('ComStatus')),
+                'timestamp': timestamp,
+                'season': meter.get('Date')[-1:],
+                'active': self.get_boolean('Active', element=meter),
+            }
+        except Exception as e:
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+        return values
 
     @property
     def objectified(self):
@@ -215,6 +260,15 @@ class Parameter(ValueWithTime):
         """
         raise NotImplementedError('This method is not implemented!')
 
+    @property
+    def warnings(self):
+        """
+        Warnings of these parameters.
+
+        :return: a list with the errors found while reading
+        """
+        return self._warnings
+
 
 class Meter(object):
     """
@@ -230,6 +284,7 @@ class Meter(object):
         :return: a Meter object
         """
         self.objectified = objectified_meter
+        self._warnings = {}
 
     @property
     def objectified(self):
@@ -314,6 +369,15 @@ class Meter(object):
             values.append(measure.value())
         return values
 
+    @property
+    def warnings(self):
+        """
+        Warnings of this meter.
+
+        :return: a list with the errors found while reading
+        """
+        return self._warnings
+
 
 class MeterWithConcentratorName(Meter):
     """
@@ -373,6 +437,11 @@ class MeterWithConcentratorName(Meter):
                 v['name'] = self.name
                 v['cnc_name'] = self.concentrator_name
                 values.append(v)
+            if measure.warnings:
+                if self._warnings.get(self.name, False):
+                    self._warnings[self.name].extend(measure.warnings)
+                else:
+                    self._warnings.update({self.name: measure.warnings})
         return values
 
 
@@ -402,6 +471,7 @@ class Concentrator(object):
         :return: a Concentrator object
         """
         self.objectified = objectified_concentrator
+        self._warnings = []
 
     @property
     def objectified(self):
@@ -430,6 +500,15 @@ class Concentrator(object):
         :return: a string with the name of the concentrator
         """
         return self.objectified.get('Id')
+
+    @property
+    def warnings(self):
+        """
+        Warnings of this concentrator.
+
+        :return: a list with the errors found while reading
+        """
+        return self._warnings
 
 
 class ConcentratorWithMeters(Concentrator):
@@ -483,4 +562,6 @@ class ConcentratorWithMetersWithConcentratorName(ConcentratorWithMeters):
         if getattr(self.objectified, 'Cnt', None) is not None:
             for meter in self.objectified.Cnt:
                 meters.append(self.meter_class(meter, self.name))
+            for meter in meters:
+                self._warnings.append(meter.warnings)
         return meters

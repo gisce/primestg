@@ -1,0 +1,13 @@
+<Report IdRpt="S06" IdPet="361362" Version="3.1.c">
+	<Cnc Id="CIR4621704174">
+		<Cnt Id="ZIV42553686">
+			<S06 NS="" Fab="" Mod="" Af="" Te="" Vf="" VPrime="" Pro="" Idm="" Mac="00:80:E1:15:25:55" Tp="" Ts="" Ip="" Is="" Usag="" Uswell="" Per="" Dctcp="" Vr="" Ut="" UsubT="" UsobT="" UcorteT="" AutMothBill="" ScrollDispMode="" ScrollDispTime="" />
+		</Cnt>
+		<Cnt Id="ZIV36301516">
+			<S06 Fh="20180101204134000W" NS="0019722616" Fab=" C" Mod="YK" Af="12" Te="contador  " Vf="V0408" VPrime="1.2.6d_R" Pro="DLMS0105" Idm="Deuice ID 6" Mac="00:80:E1:15:42:96" Tp="" Ts="" Ip="" Is="" Usag="180" Uswell="180" Per="3600" Dctcp="95.00" Vr="230" Ut="180" UsubT="7.00" UsobT="7.00" UcorteT="50.00" AutMothBill="Y" ScrollDispMode="A" ScrollDispTime="3" />
+		</Cnt>
+		<Cnt Id="ZIV42554578">
+			<S06 NS="" Fab="" Mod="" Af="" Te="" Vf="" VPrime="" Pro="" Idm="" Mac="00:80:E1:15:25:55" Tp="" Ts="" Ip="" Is="" Usag="" Uswell="" Per="" Dctcp="" Vr="" Ut="" UsubT="" UsobT="" UcorteT="" AutMothBill="" ScrollDispMode="" ScrollDispTime="" />
+		</Cnt>
+	</Cnc>
+</Report>

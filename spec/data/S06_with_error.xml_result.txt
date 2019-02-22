@@ -1,0 +1,40 @@
+[
+    {
+    },
+    {
+        'protocol': 'DLMS0105',
+        'concentrator': 'CIR4621704174',
+        'timestamp': '2018-01-01 20:41:34',
+        'secondary_voltage': 0,
+        'prime_firmware_version': '1.2.6d_R',
+        'meter': 'ZIV36301516',
+        'mac': '00:80:E1:15:42:96',
+        'time_threshold_voltage_swells': 180,
+        'time_threshold_voltage_sags': 180,
+        'secondary_current': 0,
+        'firmware_version': 'V0408',
+        'primary_current': 0,
+        'voltage_cut-off_threshold': '50.00',
+        'manufacturer': ' C',
+        'equipment_type': 'contador  ',
+        'voltage_swell_threshold': '7.00',
+        'manufacturing_year': 12,
+        'load_profile_period': 3600,
+        'primary_voltage': 0,
+        'id_multicast': 'Deuice ID 6',
+        'scroll_display_mode': 'A',
+        'season': 'W',
+        'demand_close_contracted_power': '95.00',
+        'version': '3.1.c',
+        'reference_voltage': 230,
+        'request_id': '361362',
+        'model_type': 'YK',
+        'serial_number': '0019722616',
+        'automatic_monthly_billing': True,
+        'time_scroll_display': 3,
+        'voltage_sag_threshold': '7.00',
+        'long_power_failure_threshold': 180
+    },
+    {
+    }
+]

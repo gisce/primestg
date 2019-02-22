@@ -2,15 +2,13 @@ from expects import expect, equal
 from primestg.report import Report
 from ast import literal_eval
 
-with description('Report S17 examples'):
+with description('Report S24 examples'):
     with before.all:
 
         self.data_filenames = [
-            'spec/data/ZIV0000035545_0_S17_0_20161203040002',
-            'spec/data/ZIV0000035536_0_S17_0_20161204040002',
-            'spec/data/ZIV0004311822_0_S17_0_20161215040002',
-            'spec/data/ZIV0000035536_0_S17_0_201612040empty',
-            'spec/data/ZIV0004311822_0_S17_0_20161215040002_warnings',
+            'spec/data/CIR4621511030_0_S24_0_20180529093051',
+            'spec/data/CIR4621707229_0_S24_0_20180529200000',
+            'spec/data/CIR4621707229_0_S24_0_20180529200000_warnings',
         ]
 
         self.report = []
@@ -18,27 +16,18 @@ with description('Report S17 examples'):
             with open(data_filename) as data_file:
                 self.report.append(Report(data_file))
 
-    with it('generates expected results for the values of the the first '
-            'concentrator'):
+    with it('generates result with the expected fields'):
 
-        expected_first_value_first_concentrator = \
-            {
-                'name': 'ZIV0000035545',
-                'event_code': 1,
-                'season': 'W',
-                'timestamp': '2016-12-02 13:12:40:',
-                'data': 'D1: admin\nD2: HMI_write',
-                'event_group': 2
-            }
+        expected_first_value_first_concentrator = ['cnc_name', 'meters',
+                                                   'season', 'timestamp']
 
         concentrator = list(self.report[0].concentrators)[0]
         parameter = concentrator.parameters[0]
         first_task_first_concentrator = parameter.values
-
         expect(sorted(first_task_first_concentrator))\
-            .to(equal(sorted(expected_first_value_first_concentrator)))
+            .to(equal(expected_first_value_first_concentrator))
 
-    with it('generates the expected results for the whole report'):
+    with it('generates the expected results for all reports'):
 
         result_filenames = []
         warnings = []
@@ -56,5 +45,5 @@ with description('Report S17 examples'):
                 if cnc.warnings:
                     warnings.append(cnc.warnings)
                 expect(result).to(equal(expected_result))
-
         expect(len(warnings)).to(equal(1))
+        expect(len(warnings[0])).to(equal(2))

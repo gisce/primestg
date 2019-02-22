@@ -8,7 +8,8 @@ with description('Report S06 example'):
 
         self.data_filenames = [
             'spec/data/S06.xml',
-            # 'spec/data/S06_empty.xml'
+            'spec/data/S06_with_error.xml',
+            'spec/data/S06_empty.xml'
         ]
 
         self.report = []
@@ -19,22 +20,29 @@ with description('Report S06 example'):
     with it('generates the expected results for the whole report'):
 
         result_filenames = []
+        warnings = []
         for data_filename in self.data_filenames:
             result_filenames.append('{}_result.txt'.format(data_filename))
 
         for key, result_filename in enumerate(result_filenames):
+            result = []
             with open(result_filename) as result_file:
                 result_string = result_file.read()
                 expected_result = literal_eval(result_string)
-
-        result = self.report[key].values
-        expect(result).to(equal(expected_result))
-        # result_filename = '{}_result.txt'.format(self.data_filename)
-        #
-        # with open(result_filename) as result_file:
-        #     result_string = result_file.read()
-        #     self.expected_result = literal_eval(result_string)
-        #
-        # result = self.report.values
-        #
-        # expect(result).to(equal(self.expected_result))
+            for cnc in self.report[key].concentrators:
+                if cnc.meters:
+                    for meter in cnc.meters:
+                        for value in meter.values:
+                            result.append(value)
+                        if meter.warnings:
+                            warnings.append(meter.warnings)
+            expect(result).to(equal(expected_result))
+        meter_found = 0
+        for warning in warnings:
+            if warning.get('ZIV42553686', False):
+                expect(len(list(warning.values())[0])).to(equal(1))
+                meter_found += 1
+            if warning.get('ZIV42554578', False):
+                expect(len(list(warning.values())[0])).to(equal(1))
+                meter_found += 1
+        expect(meter_found).to(equal(2))

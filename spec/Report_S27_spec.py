@@ -3,15 +3,13 @@ from primestg.report import Report
 from ast import literal_eval
 
 
-with description('Report S05 example'):
+with description('Report S27 example'):
     with before.all:
 
         self.data_filenames = [
-            'spec/data/CIR4621247027_0_S05_0_20150901072044',
-            'spec/data/CIR4621247027_0_S05_0_201509010empty',
-            'spec/data/CIR4621247027_0_S05_0_20150901072044_warnings',
-            'spec/data/CIR4621802303_4F39_S05_0_20190221014548',
-            'spec/data/CIR4621802303_4F39_S05_1_20190221014548', # Compressed
+            'spec/data/ZIV0004394488_0_S27_20170727120456_no_max',
+            'spec/data/ZIV0004395680_0_S27_20181031164412_with_max',
+            # 'spec/data/CIR4621247027_0_S05_0_20150901072044_warnings',
         ]
 
         self.report = []
@@ -19,34 +17,67 @@ with description('Report S05 example'):
             with open(data_filename) as data_file:
                 self.report.append(Report(data_file))
 
-    with it('generates expected results for a value of the first meter of '
-            'first concentrator'):
+    with it('generates expected results for a meter with values at 0'):
 
         expected_first_value_first_meter = [
             {
-                'r4': 2,
-                'date_begin': '2015-09-01 00:00:00',
-                'name': 'CIR0141433184',
+                'r4': 0,
+                'date_begin': '2017-07-27 12:04:56',
+                'name': 'ZIVS004394488',
                 'r2': 0,
                 'r3': 0,
-                'ai': 308,
-                'date_end': '2015-09-01 00:00:00',
+                'ai': 0,
+                'date_end': '2017-07-27 12:04:56',
                 'period': 0,
                 'contract': 1,
-                'cnc_name': 'CIR4621247027',
+                'cnc_name': 'ZIV0004394488',
                 'value': 'a',
                 'ae': 0,
-                'type': 'day',
-                'r1': 185
+                'type': 'manual',
+                'r1': 0,
+                'max': 0,
+                'date_max': '2017-07-14 08:39:00'
             }
         ]
         concentrator = list(self.report[0].concentrators)[0]
         meter = concentrator.meters[0]
         values = meter.values
-
         first_value_first_meter = []
         for x in values:
-            if x['name'] == 'CIR0141433184' and x['period'] == 0:
+            if x['name'] == 'ZIVS004394488' and x['period'] == 0:
+                first_value_first_meter.append(x)
+
+        expect(first_value_first_meter)\
+            .to(equal(expected_first_value_first_meter))
+
+    with it('generates expected results for a meter with real values'):
+
+        expected_first_value_first_meter = [
+            {
+                'r4': 610,
+                'date_begin': '2018-10-31 16:44:12',
+                'name': 'ZIV0044510398',
+                'r2': 0,
+                'r3': 0,
+                'ai': 3568,
+                'date_end': '2018-10-31 16:44:12',
+                'period': 0,
+                'contract': 1,
+                'cnc_name': 'ZIV0004395680',
+                'value': 'a',
+                'ae': 0,
+                'type': 'manual',
+                'r1': 2688,
+                'max': 4744,
+                'date_max': '2018-10-06 23:15:00'
+            }
+        ]
+        concentrator = list(self.report[1].concentrators)[0]
+        meter = concentrator.meters[0]
+        values = meter.values
+        first_value_first_meter = []
+        for x in values:
+            if x['name'] == 'ZIV0044510398' and x['period'] == 0:
                 first_value_first_meter.append(x)
 
         expect(first_value_first_meter)\
@@ -74,7 +105,7 @@ with description('Report S05 example'):
             expect(result).to(equal(expected_result))
         meter_found = 0
         for warning in warnings:
-            if warning.get('CIR0141433184', False):
+            if warning.get('ZIV0044510398', False):
                 expect(len(list(warning.values())[0])).to(equal(2))
                 meter_found += 1
-        expect(meter_found).to(equal(1))
+        expect(meter_found).to(equal(0))

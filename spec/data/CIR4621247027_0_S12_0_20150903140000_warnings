@@ -1,0 +1,26 @@
+<Report IdRpt="S12" IdPet="0" Version="3.1.c">
+	<Cnc Id="CIR4621247027">
+		<S12 Fh="20150903140000000S" Mod="SGE-PLC50" Af="2012" Te="concentrator" Vf="0.8.7" VfComm="2223" Pro="ISDIP" Com="PLC" Bat="99" ipCom="192.168.42.30" PortWS="8080" ipMask="255.255.255.0" ipGtw="192.168.42.1" ipDhcp="N" Slave1="" Slave2="" Slave3="" ipLoc="100.0.0.1" ipMaskLoc="255.255.255.0" Macplc="00:80:E1:0F:1A:9D" Pse="38400" Priority="Y" IPstg="" IPNTP="0.pool.ntp.org" IPftp="ger.dynalias.org" FTPUserReport="telegestion" IPftpDCUpg="" UserftpDCUpg="DCUPGRADE" IPftpMeterUpg="" UserftpMeterUpg="CNTUPGRADE" RetryFtp="3" TimeBetwFtp="A" IPftpCycles="" UserftpCycles="user" DestDirCycles="/" SyncMeter="N" TimeOutMeterFwU="604800" TimeDev="30" TimeDevOver="3600" ResetMsg="N" NumMeters="100" TimeSendReq="0" TimeDisconMeter="86400" RetryDisconMeter="6" TimeRetryInterval="7200" MeterRegData="010000600100FF02010000600101FF02010000600102FF02" ReportFormat="0" S26Content="Pimp,AIa,L1v" ValuesCheckDelay="30" MaxOrderOutdate="86400" TimeDelayRestart="300" NTPMaxDeviation="30" AccInacTimeout="30" AccSimulMax="10">
+			<TP TpTar="1" TpHi="20150904011000000S" TpPer="00000001000000" TpCompl="Y" TpMet="" TpPrio="2">
+				<TpPro TpReq="S02" TpSend="Y" TpStore="Y">
+					<TpAttr/>
+				</TpPro>
+			</TP>
+			<TP TpTar="2" TpHi="20151001030000000S" TpPer="00000100000000" TpCompl="Y" TpMet="" TpPrio="2">
+				<TpPro TpReq="S04" TpSend="Y" TpStore="Y">
+					<TpAttr/>
+				</TpPro>
+			</TP>
+			<TP TpTar="3" TpHi="20150904011000000S" TpPer="00000001000000" TpCompl="Y" TpMet="" TpPrio="2">
+				<TpPro TpReq="S05" TpSend="Y" TpStore="Y">
+					<TpAttr/>
+				</TpPro>
+			</TP>
+			<TP TpTar="4" TpHi="20150903140000000S" TpPer="00000007000000" TpCompl="Y" TpMet="" TpPrio="2">
+				<TpPro TpReq="S12" TpSend="Y" TpStore="Y">
+					<TpAttr/>
+				</TpPro>
+			</TP>
+		</S12>
+	</Cnc>
+</Report>
