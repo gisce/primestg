@@ -1,4 +1,10 @@
 from lxml.objectify import fromstring
+import binascii
+import zlib
+
+
+def is_gziped(content):
+    return binascii.hexlify(content[:2]) == b'1f8b'
 
 
 class BaseMessage(object):
@@ -33,6 +39,8 @@ class BaseMessage(object):
 
         if hasattr(value, 'read'):
             value = value.read()
+        if is_gziped(value):
+            value = zlib.decompress(value, zlib.MAX_WBITS | 32)
         self._xml = value
         self._objectified = fromstring(self._xml)
 
