@@ -4,7 +4,7 @@ import zlib
 
 
 def is_gziped(content):
-    return binascii.hexlify(content[:2]) == b'1f8b'
+    return binascii.hexlify(content[:2].encode('utf-8')) == b'1f8b'
 
 
 class BaseMessage(object):
