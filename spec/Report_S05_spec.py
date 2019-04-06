@@ -16,7 +16,7 @@ with description('Report S05 example'):
 
         self.report = []
         for data_filename in self.data_filenames:
-            with open(data_filename) as data_file:
+            with open(data_filename, 'rb') as data_file:
                 self.report.append(Report(data_file))
 
     with it('generates expected results for a value of the first meter of '
