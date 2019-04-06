@@ -4,7 +4,13 @@ import zlib
 
 
 def is_gziped(content):
-    return binascii.hexlify(content[:2].encode('utf-8')) == b'1f8b'
+    signature = content[:2]
+    try:
+        res = binascii.hexlify(signature) == b'1f8b'
+    except:
+        res = binascii.hexlify(signature.encode('utf-8')) == b'1f8b'
+
+    return res
 
 
 class BaseMessage(object):
