@@ -1,10 +1,19 @@
 from lxml.objectify import fromstring
 import binascii
 import zlib
+import six
 
 
 def is_gziped(content):
-    return binascii.hexlify(content[:2]) == b'1f8b'
+    signature = content[:2]
+    if isinstance(signature, six.binary_type):
+        res = binascii.hexlify(signature) == b'1f8b'
+    elif isinstance(signature, six.text_type):
+        res = binascii.hexlify(signature.encode('utf-8')) == b'1f8b'
+    else:
+        raise ValueError('type {} not supported'.format(type(content)))
+
+    return res
 
 
 class BaseMessage(object):

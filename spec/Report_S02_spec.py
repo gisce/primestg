@@ -10,6 +10,7 @@ with description('Report S02 example'):
             'spec/data/CIR4621247027_0_S02_0_20150901111051',
             'spec/data/CIR4621247027_0_S02_0_201509011empty',
             'spec/data/CIR4621247027_0_S02_0_20150901111051_warnings',
+            'spec/data/ZIV0004408479_0_S02_0_20190403001724_float',
         ]
 
         self.report = []

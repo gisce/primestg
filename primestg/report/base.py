@@ -129,6 +129,31 @@ class MeasureActiveReactive(Measure):
         }
 
 
+class MeasureActiveReactiveFloat(Measure):
+    """
+    Base class for a set of measures with active and reactive measures.
+    """
+
+    def active_reactive(self, measure, measure_type):
+        """
+        Get the active and reactive measures.
+
+        :param measure: an lxml.objectify.StringElement representing a set of \
+            measures
+        :param measure_type: the type of measure, added at the end of the \
+            name of each measure ('a' or 'i')
+        :return: a dict with the active and reactive measures
+        """
+        return {
+            'ai': float(measure.get('AI{}'.format(measure_type))),
+            'ae': float(measure.get('AE{}'.format(measure_type))),
+            'r1': float(measure.get('R1{}'.format(measure_type))),
+            'r2': float(measure.get('R2{}'.format(measure_type))),
+            'r3': float(measure.get('R3{}'.format(measure_type))),
+            'r4': float(measure.get('R4{}'.format(measure_type))),
+        }
+
+
 class Parameter(ValueWithTime):
     """
     Base class for a set of parameters.
