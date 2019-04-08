@@ -1,7 +1,7 @@
 from primestg.report.base import (
-    MeasureActiveReactive, Parameter, MeterWithMagnitude,
-    ConcentratorWithMetersWithConcentratorName, Concentrator, Measure,
-    MeterWithConcentratorName,
+    MeasureActiveReactive, MeasureActiveReactiveFloat, Parameter,
+    MeterWithMagnitude, ConcentratorWithMetersWithConcentratorName,
+    Concentrator, Measure, MeterWithConcentratorName,
 )
 from primestg.message import MessageS
 
@@ -21,7 +21,7 @@ def get_integer_value(param):
     return result
 
 
-class MeasureS02(MeasureActiveReactive):
+class MeasureS02(MeasureActiveReactiveFloat):
     """
     Class for a set of measures of report S02.
     """
