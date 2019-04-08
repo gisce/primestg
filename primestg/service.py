@@ -2,6 +2,43 @@
 
 from zeep import Client
 import primestg
+from datetime import datetime
+import calendar
+
+
+B11_TEMPLATE = """<Order IdPet="{idpet}" IdReq="B11" Version="3.1.c">
+    <Cnc Id="{cnc_id}">
+        <B11 Order="{order}" Args="" Fini="{start_date}" Ffin="{end_date}">
+        </B11>
+    </Cnc>
+</Order>
+"""
+
+
+def last_sunday(year, month):
+    """Retorna l'últim diumenge del mes, serveix per determinar quin dia
+    s'ha de canviar l'hora.
+    """
+    for day in reversed(range(1, calendar.monthrange(year, month)[1] + 1)):
+        if calendar.weekday(year, month, day) == calendar.SUNDAY:
+            return datetime(year, month, day)
+
+
+def format_timestamp(dt):
+    """Returns format "YYYYMMDDHHMNSSFFFX"
+
+    :param dt: Datetime to parse
+    :type dt: datetime
+    :return: timestamp string
+    :rtype: str
+    """
+    march = last_sunday(dt.year, 3).replace(hour=2)
+    october = last_sunday(dt.year, 10).replace(hour=2)
+    if march < dt < october:
+        season = 'S'
+    else:
+        season = 'W'
+    return '{}{}'.format(dt.strftime('%Y%m%d%H%M%S000'), season)
 
 
 class Service(object):
@@ -26,6 +63,34 @@ class Service(object):
                                                     meters, 2, self.source)
 
         return results
+
+    def order(self, cnc_id, order, start_date=None, end_date=None):
+        """
+        :param cnc_id: Id concentrador
+        :type cnc_id: str
+        :param order: Tipo de order (T01, T02, T03, T04, ...)
+        :type order: str
+        :param start_date: Fecha inicio, si está vacio coge ahora)
+        :type start_date: datetime
+        :param end_date: Fecha final, si está vacio coge ahora)
+        :type end_date: datetime
+        :return: Resultado petición
+        :rtype: bool
+        """
+
+        if start_date is None:
+            start_date = datetime.now()
+        if end_date is None:
+            end_date = datetime.now()
+
+        b11 = B11_TEMPLATE.format(
+            idpet=self.fact_id,
+            cnc_id=cnc_id,
+            order=order,
+            start_date=format_timestamp(start_date),
+            end_date=format_timestamp(end_date)
+        )
+        return self.DC_service.Order(self.fact_id, 0, b11, 3)
 
     def create_service(self):
         binding = '{http://www.asais.fr/ns/Saturne/DC/ws}WS_DCSoap'
