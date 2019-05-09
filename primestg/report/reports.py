@@ -1,10 +1,8 @@
-import datetime
-
 from primestg.report.base import (
     MeasureActiveReactive, MeasureActiveReactiveFloat, Parameter,
     MeterWithMagnitude, ConcentratorWithMetersWithConcentratorName,
-    Concentrator, Measure, MeterWithConcentratorName,
-    SAGE_BAD_TIMESTAMP)
+    Concentrator, Measure, MeterWithConcentratorName
+)
 from primestg.message import MessageS
 
 SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S15',
@@ -476,7 +474,7 @@ class ParameterS23(Parameter):
     @staticmethod
     def get_pc(obj):
         obj_values = {}
-        obj_values.update({'act_date': obj.get('ActDate')})
+        obj_values.update({'act_date': Measure(obj)._get_timestamp('ActDate')})
         if getattr(obj, 'Contrato1', None) is not None:
             for obj_data in obj.Contrato1:
                 obj_contrato1_value = {
@@ -516,7 +514,7 @@ class ParameterS23(Parameter):
                 contract_values = {
                     'calendar_type': contract_obj.get('CalendarType'),
                     'calendar_name': contract_obj.get('CalendarName'),
-                    'act_date': contract_obj.get('ActDate'),
+                    'act_date': Measure(contract_obj)._get_timestamp('ActDate'),
                 }
                 if getattr(contract_obj, 'Season', None) is not None:
                     seasons = {}
