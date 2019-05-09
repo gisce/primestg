@@ -542,7 +542,7 @@ class ParameterS23(Parameter):
                     for x, special_day_obj in enumerate(obj.Contract.SpecialDays):
                         special_day = 'special_day' + str(x + 1)
                         special_day_value = {
-                            'dt': special_day_obj.get('DT'),
+                            'dt': Measure(special_day_obj)._get_timestamp('DT'),
                             'dt_card': special_day_obj.get('DTCard'),
                             'day_id': special_day_obj.get('DayID'),
                         }
