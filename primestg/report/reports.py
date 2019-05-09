@@ -474,41 +474,9 @@ class ParameterS23(Parameter):
     :return: formated values for PCact and PCLatent sections 
     """
     @staticmethod
-    def tr_date(parent, name):
-        """
-        Formats a timestamp from the name of the value.
-
-        :param name: a string with the name
-        :param element: an lxml.objectify.StringElement, by default \
-            self.objectified
-        :return: a formatted string representing a timestamp \
-            ('%Y-%m-%d %H:%M:%S')
-        """
-        value = parent.get(name)
-        if len(value) > 15:
-            date_value = value[0:14] + value[-1]
-        else:
-            date_value = value
-
-        # Fix for SAGECOM which puts this timestamp when the period doesn't
-        # affect the contracted tariff
-        if date_value.upper() in SAGE_BAD_TIMESTAMP:
-            date_value = '19000101000000W'
-
-        try:
-            time = datetime.strptime(date_value[:-1],
-                                     '%Y%m%d%H%M%S')
-        except ValueError as e:
-            raise ValueError("Date out of range: {} ({}) {}".format(
-                date_value, name, e))
-        return time.strftime('%Y-%m-%d %H:%M:%S')
-
-
-
-    @staticmethod
-    def get_pc(parent, obj):
+    def get_pc(obj):
         obj_values = {}
-        obj_values.update({'act_date': parent.tr_date(parent, obj.get('ActDate'))})
+        obj_values.update({'act_date': obj.get('ActDate')})
         if getattr(obj, 'Contrato1', None) is not None:
             for obj_data in obj.Contrato1:
                 obj_contrato1_value = {
@@ -539,7 +507,7 @@ class ParameterS23(Parameter):
     :return: formated values for ActiveCalendar and LatentCalendar sections
     """
     @staticmethod
-    def get_calendars(parent, obj):
+    def get_calendars(obj):
         obj_values = {}
         if getattr(obj, 'Contract', None) is not None:
             for i, contract_obj in enumerate(obj.Contract):
@@ -613,13 +581,13 @@ class ParameterS23(Parameter):
             values.update({'date': self._get_timestamp('Fh')})
             if hasattr(self.objectified, 'PCact'):
                 pc_act = self.objectified.PCact
-                obj_values = self.get_pc(self, pc_act)
+                obj_values = self.get_pc(pc_act)
                 values['pc_act'] = obj_values
             else:
                 values['pc_act'] = []
             if hasattr(self.objectified, 'PCLatent'):
                 pc_lat = self.objectified.PCLatent
-                obj_values = self.get_pc(self, pc_lat)
+                obj_values = self.get_pc(pc_lat)
                 values['pc_latent'] = obj_values
             else:
                 values['pc_latent'] = []
