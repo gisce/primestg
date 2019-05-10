@@ -1,0 +1,109 @@
+<Report IdRpt="S23" IdPet="93590210" Version="3.1.c">
+<Cnc Id="ZIV0004488684">
+	<Cnt Id="ZIV0045682496">
+		<S23 Fh="20190424225221000S">
+			<PCact ActDate="20180306152621000W">
+				<Contrato1 TR1="55000" TR2="55000" TR3="55000" TR4="55000" TR5="55000" TR6="55000"/>
+			</PCact>
+			<PCLatent ActDate="FFFFFFFFFFFFFFFFFF800009">
+				<Contrato1 TR1="55000" TR2="55000" TR3="55000" TR4="55000" TR5="55000" TR6="55000"/>
+			</PCLatent>
+			<ActiveCalendars>
+				<Contract c="1" CalendarType="01" CalendarName="322E30444841" ActDate="20180306152621000W">
+					<Season Name="01" Start="FFFFFEFFFFFFFF0000800080" Week="01"/>
+					<Season Name="02" Start="FFFFFDFFFFFFFF0000800000" Week="02"/>
+					<Week Name="01" Week="01010101010101"/>
+					<Week Name="02" Week="02020202020202"/>
+					<Day id="01">
+						<Change Hour="0D000000" TariffRate="0001"/>
+						<Change Hour="17000000" TariffRate="0002"/>
+					</Day>
+					<Day id="02">
+						<Change Hour="0C000000" TariffRate="0001"/>
+						<Change Hour="16000000" TariffRate="0002"/>
+					</Day>
+					<SpecialDays DT="20111225000000W" DTCard="N" DayID="01"/>
+					<SpecialDays DT="20110815000000W" DTCard="N" DayID="01"/>
+					<SpecialDays DT="20110714000000W" DTCard="N" DayID="01"/>
+					<SpecialDays DT="20110501000000W" DTCard="N" DayID="01"/>
+				</Contract>
+				<Contract c="2" CalendarType="01" CalendarName="202020202020" ActDate="FFFFFFFFFFFFFFFFFW">
+				</Contract>
+				<Contract c="3" CalendarType="01" CalendarName="202020202020" ActDate="FFFFFFFFFFFFFFFFFW">
+				</Contract>
+			</ActiveCalendars>
+			<LatentCalendars>
+				<Contract c="1" CalendarType="01" CalendarName="322E30444841" ActDate="FFFFFFFFFFFFFFFFFF800009">
+					<Season Name="01" Start="FFFFFEFFFFFFFF0000800080" Week="01"/>
+					<Season Name="02" Start="FFFFFDFFFFFFFF0000800000" Week="02"/>
+					<Week Name="01" Week="01010101010101"/>
+					<Week Name="02" Week="02020202020202"/>
+					<Day id="01">
+						<Change Hour="0D000000" TariffRate="0001"/>
+						<Change Hour="17000000" TariffRate="0002"/>
+					</Day>
+					<Day id="02">
+						<Change Hour="0C000000" TariffRate="0001"/>
+						<Change Hour="16000000" TariffRate="0002"/>
+					</Day>
+				</Contract>
+				<Contract c="2" CalendarType="01" CalendarName="202020202020" ActDate="FFFFFFFFFFFFFFFFFF800009">
+				</Contract>
+				<Contract c="3" CalendarType="01" CalendarName="202020202020" ActDate="FFFFFFFFFFFFFFFFFF800009">
+				</Contract>
+			</LatentCalendars>
+		</S23>
+	</Cnt>
+	<Cnt Id="ZIVS004488684" ErrCat="3" ErrCode="1" />
+	<Cnt Id="ZIV0050201909">
+		<S23 Fh="20190424225310000S">
+			<PCact ActDate="20180704154419000S">
+				<Contrato1 TR1="15000" TR2="15000" TR3="15000" TR4="15000" TR5="15000" TR6="15000"/>
+			</PCact>
+			<PCLatent ActDate="FFFFFFFFFFFFFFFFFF800009">
+				<Contrato1 TR1="15000" TR2="15000" TR3="15000" TR4="15000" TR5="15000" TR6="15000"/>
+			</PCLatent>
+			<ActiveCalendars>
+				<Contract c="1" CalendarType="01" CalendarName="322E30444841" ActDate="20180704154419000S">
+					<Season Name="01" Start="FFFFFEFFFFFFFF0000800080" Week="01"/>
+					<Season Name="02" Start="FFFFFDFFFFFFFF0000800000" Week="02"/>
+					<Week Name="01" Week="01010101010101"/>
+					<Week Name="02" Week="02020202020202"/>
+					<Day id="01">
+						<Change Hour="0D000000" TariffRate="0001"/>
+						<Change Hour="17000000" TariffRate="0002"/>
+					</Day>
+					<Day id="02">
+						<Change Hour="0C000000" TariffRate="0001"/>
+						<Change Hour="16000000" TariffRate="0002"/>
+					</Day>
+				</Contract>
+				<Contract c="2" CalendarType="01" CalendarName="202020202020" ActDate="FFFFFFFFFFFFFFFFFW">
+				</Contract>
+				<Contract c="3" CalendarType="01" CalendarName="202020202020" ActDate="FFFFFFFFFFFFFFFFFW">
+				</Contract>
+			</ActiveCalendars>
+			<LatentCalendars>
+				<Contract c="1" CalendarType="01" CalendarName="322E30444841" ActDate="FFFFFFFFFFFFFFFFFF800009">
+					<Season Name="01" Start="FFFFFEFFFFFFFF0000800080" Week="01"/>
+					<Season Name="02" Start="FFFFFDFFFFFFFF0000800000" Week="02"/>
+					<Week Name="01" Week="01010101010101"/>
+					<Week Name="02" Week="02020202020202"/>
+					<Day id="01">
+						<Change Hour="0D000000" TariffRate="0001"/>
+						<Change Hour="17000000" TariffRate="0002"/>
+					</Day>
+					<Day id="02">
+						<Change Hour="0C000000" TariffRate="0001"/>
+						<Change Hour="16000000" TariffRate="0002"/>
+					</Day>
+				</Contract>
+				<Contract c="2" CalendarType="01" CalendarName="202020202020" ActDate="FFFFFFFFFFFFFFFFFF800009">
+				</Contract>
+				<Contract c="3" CalendarType="01" CalendarName="202020202020" ActDate="FFFFFFFFFFFFFFFFFF800009">
+				</Contract>
+			</LatentCalendars>
+		</S23>
+	</Cnt>
+</Cnc>
+</Report>

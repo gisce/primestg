@@ -467,7 +467,7 @@ class ParameterS23(Parameter):
     """
 
     """
-    Static method to retrieve values with common structure for S233.
+    Static method to retrieve values with common structure for S23.
 
     :return: formated values for PCact and PCLatent sections 
     """
@@ -1062,7 +1062,7 @@ class MeterS13(MeterWithConcentratorName):
 
 class MeterS23(MeterWithConcentratorName):
     """
-    Class for a meter of report S09.
+    Class for a meter of report S23.
     """
 
     @property
@@ -1070,7 +1070,7 @@ class MeterS23(MeterWithConcentratorName):
         """
         The type of report for report S23.
 
-        :return: a string with 'S023'
+        :return: a string with 'S23'
         """
 
         return 'S23'
@@ -1082,9 +1082,7 @@ class MeterS23(MeterWithConcentratorName):
     def __init__(
             self,
             objectified_meter,
-            concentrator_name,
-            # report_version,
-            # request_id
+            concentrator_name
     ):
         """
         Create a Meter object using MeterWithConcentratorName constructor and \
@@ -1100,8 +1098,6 @@ class MeterS23(MeterWithConcentratorName):
         :return: a Measure object
         """
         super(MeterS23, self).__init__(objectified_meter, concentrator_name)
-        # self.parameters.report_version = report_version
-        # self.request_id = request_id
 
     @property
     def request_id(self):
@@ -1128,12 +1124,15 @@ class MeterS23(MeterWithConcentratorName):
 
         :return: a list of parameter set objects
         """
-        parameters = []
-        for parameter in self.objectified.S23:
-            parameters.append(ParameterS23(
-                parameter,
-                self.concentrator_name,
-            ))
+        if not self.errors:
+            parameters = []
+            for parameter in self.objectified.S23:
+                parameters.append(ParameterS23(
+                    parameter,
+                    self.concentrator_name,
+                ))
+        else:
+            parameters = []
         return parameters
 
     @property
