@@ -474,7 +474,8 @@ class ParameterS23(Parameter):
     @staticmethod
     def get_pc(obj):
         obj_values = {}
-        obj_values.update({'act_date': Measure(obj)._get_timestamp('ActDate')})
+        if obj.get('ActDate'):
+            obj_values.update({'act_date': Measure(obj)._get_timestamp('ActDate')})
         if getattr(obj, 'Contrato1', None) is not None:
             for obj_data in obj.Contrato1:
                 obj_contrato1_value = {
@@ -1559,6 +1560,18 @@ class ConcentratorS23(ConcentratorWithMetersWithConcentratorName):
         """
         return MeterS23
 
+    @property
+    def values(self):
+        """
+        Values of the set of parameters of this concentrator.
+
+        :return: a list with the values of the meters
+        """
+        values = []
+        for parameter in self.parameters:
+            values.append(parameter.values)
+            self._warnings.extend(parameter.warnings)
+        return values
 
 class ConcentratorS24(Concentrator):
     """
