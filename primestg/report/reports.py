@@ -1,12 +1,12 @@
 from primestg.report.base import (
     MeasureActiveReactive, MeasureActiveReactiveFloat, Parameter,
     MeterWithMagnitude, ConcentratorWithMetersWithConcentratorName,
-    Concentrator, Measure, MeterWithConcentratorName,
+    Concentrator, Measure, MeterWithConcentratorName
 )
 from primestg.message import MessageS
 
 SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S15',
-                     'S17', 'S24', 'S27']
+                     'S17', 'S23', 'S24', 'S27']
 
 
 def is_supported(report_code):
@@ -457,6 +457,153 @@ class ParameterS12(Parameter):
                 values['tasks'] = []
         except Exception as e:
             self._warnings.append('ERROR: Reading S12 report. Thrown '
+                                  'exception: {}'.format(e))
+        return values
+
+
+class ParameterS23(Parameter):
+    """
+    Class for a set of parameters of report S23.
+    """
+
+    """
+    Static method to retrieve values with common structure for S23.
+
+    :return: formated values for PCact and PCLatent sections 
+    """
+    @staticmethod
+    def get_pc(obj):
+        obj_values = {}
+        if obj.get('ActDate'):
+            obj_values.update({'act_date': Measure(obj)._get_timestamp('ActDate')})
+        if getattr(obj, 'Contrato1', None) is not None:
+            for obj_data in obj.Contrato1:
+                obj_contrato1_value = {
+                    'tr1': int(obj_data.get('TR1')),
+                    'tr2': int(obj_data.get('TR2')),
+                    'tr3': int(obj_data.get('TR3')),
+                    'tr4': int(obj_data.get('TR4')),
+                    'tr5': int(obj_data.get('TR5')),
+                    'tr6': int(obj_data.get('TR6')),
+                }
+            obj_values.update({'contrato1': obj_contrato1_value})
+        if getattr(obj, 'PResidual', None) is not None:
+            for obj_data in obj.PResidual:
+                obj_presidual_value = {
+                    'tr1': int(obj_data.get('TR1')),
+                    'tr2': int(obj_data.get('TR2')),
+                    'tr3': int(obj_data.get('TR3')),
+                    'tr4': int(obj_data.get('TR4')),
+                    'tr5': int(obj_data.get('TR5')),
+                    'tr6': int(obj_data.get('TR6')),
+                }
+            obj_values.update({'presidual': obj_presidual_value})
+        return obj_values
+
+    """
+    Static method to retrieve values with common structure for S233.
+
+    :return: formated values for ActiveCalendar and LatentCalendar sections
+    """
+    @staticmethod
+    def get_calendars(obj):
+        obj_values = {}
+        if getattr(obj, 'Contract', None) is not None:
+            for i, contract_obj in enumerate(obj.Contract):
+                contract = {}
+                contract_num = 'c' + str(i + 1)
+                contract_values = {
+                    'calendar_type': contract_obj.get('CalendarType'),
+                    'calendar_name': contract_obj.get('CalendarName'),
+                    'act_date': Measure(contract_obj)._get_timestamp('ActDate'),
+                }
+                if getattr(contract_obj, 'Season', None) is not None:
+                    seasons = {}
+                    for x, season_obj in enumerate(obj.Contract.Season):
+                        season = 'season' + str(x + 1)
+                        season_value = {
+                            'name': season_obj.get('Name'),
+                            'start': season_obj.get('Start'),
+                            'week': season_obj.get('Week'),
+                        }
+                        seasons.update({season: season_value})
+                    contract.update({'seasons': seasons})
+                if getattr(contract_obj, 'Week', None) is not None:
+                    weeks = {}
+                    for x, week_obj in enumerate(obj.Contract.Week):
+                        week = 'week' + str(x + 1)
+                        week_value = {
+                            'name': week_obj.get('Name'),
+                            'week': week_obj.get('Week'),
+                        }
+                        weeks.update({week: week_value})
+                    contract.update({'weeks': weeks})
+                if getattr(contract_obj, 'SpecialDays', None) is not None:
+                    special_days = {}
+                    for x, special_day_obj in enumerate(obj.Contract.SpecialDays):
+                        special_day = 'special_day' + str(x + 1)
+                        special_day_value = {
+                            'dt': Measure(special_day_obj)._get_timestamp('DT'),
+                            'dt_card': special_day_obj.get('DTCard'),
+                            'day_id': special_day_obj.get('DayID'),
+                        }
+                        special_days.update({special_day: special_day_value})
+                    contract.update({'special_days': special_days})
+                if getattr(contract_obj, 'Day', None) is not None:
+                    days = {}
+                    for x, day_obj in enumerate(obj.Contract.Day):
+                        day = 'day' + str(x + 1)
+                        changes = {}
+                        for y, change_obj in enumerate(obj.Contract.Day[x].Change):
+                            change = 'change' + str(y + 1)
+                            if getattr(day_obj, 'Change', None) is not None:
+                                change_value = {
+                                    'hour': change_obj.get('Hour'),
+                                    'tariffrate': change_obj.get('TariffRate'),
+                                }
+                            changes.update({change: change_value})
+                        days.update({day: changes})
+                    contract.update({'days': days})
+                contract.update(contract_values)
+                obj_values.update({contract_num: contract})
+        return obj_values
+
+    @property
+    def values(self):
+        """
+        Set of parameters of report S23.
+
+        :return: a dict with a set of parameters of report S23
+        """
+        values = {}
+        try:
+            values.update({'date': self._get_timestamp('Fh')})
+            if hasattr(self.objectified, 'PCact'):
+                pc_act = self.objectified.PCact
+                obj_values = self.get_pc(pc_act)
+                values['pc_act'] = obj_values
+            else:
+                values['pc_act'] = []
+            if hasattr(self.objectified, 'PCLatent'):
+                pc_lat = self.objectified.PCLatent
+                obj_values = self.get_pc(pc_lat)
+                values['pc_latent'] = obj_values
+            else:
+                values['pc_latent'] = []
+            if hasattr(self.objectified, 'ActiveCalendars'):
+                active_calendars = self.objectified.ActiveCalendars
+                obj_values = self.get_calendars(active_calendars)
+                values['active_calendars'] = obj_values
+            else:
+                values['active_calendars'] = []
+            if hasattr(self.objectified, 'LatentCalendars'):
+                latent_calendars = self.objectified.LatentCalendars
+                obj_values = self.get_calendars(latent_calendars)
+                values['latent_calendars'] = obj_values
+            else:
+                values['latent_calendars'] = []
+        except Exception as e:
+            self._warnings.append('ERROR: Reading S23 report. Thrown '
                                   'exception: {}'.format(e))
         return values
 
@@ -914,6 +1061,128 @@ class MeterS13(MeterWithConcentratorName):
         return MeasureEvents
 
 
+class MeterS23(MeterWithConcentratorName):
+    """
+    Class for a meter of report S23.
+    """
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S23.
+
+        :return: a string with 'S23'
+        """
+
+        return 'S23'
+
+    """
+    Class for a meter of report S23.
+    """
+
+    def __init__(
+            self,
+            objectified_meter,
+            concentrator_name
+    ):
+        """
+        Create a Meter object using MeterWithConcentratorName constructor and \
+            adding the report version and request identification.
+
+        Create a Meter object.
+
+        :param objectified_meter: an lxml.objectify.StringElement \
+            representing a set of parameters
+        :param concentrator_name: a string with the name of the concentrator
+        :param report_version: a string with the version of report
+        :param request_id: a string with the request identification
+        :return: a Measure object
+        """
+        super(MeterS23, self).__init__(objectified_meter, concentrator_name)
+
+    @property
+    def request_id(self):
+        """
+        The request identification.
+
+        :return: a string with the request identification
+        """
+        return self._request_id
+
+    @request_id.setter
+    def request_id(self, value):
+        """
+        Stores the request identification.
+
+        :param value: a string with the version of the report
+        """
+        self._request_id = value
+
+    @property
+    def parameters(self):
+        """
+        Parameter set objects of this concentrator.
+
+        :return: a list of parameter set objects
+        """
+        if not self.errors:
+            parameters = []
+            for parameter in self.objectified.S23:
+                parameters.append(ParameterS23(
+                    parameter,
+                    self.concentrator_name,
+                ))
+        else:
+            parameters = []
+        return parameters
+
+    @property
+    def values(self):
+        """
+        Values of the set of parameters of this meter.
+
+        :return: a list with the values of the meter
+        """
+        values = []
+        for parameter in self.parameters:
+            values.append(parameter.values)
+            if parameter.warnings:
+                if self._warnings.get(self.name, False):
+                    self._warnings[self.name].extend(parameter.warnings)
+                else:
+                    self._warnings.update({self.name: parameter.warnings})
+        return values
+
+    @property
+    def warnings(self):
+        """
+        Warnings of this meter.
+
+        :return: a list with the errors found reading the meter
+        """
+        return self._warnings
+
+    @property
+    def meters(self):
+        """
+        Meter objects of this concentrator.
+
+        :return: a list of meter objects
+        """
+        meters = []
+        if getattr(self.objectified, 'Cnt', None) is not None:
+            for meter in self.objectified.Cnt:
+                meters.append(MeterS23(
+                    meter,
+                    self.name,
+                    self.report_version,
+                    self.request_id
+                ))
+            for meter in meters:
+                self._warnings.append(meter.warnings)
+        return meters
+
+
 class ConcentratorS02(ConcentratorWithMetersWithConcentratorName):
     """
     Class for a concentrator of report S02.
@@ -1276,6 +1545,34 @@ class ConcentratorS17(ConcentratorEvents):
         return parameters
 
 
+class ConcentratorS23(ConcentratorWithMetersWithConcentratorName):
+
+    """
+    Class for a concentrator of report S23.
+    """
+
+    @property
+    def meter_class(self):
+        """
+        The class used to instance meters for report S23.
+
+        :return: a class to instance meters of report S23
+        """
+        return MeterS23
+
+    @property
+    def values(self):
+        """
+        Values of the set of parameters of this concentrator.
+
+        :return: a list with the values of the meters
+        """
+        values = []
+        for parameter in self.parameters:
+            values.append(parameter.values)
+            self._warnings.extend(parameter.warnings)
+        return values
+
 class ConcentratorS24(Concentrator):
     """
         Class for a concentrator of report S24.
@@ -1447,6 +1744,10 @@ class Report(object):
                     self.request_id,
                     self.report_type
                 ]
+            },
+            'S23': {
+                'class': ConcentratorS23,
+                'args': [objectified_concentrator]
             },
             'S24': {
                 'class': ConcentratorS24,
