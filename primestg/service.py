@@ -151,21 +151,6 @@ class Service(object):
         """
         return self.send('S05', '', date_from, date_to)
 
-    def get_meter_events(self, meters, date_from, date_to):
-        """
-        Asks for a S09 report to the specified meter.
-        :param meters: a meter_id
-        :return: an S09 report for the corresponding meter
-        """
-        return self.send('S09', meters, date_from, date_to)
-
-    def get_all_meter_events(self, date_from, date_to):
-        """
-        Asks for a S09 report to all meters.
-        :return: an S09 report from every meter
-        """
-        return self.send('S09', '', date_from, date_to)
-
     def get_meter_parameters(self, meters, date_from, date_to):
         """
         Asks for a S06 report to the specified meter.
@@ -181,9 +166,54 @@ class Service(object):
         """
         return self.send('S06', '', date_from, date_to)
 
+    def get_meter_events(self, meters, date_from, date_to):
+        """
+        Asks for a S09 report to the specified meter.
+        :param meters: a meter_id
+        :return: an S09 report for the corresponding meter
+        """
+        return self.send('S09', meters, date_from, date_to)
+
+    def get_all_meter_events(self, date_from, date_to):
+        """
+        Asks for a S09 report to all meters.
+        :return: an S09 report from every meter
+        """
+        return self.send('S09', '', date_from, date_to)
+
     def get_concentrator_parameters(self, dc, date_from, date_to):
         """
         Asks for a S12 report to the concentrator.
         :return: an S12 report from the concentrator.
         """
         return self.send('S12', dc, date_from, date_to)
+
+    def get_advanced_instant_data(self, meters):
+        """
+        Asks for a S21 report to the specified meter.
+        :param meters: a meter_id
+        :return: an S21 report for the corresponding meter
+        """
+        return self.send('S21', meters)
+
+    def get_contract_definition(self, meters, date_from, date_to):
+        """
+        Asks for a S23 report to the specified meter.
+        :param meters: a meter_id
+        :return: an S23 report for the corresponding meter
+        """
+        return self.send('S23', meters, date_from, date_to)
+
+    def get_all_contract_definition(self, date_from, date_to):
+        """
+        Asks for a S23 report to all meters.
+        :return: an S23 report from every meter
+        """
+        return self.send('S23', '', date_from, date_to)
+
+    def get_all_contract_definition(self, date_from, date_to):
+        """
+        Asks for a S23 report to all meters.
+        :return: an S23 report from every meter
+        """
+        return self.send('S23', '', date_from, date_to)
