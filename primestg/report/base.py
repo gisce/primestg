@@ -15,10 +15,17 @@ Magnitude value (1000) for measures represented in kW.
 SAGE_BAD_TIMESTAMP = [
     'FFFFFFFFFFFFFFW',
     'FFFFFFFF000000S',
+]
+
+S23_BAD_TIMESTAMP = [
     '00000000000000W',
     '000000000000000',
     'FFFFFFFFFFFFFF9',
+    'FFFFFFFFFFFFFF0',
+    'FFFFFFFFFFFFFFF'
 ]
+
+BAD_TIMESTAMP = SAGE_BAD_TIMESTAMP + S23_BAD_TIMESTAMP
 
 
 class ValueWithTime(object):
@@ -48,8 +55,11 @@ class ValueWithTime(object):
 
         # Fix for SAGECOM which puts this timestamp when the period doesn't
         # affect the contracted tariff
-        if date_value.upper() in  SAGE_BAD_TIMESTAMP:
+        if date_value.upper() in BAD_TIMESTAMP:
             date_value = '19000101000000W'
+
+        if date_value.startswith('ffff'):
+            date_value = date_value.replace(date_value[:4], '9999')
 
         try:
             time = datetime.strptime(date_value[:-1],

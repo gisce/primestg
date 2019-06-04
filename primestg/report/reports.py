@@ -519,7 +519,7 @@ class ParameterS23(Parameter):
                 }
                 if getattr(contract_obj, 'Season', None) is not None:
                     seasons = {}
-                    for x, season_obj in enumerate(obj.Contract.Season):
+                    for x, season_obj in enumerate(contract_obj.Season):
                         season = 'season' + str(x + 1)
                         season_value = {
                             'name': season_obj.get('Name'),
@@ -530,7 +530,7 @@ class ParameterS23(Parameter):
                     contract.update({'seasons': seasons})
                 if getattr(contract_obj, 'Week', None) is not None:
                     weeks = {}
-                    for x, week_obj in enumerate(obj.Contract.Week):
+                    for x, week_obj in enumerate(contract_obj.Week):
                         week = 'week' + str(x + 1)
                         week_value = {
                             'name': week_obj.get('Name'),
@@ -540,7 +540,7 @@ class ParameterS23(Parameter):
                     contract.update({'weeks': weeks})
                 if getattr(contract_obj, 'SpecialDays', None) is not None:
                     special_days = {}
-                    for x, special_day_obj in enumerate(obj.Contract.SpecialDays):
+                    for x, special_day_obj in enumerate(contract_obj.SpecialDays):
                         special_day = 'special_day' + str(x + 1)
                         special_day_value = {
                             'dt': Measure(special_day_obj)._get_timestamp('DT'),
@@ -551,10 +551,10 @@ class ParameterS23(Parameter):
                     contract.update({'special_days': special_days})
                 if getattr(contract_obj, 'Day', None) is not None:
                     days = {}
-                    for x, day_obj in enumerate(obj.Contract.Day):
+                    for x, day_obj in enumerate(contract_obj.Day):
                         day = 'day' + str(x + 1)
                         changes = {}
-                        for y, change_obj in enumerate(obj.Contract.Day[x].Change):
+                        for y, change_obj in enumerate(contract_obj.Day[x].Change):
                             change = 'change' + str(y + 1)
                             if getattr(day_obj, 'Change', None) is not None:
                                 change_value = {
@@ -583,13 +583,13 @@ class ParameterS23(Parameter):
                 obj_values = self.get_pc(pc_act)
                 values['pc_act'] = obj_values
             else:
-                values['pc_act'] = []
+                values['pc_act'] = 'supervisor'
             if hasattr(self.objectified, 'PCLatent'):
                 pc_lat = self.objectified.PCLatent
                 obj_values = self.get_pc(pc_lat)
                 values['pc_latent'] = obj_values
             else:
-                values['pc_latent'] = []
+                values['pc_act'] = 'supervisor'
             if hasattr(self.objectified, 'ActiveCalendars'):
                 active_calendars = self.objectified.ActiveCalendars
                 obj_values = self.get_calendars(active_calendars)
