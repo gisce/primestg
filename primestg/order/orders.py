@@ -1,5 +1,5 @@
 from libcomxml.core import XmlModel, XmlField
-from base import Order
+from primestg.order.base import Order
 
 SUPPORTED_ORDERS = ['B11']
 
