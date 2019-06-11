@@ -63,8 +63,8 @@ class Service(object):
         :return: Success or fail
         """
         payload.update({
-            'date_from': format_timestamp(payload.get('date_from')),
-            'date_to': format_timestamp(payload.get('date_to'))
+            'date_from': payload.get('date_from'),
+            'date_to': payload.get('date_to')
         })
         b11 = B11(generic_values, payload)
         b11.order.build_tree()
