@@ -2,7 +2,7 @@
 from zeep import Client
 from datetime import datetime
 import primestg
-from order.orders import *
+from primestg.order.orders import *
 import calendar
 
 def last_sunday(year, month):
