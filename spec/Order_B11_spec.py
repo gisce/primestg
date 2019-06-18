@@ -1,14 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from primestg.order.orders import B11
+from primestg.order.orders import Order
 from expects import expect, equal
 
 with description('Order B11 Generation'):
-    with before.all:
-
-        self.data_filenames = [
-            'spec/data/B11.xml',
-        ]
 
     with it('generates expected B11 T05 xml'):
         expected_result = '<Order IdPet="1234" IdReq="B11" Version="3.1.c">\n  ' \
@@ -25,10 +20,8 @@ with description('Order B11 Generation'):
             'date_from': '',
             'date_to': '',
         }
-        b11 = B11(generic_values, payload)
-        b11.order.build_tree()
-        b11.order.pretty_print = True
 
-        xml = str(b11.order)
-        formatted_xml = xml.replace('<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n', '')
-        expect(formatted_xml).to(equal(expected_result))
+        order = Order('B11')
+        order = order.create(generic_values, payload)
+
+        expect(order).to(equal(expected_result))

@@ -2,8 +2,9 @@
 from zeep import Client
 from datetime import datetime
 import primestg
-from primestg.order.orders import *
+from primestg.order.orders import Order
 import calendar
+
 
 def last_sunday(year, month):
     """Retorna l'últim diumenge del mes, serveix per determinar quin dia
@@ -57,6 +58,32 @@ class Service(object):
         results = self.DC_service.Order(self.fact_id, 0, order, 3)
         return results
 
+    def get_cutoff_reconnection(self, generic_values, payload):
+        """
+        Sends B03 order to meter
+        :return: Success or fail
+        """
+        payload.update({
+            'date_from': payload.get('date_from'),
+            'date_to': payload.get('date_to')
+        })
+        order = Order('B03')
+        order = order.create(generic_values, payload)
+        return self.send_order('B03', order)
+
+    def meter_modification(self, generic_values, payload):
+        """
+        Sends B09 order to meter
+        :return: Success or fail
+        """
+        payload.update({
+            'date_from': payload.get('date_from'),
+            'date_to': payload.get('date_to')
+        })
+        order = Order('B09')
+        order = order.create(generic_values, payload)
+        return self.send_order('B09', order)
+
     def get_order_request(self, generic_values, payload):
         """
         Sends B11 order to concentrator
@@ -66,12 +93,9 @@ class Service(object):
             'date_from': payload.get('date_from'),
             'date_to': payload.get('date_to')
         })
-        b11 = B11(generic_values, payload)
-        b11.order.build_tree()
-        b11.order.pretty_print = True
-        b11 = str(b11.order)
-        formatted_b11 = b11.replace('<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n', '')
-        return self.send_order('B11', formatted_b11)
+        order = Order('B11')
+        order = order.create(generic_values, payload)
+        return self.send_order('B11', order)
 
     def create_service(self):
         binding = '{http://www.asais.fr/ns/Saturne/DC/ws}WS_DCSoap'
