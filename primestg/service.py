@@ -63,10 +63,6 @@ class Service(object):
         Sends B03 order to meter
         :return: Success or fail
         """
-        payload.update({
-            'date_from': payload.get('date_from'),
-            'date_to': payload.get('date_to')
-        })
         order = Order('B03')
         order = order.create(generic_values, payload)
         return self.send_order('B03', order)
@@ -76,10 +72,6 @@ class Service(object):
         Sends B09 order to meter
         :return: Success or fail
         """
-        payload.update({
-            'date_from': payload.get('date_from'),
-            'date_to': payload.get('date_to')
-        })
         order = Order('B09')
         order = order.create(generic_values, payload)
         return self.send_order('B09', order)
@@ -89,10 +81,6 @@ class Service(object):
         Sends B11 order to concentrator
         :return: Success or fail
         """
-        payload.update({
-            'date_from': payload.get('date_from'),
-            'date_to': payload.get('date_to')
-        })
         order = Order('B11')
         order = order.create(generic_values, payload)
         return self.send_order('B11', order)
