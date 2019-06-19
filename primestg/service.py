@@ -55,6 +55,12 @@ class Service(object):
         return results
 
     def send_order(self, report_id, order):
+        """
+        Sends order
+        :param report_id: B11,B09,etc.
+        :param order: XML containing order
+        :return: true or false
+        """
         results = self.DC_service.Order(self.fact_id, 0, order, 3)
         return results
 
@@ -67,7 +73,7 @@ class Service(object):
         order = order.create(generic_values, payload)
         return self.send_order('B03', order)
 
-    def meter_modification(self, generic_values, payload):
+    def get_meter_modification(self, generic_values, payload):
         """
         Sends B09 order to meter
         :return: Success or fail

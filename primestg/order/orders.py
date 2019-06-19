@@ -30,7 +30,12 @@ class B03Payload(XmlModel):
     """
     The class used to instance B03 parameters.
     Supported parameters:
-
+        Fini: Execution date
+        Ffin: Maximum Execution Date
+        Order:
+            0 -> OPEN
+            1 -> CLOSE
+            2 -> CLOSE/RECONNECT
     :return: B03 parameters
 
     """
@@ -47,13 +52,7 @@ class B03Payload(XmlModel):
 class B09:
     """
     The class used to instance B09 order.
-    Supported parameters:
-        Fini: Execution date
-        Ffin: Maximum Execution Date
-        Order:
-            0 -> OPEN
-            1 -> CLOSE
-            2 -> CLOSE/RECONNECT
+
     :return: B09 order with parameters
     """
     def __init__(self, generic_values, payload):
