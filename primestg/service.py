@@ -215,7 +215,7 @@ class Service(object):
         Asks for a S17 report to the concentrator.
         :return: an S17 report from the concentrator.
         """
-        return self.send('S12', dc, date_from, date_to)
+        return self.send('S17', dc, date_from, date_to)
 
     def get_all_contract_definition(self, date_from, date_to):
         """
