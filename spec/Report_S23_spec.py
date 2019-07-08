@@ -8,7 +8,9 @@ with description('Report S23 examples'):
     with before.all:
 
         self.data_filenames = [
-            'spec/data/ZIV0004488684_59412C2_S23_0_20190424225341'
+            'spec/data/ZIV0004488684_59412C2_S23_0_20190424225341',
+            # File with supervisor
+            'spec/data/CIR4621816077_59864AC_S23_0_20190514165558'
         ]
 
         self.report = []
