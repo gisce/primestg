@@ -11,7 +11,8 @@ setup(
     author_email='devel@gisce.net',
     install_requires=[
         'lxml',
-        'zeep'
+        'zeep',
+        'libcomxml'
     ],
     description='Prime STG-DC Interface Specification',
     classifiers=[
