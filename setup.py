@@ -12,7 +12,8 @@ setup(
     install_requires=[
         'lxml',
         'zeep',
-        'libcomxml'
+        'libcomxml',
+        'click'
     ],
     description='Prime STG-DC Interface Specification',
     classifiers=[
@@ -25,5 +26,9 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
-      ]
+      ],
+    entry_points = '''
+       [console_scripts]
+       primestg=primestg.cli:primestg
+    ''',
 )
