@@ -8,6 +8,7 @@ with description('Report S21 example'):
 
         self.data_filenames = [
             'spec/data/S21.xml',
+            'spec/data/S21_with_error.xml',
             'spec/data/S21_empty.xml',
         ]
 

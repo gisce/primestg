@@ -21,6 +21,14 @@ def get_integer_value(param):
     return result
 
 
+def get_float_value(param):
+    try:
+        result = float(param)
+    except ValueError as e:
+        result = 0.0
+    return result
+
+
 class MeasureS01(MeasureActiveReactive):
     """
     Class for a set of measures of report S01.
@@ -39,12 +47,12 @@ class MeasureS01(MeasureActiveReactive):
                 {
                     'timestamp': self._get_timestamp('Fh'),
                     'voltage': get_integer_value(get('L1v')),
-                    'current': float(get('L1i')),
+                    'current': get_float_value(get('L1i')),
                     'active_power_import': get_integer_value(get('Pimp')),
                     'active_power_export': get_integer_value(get('Pexp')),
                     'reactive_power_import': get_integer_value(get('Qimp')),
                     'reactive_power_export': get_integer_value(get('Qexp')),
-                    'power_factor': float(get('PF')),
+                    'power_factor': get_float_value(get('PF')),
                     'active_quadrant': get_integer_value(get('Ca')),
                     'phase_presence': [get_integer_value(i) for i in (get('PP')).split(",")],
                     'meter_phase': get_integer_value(get('Fc')),
@@ -75,34 +83,34 @@ class MeasureS21(MeasureActiveReactive):
             values.update(
                 {
                     'timestamp': self._get_timestamp('Fh'),
-                    'active_quadrant': int(get('Ca')),
-                    'current_sum_3_phases': float(get('I3')),
+                    'active_quadrant': get_integer_value(get('Ca')),
+                    'current_sum_3_phases': get_float_value(get('I3')),
 
                     'voltage1': get_integer_value(get('L1v')),
-                    'current1': float(get('L1i')),
+                    'current1': get_float_value(get('L1i')),
                     'active_power_import1': get_integer_value(get('Pimp1')),
                     'active_power_export1': get_integer_value(get('Pexp1')),
                     'reactive_power_import1': get_integer_value(get('Qimp1')),
                     'reactive_power_export1': get_integer_value(get('Qexp1')),
-                    'power_factor1': float(get('PF1')),
+                    'power_factor1': get_float_value(get('PF1')),
                     'active_quadrant_phase1': get_integer_value(get('Ca1')),
 
                     'voltage2': get_integer_value(get('L2v')),
-                    'current2': float(get('L2i')),
+                    'current2': get_float_value(get('L2i')),
                     'active_power_import2': get_integer_value(get('Pimp2')),
                     'active_power_export2': get_integer_value(get('Pexp2')),
                     'reactive_power_import2': get_integer_value(get('Qimp2')),
                     'reactive_power_export2': get_integer_value(get('Qexp2')),
-                    'power_factor2': float(get('PF2')),
+                    'power_factor2': get_float_value(get('PF2')),
                     'active_quadrant_phase2': get_integer_value(get('Ca2')),
 
                     'voltage3': get_integer_value(get('L3v')),
-                    'current3': float(get('L3i')),
+                    'current3': get_float_value(get('L3i')),
                     'active_power_import3': get_integer_value(get('Pimp3')),
                     'active_power_export3': get_integer_value(get('Pexp3')),
                     'reactive_power_import3': get_integer_value(get('Qimp3')),
                     'reactive_power_export3': get_integer_value(get('Qexp3')),
-                    'power_factor3': float(get('PF3')),
+                    'power_factor3': get_float_value(get('PF3')),
                     'active_quadrant_phase3': get_integer_value(get('Ca3')),
 
                     'phase_presence': [get_integer_value(i) for i in (get('PP')).split(",")],
