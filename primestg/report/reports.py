@@ -21,6 +21,102 @@ def get_integer_value(param):
     return result
 
 
+class MeasureS01(MeasureActiveReactive):
+    """
+    Class for a set of measures of report S01.
+    """
+    @property
+    def values(self):
+        """
+        Set of measures of report S01.
+        :return: a dict with a set of measures of report S01.
+        """
+        values = {}
+        try:
+            get = self.objectified.get
+            values = self.active_reactive(self.objectified, 'a')
+            values.update(
+                {
+                    'timestamp': self._get_timestamp('Fh'),
+                    'voltage': get_integer_value(get('L1v')),
+                    'current': float(get('L1i')),
+                    'active_power_import': get_integer_value(get('Pimp')),
+                    'active_power_export': get_integer_value(get('Pexp')),
+                    'reactive_power_import': get_integer_value(get('Qimp')),
+                    'reactive_power_export': get_integer_value(get('Qexp')),
+                    'power_factor': float(get('PF')),
+                    'active_quadrant': get_integer_value(get('Ca')),
+                    'phase_presence': [get_integer_value(i) for i in (get('PP')).split(",")],
+                    'meter_phase': get_integer_value(get('Fc')),
+                    'current_switch_state': get_integer_value(get('Eacti')),
+                    'previous_switch_state': get_integer_value(get('Eanti')),
+                }
+            )
+        except Exception as e:
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+            return []
+        return [values]
+
+
+class MeasureS21(MeasureActiveReactive):
+    """
+    Class for a set of measures of report S21.
+    """
+    @property
+    def values(self):
+        """
+        Set of measures of report S21.
+        :return: a dict with a set of measures of report S21.
+        """
+        values = {}
+        try:
+            get = self.objectified.get
+            values = self.active_reactive(self.objectified, 'a')
+            values.update(
+                {
+                    'timestamp': self._get_timestamp('Fh'),
+                    'active_quadrant': int(get('Ca')),
+                    'current_sum_3_phases': float(get('I3')),
+
+                    'voltage1': get_integer_value(get('L1v')),
+                    'current1': float(get('L1i')),
+                    'active_power_import1': get_integer_value(get('Pimp1')),
+                    'active_power_export1': get_integer_value(get('Pexp1')),
+                    'reactive_power_import1': get_integer_value(get('Qimp1')),
+                    'reactive_power_export1': get_integer_value(get('Qexp1')),
+                    'power_factor1': float(get('PF1')),
+                    'active_quadrant_phase1': get_integer_value(get('Ca1')),
+
+                    'voltage2': get_integer_value(get('L2v')),
+                    'current2': float(get('L2i')),
+                    'active_power_import2': get_integer_value(get('Pimp2')),
+                    'active_power_export2': get_integer_value(get('Pexp2')),
+                    'reactive_power_import2': get_integer_value(get('Qimp2')),
+                    'reactive_power_export2': get_integer_value(get('Qexp2')),
+                    'power_factor2': float(get('PF2')),
+                    'active_quadrant_phase2': get_integer_value(get('Ca2')),
+
+                    'voltage3': get_integer_value(get('L3v')),
+                    'current3': float(get('L3i')),
+                    'active_power_import3': get_integer_value(get('Pimp3')),
+                    'active_power_export3': get_integer_value(get('Pexp3')),
+                    'reactive_power_import3': get_integer_value(get('Qimp3')),
+                    'reactive_power_export3': get_integer_value(get('Qexp3')),
+                    'power_factor3': float(get('PF3')),
+                    'active_quadrant_phase3': get_integer_value(get('Ca3')),
+
+                    'phase_presence': [get_integer_value(i) for i in (get('PP')).split(",")],
+                    'meter_phase': get_integer_value(get('Fc')),
+                    'current_switch_state': get_integer_value(get('Eacti')),
+                    'previous_switch_state': get_integer_value(get('Eanti')),
+                }
+            )
+        except Exception as e:
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+            return []
+        return [values]
+
+
 class MeasureS02(MeasureActiveReactiveFloat):
     """
     Class for a set of measures of report S02.
@@ -790,6 +886,30 @@ class ParameterConcentratorEvents(Parameter):
         return values
 
 
+class MeterS01(MeterWithMagnitude):
+    """
+    Class for a meter of report S01.
+    """
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S01.
+
+        :return: a string with 'S01'
+        """
+        return 'S01'
+
+    @property
+    def measure_class(self):
+        """
+        The class used to instance measure sets for report S01.
+
+        :return: a class to instance measure sets of report S01
+        """
+        return MeasureS01
+
+
 class MeterS02(MeterWithMagnitude):
     """
     Class for a meter of report S02.
@@ -1061,6 +1181,30 @@ class MeterS13(MeterWithConcentratorName):
         return MeasureEvents
 
 
+class MeterS21(MeterWithMagnitude):
+    """
+    Class for a meter of report S21.
+    """
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S21.
+
+        :return: a string with 'S21'
+        """
+        return 'S21'
+
+    @property
+    def measure_class(self):
+        """
+        The class used to instance measure sets for report S21.
+
+        :return: a class to instance measure sets of report S21
+        """
+        return MeasureS21
+
+
 class MeterS23(MeterWithConcentratorName):
     """
     Class for a meter of report S23.
@@ -1181,6 +1325,21 @@ class MeterS23(MeterWithConcentratorName):
             for meter in meters:
                 self._warnings.append(meter.warnings)
         return meters
+
+
+class ConcentratorS01(ConcentratorWithMetersWithConcentratorName):
+    """
+    Class for a concentrator of report S01.
+    """
+
+    @property
+    def meter_class(self):
+        """
+        The class used to instance meters for report S01.
+
+        :return: a class to instance meters of report S01
+        """
+        return MeterS01
 
 
 class ConcentratorS02(ConcentratorWithMetersWithConcentratorName):
@@ -1545,6 +1704,21 @@ class ConcentratorS17(ConcentratorEvents):
         return parameters
 
 
+class ConcentratorS21(ConcentratorWithMetersWithConcentratorName):
+    """
+    Class for a concentrator of report S01.
+    """
+
+    @property
+    def meter_class(self):
+        """
+        The class used to instance meters for report S21.
+
+        :return: a class to instance meters of report S21
+        """
+        return MeterS21
+
+
 class ConcentratorS23(ConcentratorWithMetersWithConcentratorName):
 
     """
@@ -1695,6 +1869,10 @@ class Report(object):
         :return: a concentrator object
         """
         report_type_class = {
+            'S01': {
+                'class': ConcentratorS01,
+                'args': [objectified_concentrator]
+            },
             'S02': {
                 'class': ConcentratorS02,
                 'args': [objectified_concentrator]
@@ -1744,6 +1922,10 @@ class Report(object):
                     self.request_id,
                     self.report_type
                 ]
+            },
+            'S21': {
+                'class': ConcentratorS21,
+                'args': [objectified_concentrator]
             },
             'S23': {
                 'class': ConcentratorS23,
