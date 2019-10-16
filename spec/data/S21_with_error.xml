@@ -1,0 +1,42 @@
+<Report IdRpt="S21" IdPet="1" Version="3.1.c">
+<Cnc Id="ZIV0004394488">
+	<Cnt Id="ZIV0040318130">
+		<S21
+			Fh="20191016132700000S"
+			Ca="1"
+			I3="0"
+			L1v="236"
+			L1i="1.9"
+			Pimp1="450"
+			Pexp1="0"
+			Qimp1="0"
+			Qexp1="0"
+			PF1="1.000"
+			Ca1="1"
+			L2v="0"
+			L2i="0"
+			Pimp2=""
+			Pexp2=""
+			Qimp2=""
+			Qexp2=""
+			PF2=""
+			Ca2=""
+			L3v="0"
+			L3i="0"
+			Pimp3=""
+			Pexp3=""
+			Qimp3=""
+			Qexp3=""
+			PF3=""
+			Ca3=""
+			PP="04"
+			Fc="5"
+			Eacti="1"
+			Eanti="0"
+			AIa="254"
+			AEa="0"
+			R1a="274" R2a="0" R3a="0" R4a="0" />
+	</Cnt>
+</Cnc>
+</Report>
+
