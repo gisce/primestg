@@ -1,42 +1,7 @@
 <Report IdRpt="S21" IdPet="55568" Version="3.2">
-<Cnc Id="ZIV0004366654">
-	<Cnt Id="ZIV0044548861">
-		<S21
-			Fh="20191015152714000S"
-			Ca="4"
-			I3="8.2"
-			L1v="229"
-			L1i="0.0"
-			Pimp1="0"
-			Pexp1="0"
-			Qimp1="0"
-			Qexp1="0"
-			PF1="0.000"
-			Ca1="0"
-			L2v="228"
-			L2i="0.0"
-			Pimp2="0"
-			Pexp2="0"
-			Qimp2="0"
-			Qexp2="0"
-			PF2="0.000"
-			Ca2="0"
-			L3v="225"
-			L3i="8.3"
-			Pimp3="1860"
-			Pexp3="0"
-			Qimp3="0"
-			Qexp3="50"
-			PF3="1.000"
-			Ca3="4"
-			PP="1,2,3"
-			Fc="5"
-			Eacti="1"
-			Eanti="1"
-			AIa="2"
-			AEa="0"
-			R1a="0" R2a="0" R3a="0" R4a="0" />
-	</Cnt>
-</Cnc>
+	<Cnc Id="ZIV0004366654">
+		<Cnt Id="ZIV0044548861">
+			<S21 Fh="20191015152714000S" Ca="4" I3="8.2" L1v="229" L1i="0.0" Pimp1="0" Pexp1="0" Qimp1="0" Qexp1="0" PF1="0.000" Ca1="0" L2v="228" L2i="0.0" Pimp2="0" Pexp2="0" Qimp2="0" Qexp2="0" PF2="0.000" Ca2="0" L3v="225" L3i="8.3" Pimp3="1860" Pexp3="0" Qimp3="0" Qexp3="50" PF3="1.000" Ca3="4" PP="1,2,3" Fc="5" Eacti="1" Eanti="1" AIa="2" AEa="0" R1a="0" R2a="0" R3a="0" R4a="0"/>
+		</Cnt>
+	</Cnc>
 </Report>
-
