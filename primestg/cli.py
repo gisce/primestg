@@ -56,10 +56,15 @@ def get_sync_report(**kwargs):
                 default="http://cct.gisce.lan:8080"
 )   
 @click.option("--meter", "-m", default="ZIV0040318130")
+@click.option(
+    "--async", "-a", is_flag=True,
+    help="Sends an Async Petition to send report to FTP"
+)
 def get_sync_sxx(**kwargs):
    """Get raw Sxx report"""
+   sync = not kwargs['async']
    id_pet = get_id_pet()
-   s = Service(id_pet, kwargs['cnc_url'], sync=True)
+   s = Service(id_pet, kwargs['cnc_url'], sync=sync, source='DCF')
    res = s.send(kwargs['sxx'],kwargs['meter'])
    print res
 
