@@ -9,7 +9,8 @@ with description('Report S06 example'):
         self.data_filenames = [
             'spec/data/S06.xml',
             'spec/data/S06_with_error.xml',
-            'spec/data/S06_empty.xml'
+            'spec/data/S06_empty.xml',
+            'spec/data/S06_empty_datetime.xml',
         ]
 
         self.report = []

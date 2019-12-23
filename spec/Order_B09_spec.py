@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from primestg.order.orders import Order
 from expects import expect, equal
+from primestg.utils import assertXMLEqual
 
 with description('Order B09 Generation'):
 
@@ -44,4 +45,4 @@ with description('Order B09 Generation'):
         }
         order = Order('B09')
         order = order.create(generic_values, payload)
-        expect(order).to(equal(expected_result))
+        assertXMLEqual(order, expected_result)
