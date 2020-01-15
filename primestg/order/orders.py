@@ -1,7 +1,7 @@
 from libcomxml.core import XmlModel, XmlField
 from primestg.order.base import (OrderHeader, CntOrderHeader)
 
-SUPPORTED_ORDERS = ['B03', 'B09', 'B11']
+SUPPORTED_ORDERS = ['B03', 'B07', 'B09', 'B11']
 
 
 def is_supported(order_code):
@@ -48,6 +48,29 @@ class B03Payload(XmlModel):
             })
         super(B03Payload, self).__init__('b03Payload', 'payload', drop_empty=drop_empty)
 
+class B07:
+    """
+    The class used to instance B07 order
+    :return: B07 order with parameters
+    """
+    def __init__(self, generic_values, payload):
+        self.generic_values = generic_values
+        self.order = OrderHeader(
+            generic_values.get('id_pet'),
+            generic_values.get('id_req'),
+            generic_values.get('cnc'),
+        )
+        self.order.cnc.feed({'payload': B07Payload(payload)})
+
+class B07Payload(XmlModel):
+    """
+    The class used to instance B07 parameters.
+    """
+    def __init__(self, payload, drop_empty=False):
+        # Discard empty strings and values and compose field
+        attributes = {k: v for k, v in payload.items() if v is not None and v != ""}
+        self.payload = XmlField('B07', attributes=attributes)
+        super(B07Payload, self).__init__('b07Payload', 'payload', drop_empty=drop_empty)
 
 class B09:
     """
@@ -173,6 +196,10 @@ class Order(object):
             },
             'B09': {
                 'class': B09,
+                'args': [generic_values, payload]
+            },
+            'B07': {
+                'class': B07,
                 'args': [generic_values, payload]
             },
             'B11': {

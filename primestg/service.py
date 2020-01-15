@@ -73,6 +73,15 @@ class Service(object):
         order = order.create(generic_values, payload)
         return self.send_order('B03', order)
 
+    def get_concentrator_modification(self, generic_values, payload):
+        """
+        Sends B07 order to meter
+        :return: Success or fail
+        """
+        order = Order('B07')
+        order = order.create(generic_values, payload)
+        return self.send_order('B07', order)
+
     def get_meter_modification(self, generic_values, payload):
         """
         Sends B09 order to meter
