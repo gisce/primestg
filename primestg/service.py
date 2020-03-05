@@ -60,7 +60,7 @@ class Service(object):
         :param report_id: B11,B09,etc.
         :param order: XML containing order
         :return: true or false
-        """;print order
+        """
         results = self.DC_service.Order(self.fact_id, 0, order, 1)
         return results
 
