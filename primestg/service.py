@@ -211,7 +211,7 @@ class Service(object):
         """
         return self.send('S12', dc, date_from, date_to)
 
-    def get_concentrator_meters(self, dc, date_from, date_to):
+    def get_concentrator_events(self, dc, date_from, date_to):
         """
         Asks for a S17 report to the concentrator.
         :return: an S17 report from the concentrator.
@@ -224,3 +224,10 @@ class Service(object):
         :return: an S23 report from every meter
         """
         return self.send('S23', '', date_from, date_to)
+
+    def get_concentrator_meters(self, dc, date_from, date_to):
+        """
+        Asks for a S24 report to the concentrator.
+        :return: an S24 report from the concentrator.
+        """
+        return self.send('S24', dc, date_from, date_to)
