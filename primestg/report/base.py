@@ -19,6 +19,7 @@ SAGE_BAD_TIMESTAMP = [
 
 S23_BAD_TIMESTAMP = [
     '00000000000000W',
+    '00000101000000W',
     '000000000000000',
     'FFFFFFFFFFFFFF9',
     'FFFFFFFFFFFFFF0',
@@ -55,7 +56,7 @@ class ValueWithTime(object):
 
         # Fix for SAGECOM which puts this timestamp when the period doesn't
         # affect the contracted tariff
-        if date_value.upper() in BAD_TIMESTAMP:
+        if date_value.upper() in BAD_TIMESTAMP or not date_value:
             date_value = '19000101000000W'
 
         if date_value.startswith('ffff'):

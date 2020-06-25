@@ -6,7 +6,7 @@ from primestg.report.base import (
 from primestg.message import MessageS
 
 SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S15',
-                     'S17', 'S23', 'S24', 'S27']
+                     'S17', 'S18', 'S23', 'S24', 'S27']
 
 
 def is_supported(report_code):
@@ -1712,6 +1712,69 @@ class ConcentratorS17(ConcentratorEvents):
         return parameters
 
 
+class MeasureS18(MeasureActiveReactive):
+    """
+    Class for a set of measures of report S18.
+    """
+    @property
+    def values(self):
+        """
+        Set of measures of report S18.
+        :return: a dict with a set of measures of report S18.
+        """
+        values = {}
+        try:
+            get = self.objectified.get
+            values.update({
+                'order_datetime': self._get_timestamp('Fh'),
+                'orden': get_integer_value(get('Orden')),
+            })
+
+        except Exception as e:
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+            return []
+        return [values]
+
+
+class MeterS18(MeterWithMagnitude):
+    """
+    Class for a meter of report S18.
+    """
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S18.
+
+        :return: a string with 'S18'
+        """
+        return 'S18'
+
+    @property
+    def measure_class(self):
+        """
+        The class used to instance measure sets for report S18.
+
+        :return: a class to instance measure sets of report S18
+        """
+        return MeasureS18
+
+
+class ConcentratorS18(ConcentratorWithMetersWithConcentratorName):
+    """
+    Class for a set of measures of report S18.
+    """
+
+    @property
+    def meter_class(self):
+        """
+        The class used to instance meters for report S18.
+
+        :return: a class to instance meters of report S18
+        """
+        return MeterS18
+
+
 class ConcentratorS21(ConcentratorWithMetersWithConcentratorName):
     """
     Class for a concentrator of report S01.
@@ -1930,6 +1993,10 @@ class Report(object):
                     self.request_id,
                     self.report_type
                 ]
+            },
+            'S18': {
+                'class': ConcentratorS18,
+                'args': [objectified_concentrator]
             },
             'S21': {
                 'class': ConcentratorS21,
