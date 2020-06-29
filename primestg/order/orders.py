@@ -60,7 +60,17 @@ class B07:
             generic_values.get('id_req'),
             generic_values.get('cnc'),
         )
-        self.order.cnc.feed({'payload': B07Payload(payload)})
+        b07 = B07Payload(payload)
+        tasks = payload.get("tasks")
+        for task in tasks:
+            task_xml = B07Task(task)
+            tppros = task.get("task_data")
+            for tppro in tppros:
+                tppro_xml = B07TpPro(tppro)
+                task_xml.tppro.append(tppro_xml)
+            b07.tasks.append(task_xml)
+        self.order.cnc.feed({'payload': b07})
+
 
 class B07Payload(XmlModel):
     """
@@ -68,9 +78,26 @@ class B07Payload(XmlModel):
     """
     def __init__(self, payload, drop_empty=False):
         # Discard empty strings and values and compose field
-        attributes = {k: v for k, v in payload.items() if v is not None and v != ""}
+        attributes = {k: v for k, v in payload.items() if v is not None and v != "" and k != "tasks"}
         self.payload = XmlField('B07', attributes=attributes)
+        self.tasks = []
         super(B07Payload, self).__init__('b07Payload', 'payload', drop_empty=drop_empty)
+
+
+class B07Task(XmlModel):
+    def __init__(self, task, drop_empty=False):
+        attributes = {k: v for k, v in task.items() if v is not None and v != "" and k != "task_data"}
+        self.task = XmlField('TP', attributes=attributes)
+        self.tppro = []
+        super(B07Task, self).__init__('TP', 'task', drop_empty=drop_empty)
+
+
+class B07TpPro(XmlModel):
+    def __init__(self, task, drop_empty=False):
+        attributes = {k: v for k, v in task.items() if v is not None and v != ""}
+        self.tppro = XmlField('TpPro', attributes=attributes)
+        super(B07TpPro, self).__init__('TpPro', 'tppro', drop_empty=drop_empty)
+
 
 class B09:
     """
