@@ -121,6 +121,7 @@ class B07TpPro(XmlModel):
     def __init__(self, task, drop_empty=False):
         attributes = {k: v for k, v in task.items() if v is not None and v != ""}
         self.tppro = XmlField('TpPro', attributes=attributes)
+        self.tpattr = XmlField('TpAttr')
         super(B07TpPro, self).__init__('TpPro', 'tppro', drop_empty=drop_empty)
 
 
