@@ -3,7 +3,7 @@
 from primestg.order.orders import Order
 from expects import expect, equal
 
-with description('Order B07 Generation'):
+with description('Order B07 IP FTP Generation'):
 
     with it('generates expected B07 xml'):
         expected_result = '<Order IdPet="1234" IdReq="B07" Version="3.1.c">\n  ' \
@@ -19,6 +19,6 @@ with description('Order B07 Generation'):
         payload = {
             'IPftp': '10.1.5.206',
         }
-        order = Order('B07')
+        order = Order('B07_ipftp')
         order = order.create(generic_values, payload)
         expect(order).to(equal(expected_result))
