@@ -83,6 +83,11 @@ class Service(object):
         order = order.create(generic_values, payload)
         return self.send_order('B07', order)
 
+    def set_concentrator_ipftp(self, generic_values, payload):
+        order = Order('B07_ipftp')
+        order = order.create(generic_values, payload)
+        return self.send_order('B07', order)
+
     def get_meter_modification(self, generic_values, payload):
         """
         Sends B09 order to meter

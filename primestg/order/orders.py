@@ -48,6 +48,31 @@ class B03Payload(XmlModel):
             })
         super(B03Payload, self).__init__('b03Payload', 'payload', drop_empty=drop_empty)
 
+
+class B07IpFtp:
+    """
+    The class used to instance B07 order. Only for IPftp parameter.
+    :return: B07 order with parameters
+    """
+    def __init__(self, generic_values, payload):
+        self.generic_values = generic_values
+        self.order = OrderHeader(
+            generic_values.get('id_pet'),
+            generic_values.get('id_req'),
+            generic_values.get('cnc'),
+        )
+        self.order.cnc.feed({'payload': B07IpFtpPayload(payload)})
+
+
+class B07IpFtpPayload(XmlModel):
+    def __init__(self, payload, drop_empty=False):
+        self.payload = XmlField(
+            'B07', attributes={
+                'IPftp': payload.get('IPftp'),
+            })
+        super(B07IpFtpPayload, self).__init__('b07Payload', 'payload', drop_empty=drop_empty)
+
+
 class B07:
     """
     The class used to instance B07 order
@@ -227,6 +252,10 @@ class Order(object):
             },
             'B07': {
                 'class': B07,
+                'args': [generic_values, payload]
+            },
+            'B07_ipftp': {
+                'class': B07IpFtp,
                 'args': [generic_values, payload]
             },
             'B11': {
