@@ -1,12 +1,12 @@
 from primestg.report.base import (
     MeasureActiveReactive, MeasureActiveReactiveFloat, Parameter,
     MeterWithMagnitude, ConcentratorWithMetersWithConcentratorName,
-    Concentrator, Measure, MeterWithConcentratorName
+    Concentrator, Measure, MeterWithConcentratorName, LineDetails, SupervisorDetails
 )
 from primestg.message import MessageS
 
 SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S15',
-                     'S17', 'S18', 'S23', 'S24', 'S27']
+                     'S17', 'S18', 'S23', 'S24', 'S27', 'S52']
 
 
 def is_supported(report_code):
@@ -258,6 +258,33 @@ class MeasureS27(MeasureActiveReactive):
             self._warnings.append('ERROR: Thrown exception: {}'.format(e))
 
         return values
+
+
+class MeasureS52(MeasureActiveReactiveFloat):
+    """
+    Class for a set of measures of report S52.
+    """
+
+    @property
+    def values(self):
+        """
+        Set of measures of report S52.
+
+        :return: a dict with a set of measures of report S52
+        """
+        values = {}
+        try:
+            values = self.active_reactive(self.objectified, '')
+            values.update(
+                {
+                    'timestamp': self._get_timestamp('Fh')
+                }
+            )
+        except Exception as e:
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+            return []
+
+        return [values]
 
 
 class MeasureEvents(Measure):
@@ -891,6 +918,42 @@ class ParameterConcentratorEvents(Parameter):
                                   'exception: {}'.format(e))
             return []
 
+        return values
+
+
+class LineS52(LineDetails):
+    """
+    Class for a line of report S52.
+    """
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S52.
+
+        :return: a string with 'S52'
+        """
+        return 'S52'
+
+    @property
+    def measure_class(self):
+        """
+        The class used to instance measure sets for report S52.
+
+        :return: a class to instance measure sets of report S52
+        """
+        return MeasureS52
+
+    @property
+    def values(self):
+        """
+        Values of measure sets of this line of report that need the name of the supervisor and the line
+
+        :return: a list with the values of the measure sets
+        """
+        values = super(LineS52, self).values
+        for value in values:
+            value['magn'] = self.magnitude
         return values
 
 
@@ -1864,6 +1927,21 @@ class ConcentratorS24(Concentrator):
         return values
 
 
+class SupervisorS52(SupervisorDetails):
+    """
+    Class for a supervisor of report S52.
+    """
+
+    @property
+    def line_class(self):
+        """
+        The class used to instance lines for report S52.
+
+        :return: a class to instance lines of report S52
+        """
+        return LineS52
+
+
 class Report(object):
     """
     Report class to process MessageS
@@ -2018,7 +2096,7 @@ class Report(object):
             'S27': {
                 'class': ConcentratorS27,
                 'args': [objectified_concentrator]
-            },
+            }
         }
 
         if self.report_type not in report_type_class:
@@ -2029,6 +2107,28 @@ class Report(object):
         concentrator_args = get('args')
         concentrator = concentrator_class(*concentrator_args)
         return concentrator
+
+    def get_supervisor(self, objectified_supervisor):
+        """
+        Instances a supervisor object
+
+        :return: a supervisor object
+        """
+        report_type_class = {
+            'S52': {
+                'class': SupervisorS52,
+                'args': [objectified_supervisor]
+            }
+        }
+
+        if self.report_type not in report_type_class:
+            raise NotImplementedError('Report type not implemented!')
+
+        get = report_type_class.get(self.report_type).get
+        supervisor_class = get('class')
+        supervisor_args = get('args')
+        supervisor = supervisor_class(*supervisor_args)
+        return supervisor
 
     @property
     def supported(self):
@@ -2044,6 +2144,15 @@ class Report(object):
         return map(self.get_concentrator, self.message.objectified.Cnc)
 
     @property
+    def supervisors(self):
+        """
+        The supervisors of the report.
+
+        :return: a list of supervisors of the report
+        """
+        return map(self.get_supervisor, self.message.objectified.Rtu)
+
+    @property
     def values(self):
         """
         Values of the whole report.
@@ -2051,6 +2160,10 @@ class Report(object):
         :return: a list with the values of the whole report
         """
         values = []
-        for concentrator in self.concentrators:
-            values.extend(concentrator.values)
+        if self.report_type == 'S52':
+            for supervisor in self.supervisors:
+                values.extend(supervisor.values)
+        else:
+            for concentrator in self.concentrators:
+                values.extend(concentrator.values)
         return values

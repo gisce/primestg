@@ -603,3 +603,279 @@ class ConcentratorWithMetersWithConcentratorName(ConcentratorWithMeters):
             for meter in meters:
                 self._warnings.append(meter.warnings)
         return meters
+    
+
+class Line(object):
+    """
+    Base class for a line.
+    """
+
+    def __init__(self, objectified_line):
+        """
+        Create a Line object.
+
+        :param objectified_line: an lxml.objectify.StringElement representing a line
+        :return: a Line object
+        """
+        self.objectified = objectified_line
+        self._warnings = {}
+
+    @property
+    def objectified(self):
+        """
+        A line as an lxml.objectify.StringElement.
+
+        :return: an lxml.objectify.StringElement representing a line
+        """
+        return self._objectified
+
+    @objectified.setter
+    def objectified(self, value):
+        """
+        Stores an lxml.objectify.StringElement representing a line
+
+        :param value: an lxml.objectify.StringElement representing a line
+        """
+        self._objectified = value
+
+    @property
+    def errors(self):
+        """
+        The line errors.
+
+        :return: a dict with the line errors
+        """
+        self._errors = {}
+        if self.objectified.get('ErrCat'):
+            self._errors = {
+                'errcat': self.objectified.get('ErrCat'),
+                'errcode': self.objectified.get('ErrCode')
+            }
+        return self._errors
+
+    @property
+    def name(self):
+        """
+        The name of the line.
+
+        :return: a string with the name of the line
+        """
+        return self.objectified.get('Id')
+
+    @property
+    def report_type(self):
+        """
+        The type of report. To implement in child classes.
+        """
+        raise NotImplementedError('This method is not implemented!')
+
+    @property
+    def measure_class(self):
+        """
+        The class to instance measures sets.
+
+        :return: a class to instance measure sets
+        """
+        return Measure
+
+    @property
+    def measures(self):
+        """
+        Measure set objects of this line.
+
+        :return: a list of measure set objects
+        """
+        measures = []
+        if hasattr(self.objectified, self.report_type):
+            objectified = getattr(self.objectified, self.report_type)
+            measures = map(self.measure_class, objectified)
+        return measures
+
+    @property
+    def values(self):
+        """
+        Values of measure sets of this line.
+
+        :return: a list with the values of the measure sets
+        """
+        values = []
+        for measure in self.measures:
+            values.append(measure.value())
+        return values
+
+    @property
+    def warnings(self):
+        """
+        Warnings of this line.
+
+        :return: a list with the errors found while reading
+        """
+        return self._warnings
+
+
+class LineDetails(Line):
+    """
+    Base class for a lines of report that need the name of the supervisor in the values, like S52.
+    """
+
+    def __init__(self, objectified_line, supervisor_name):
+        """
+        Create a Line object using Line constructor and adding the supervisor name.
+
+        :param objectified_line: an lxml.objectify.StringElement representing a line
+        :param supervisor_name: a string with the name of the supervisor
+        :return: a Line object
+        """
+        super(LineDetails, self).__init__(objectified_line)
+        self.supervisor_name = supervisor_name
+
+    @property
+    def supervisor_name(self):
+        """
+        A string with the supervisor name.
+
+        :return: a string with the supervisor name
+        """
+        return self._supervisor_name
+
+    @supervisor_name.setter
+    def supervisor_name(self, value):
+        """
+        Stores a string with the supervisor name.
+
+        :param value: a string with the supervisor name
+        """
+        self._supervisor_name = value
+
+    @property
+    def values(self):
+        """
+        Values of measure sets of this line of report that need the name of the supervisor and the line
+
+        :return: a list with the values of the measure sets
+        """
+        values = []
+        for measure in self.measures:
+            for subvalue in measure.values:
+                v = subvalue.copy()
+                v['name'] = self.name
+                v['rtu_name'] = self.supervisor_name
+                values.append(v)
+            if measure.warnings:
+                if self._warnings.get(self.name, False):
+                    self._warnings[self.name].extend(measure.warnings)
+                else:
+                    self._warnings.update({self.name: measure.warnings})
+        return values
+
+    @property
+    def magnitude(self):
+        """
+        The magnitude of the line measures.
+
+        :return: a int with the magnitude of the line measures
+        """
+        return int(self.objectified.get('Magn'))
+
+    @property
+    def position(self):
+        """
+        The position of the line measures.
+
+        :return: a int with the position of the line measures
+        """
+        return int(self.objectified.get('Pos'))
+
+
+class Supervisor(object):
+    """
+    Base class for a supervisor.
+    """
+
+    def __init__(self, objectified_supervisor):
+        """
+        Create a Supervisor object.
+
+        :param objectified_supervisor: an lxml.objectify.StringElement representing a supervisor
+        :return: a Supervisor object
+        """
+        self.objectified = objectified_supervisor
+        self._warnings = []
+
+    @property
+    def objectified(self):
+        """
+        A supervisor as an lxml.objectify.StringElement.
+
+        :return: an lxml.objectify.StringElement representing a supervisor
+        """
+        return self._objectified
+
+    @objectified.setter
+    def objectified(self, value):
+        """
+        Stores a supervisor as an lxml.objectify.StringElement.
+
+        :param value: an lxml.objectify.StringElement representing a supervisor
+        """
+        self._objectified = value
+
+    @property
+    def name(self):
+        """
+        The name of the supervisor.
+
+        :return: a string with the name of the supervisor
+        """
+        return self.objectified.get('Id')
+
+    @property
+    def warnings(self):
+        """
+        Warnings of this supervisor.
+
+        :return: a list with the errors found while reading
+        """
+        return self._warnings
+
+
+class SupervisorDetails(Supervisor):
+    """
+    Base class for a supervisor of report that need the name of the supervisor in the values, like S52.
+    """
+
+    @property
+    def line_class(self):
+        """
+        The class to instance lines.
+
+        :return: a class to instance lines
+        """
+        return Line
+
+    @property
+    def values(self):
+        """
+        Values of the lines of this supervisor.
+
+        :return: a list with the values of the lines
+        """
+        values = []
+        for line in self.lines:
+            values.extend(line.values)
+        return values
+
+    @property
+    def lines(self):
+        """
+        Line objects of this supervisor. The name of supervisor is passed to the line.
+
+        :return: a list of line objects
+        """
+        lines = []
+        if getattr(self.objectified, 'LVSLine', None) is not None:
+            for line in self.objectified.LVSLine:
+                lines.append(self.line_class(line, self.name))
+            for line in lines:
+                self._warnings.append(line.warnings)
+        return lines
