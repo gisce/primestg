@@ -603,40 +603,64 @@ class ConcentratorWithMetersWithConcentratorName(ConcentratorWithMeters):
             for meter in meters:
                 self._warnings.append(meter.warnings)
         return meters
-    
 
-class Line(object):
+
+class BaseElement(object):
     """
-    Base class for a line.
+    Base class
     """
 
-    def __init__(self, objectified_line):
+    def __init__(self, objectified):
         """
-        Create a Line object.
+        Create object.
 
-        :param objectified_line: an lxml.objectify.StringElement representing a line
-        :return: a Line object
+        :param objectified: an lxml.objectify.StringElement
+        :return: object
         """
-        self.objectified = objectified_line
-        self._warnings = {}
+        self.objectified = objectified
+        self._warnings = []
 
     @property
     def objectified(self):
         """
-        A line as an lxml.objectify.StringElement.
+        A supervisor as an lxml.objectify.StringElement.
 
-        :return: an lxml.objectify.StringElement representing a line
+        :return: an lxml.objectify.StringElement
         """
         return self._objectified
 
     @objectified.setter
     def objectified(self, value):
         """
-        Stores an lxml.objectify.StringElement representing a line
+        Stores an lxml.objectify.StringElement.
 
-        :param value: an lxml.objectify.StringElement representing a line
+        :param value: an lxml.objectify.StringElement
         """
         self._objectified = value
+
+    @property
+    def name(self):
+        """
+        The name
+
+        :return: a string with the name
+        """
+        return self.objectified.get('Id')
+
+    @property
+    def warnings(self):
+        """
+        Warnings
+
+        :return: a list with the errors found while reading
+        """
+        return self._warnings
+    
+
+class Line(BaseElement):
+    """
+    Base class for a line.
+    """
 
     @property
     def errors(self):
@@ -652,15 +676,6 @@ class Line(object):
                 'errcode': self.objectified.get('ErrCode')
             }
         return self._errors
-
-    @property
-    def name(self):
-        """
-        The name of the line.
-
-        :return: a string with the name of the line
-        """
-        return self.objectified.get('Id')
 
     @property
     def report_type(self):
@@ -702,15 +717,6 @@ class Line(object):
         for measure in self.measures:
             values.append(measure.value())
         return values
-
-    @property
-    def warnings(self):
-        """
-        Warnings of this line.
-
-        :return: a list with the errors found while reading
-        """
-        return self._warnings
 
 
 class LineDetails(Line):
@@ -787,59 +793,7 @@ class LineDetails(Line):
         return int(self.objectified.get('Pos'))
 
 
-class Supervisor(object):
-    """
-    Base class for a supervisor.
-    """
-
-    def __init__(self, objectified_supervisor):
-        """
-        Create a Supervisor object.
-
-        :param objectified_supervisor: an lxml.objectify.StringElement representing a supervisor
-        :return: a Supervisor object
-        """
-        self.objectified = objectified_supervisor
-        self._warnings = []
-
-    @property
-    def objectified(self):
-        """
-        A supervisor as an lxml.objectify.StringElement.
-
-        :return: an lxml.objectify.StringElement representing a supervisor
-        """
-        return self._objectified
-
-    @objectified.setter
-    def objectified(self, value):
-        """
-        Stores a supervisor as an lxml.objectify.StringElement.
-
-        :param value: an lxml.objectify.StringElement representing a supervisor
-        """
-        self._objectified = value
-
-    @property
-    def name(self):
-        """
-        The name of the supervisor.
-
-        :return: a string with the name of the supervisor
-        """
-        return self.objectified.get('Id')
-
-    @property
-    def warnings(self):
-        """
-        Warnings of this supervisor.
-
-        :return: a list with the errors found while reading
-        """
-        return self._warnings
-
-
-class SupervisorDetails(Supervisor):
+class SupervisorDetails(BaseElement):
     """
     Base class for a supervisor of report that need the name of the supervisor in the values, like S52.
     """
