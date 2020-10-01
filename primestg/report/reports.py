@@ -1,7 +1,7 @@
 from primestg.report.base import (
     MeasureActiveReactive, MeasureActiveReactiveFloat, Parameter,
     MeterWithMagnitude, ConcentratorWithMetersWithConcentratorName,
-    Concentrator, Measure, MeterWithConcentratorName, LineDetails, SupervisorDetails
+    Concentrator, Measure, MeterWithConcentratorName, LineDetails, RemoteTerminalUnitDetails
 )
 from primestg.message import MessageS
 
@@ -272,12 +272,12 @@ class MeasureS52(MeasureActiveReactiveFloat):
 
         :return: a dict with a set of measures of report S52
         """
-        values = {}
         try:
             values = self.active_reactive(self.objectified, '')
             values.update(
                 {
-                    'timestamp': self._get_timestamp('Fh')
+                    'timestamp': self._get_timestamp('Fh'),
+                    'bc': self.objectified.get('Bc')
                 }
             )
         except Exception as e:
@@ -947,7 +947,7 @@ class LineS52(LineDetails):
     @property
     def values(self):
         """
-        Values of measure sets of this line of report that need the name of the supervisor and the line
+        Values of measure sets of this line of report that need the name of the remote terminal unit and the line
 
         :return: a list with the values of the measure sets
         """
@@ -1927,9 +1927,9 @@ class ConcentratorS24(Concentrator):
         return values
 
 
-class SupervisorS52(SupervisorDetails):
+class RemoteTerminalUnitS52(RemoteTerminalUnitDetails):
     """
-    Class for a supervisor of report S52.
+    Class for a remote terminal unit of report S52.
     """
 
     @property
@@ -2108,16 +2108,16 @@ class Report(object):
         concentrator = concentrator_class(*concentrator_args)
         return concentrator
 
-    def get_supervisor(self, objectified_supervisor):
+    def get_rt_unit(self, objectified_rt_unit):
         """
-        Instances a supervisor object
+        Instances a remote terminal unit object
 
-        :return: a supervisor object
+        :return: a remote terminal unit object
         """
         report_type_class = {
             'S52': {
-                'class': SupervisorS52,
-                'args': [objectified_supervisor]
+                'class': RemoteTerminalUnitS52,
+                'args': [objectified_rt_unit]
             }
         }
 
@@ -2125,10 +2125,10 @@ class Report(object):
             raise NotImplementedError('Report type not implemented!')
 
         get = report_type_class.get(self.report_type).get
-        supervisor_class = get('class')
-        supervisor_args = get('args')
-        supervisor = supervisor_class(*supervisor_args)
-        return supervisor
+        rt_unit_class = get('class')
+        rt_unit_args = get('args')
+        rt_unit = rt_unit_class(*rt_unit_args)
+        return rt_unit
 
     @property
     def supported(self):
@@ -2144,13 +2144,13 @@ class Report(object):
         return map(self.get_concentrator, self.message.objectified.Cnc)
 
     @property
-    def supervisors(self):
+    def rt_units(self):
         """
-        The supervisors of the report.
+        The remote terminal units of the report.
 
-        :return: a list of supervisors of the report
+        :return: a list of remote terminals units of the report
         """
-        return map(self.get_supervisor, self.message.objectified.Rtu)
+        return map(self.get_rt_unit, self.message.objectified.Rtu)
 
     @property
     def values(self):
@@ -2161,8 +2161,8 @@ class Report(object):
         """
         values = []
         if self.report_type == 'S52':
-            for supervisor in self.supervisors:
-                values.extend(supervisor.values)
+            for rt_unit in self.rt_units:
+                values.extend(rt_unit.values)
         else:
             for concentrator in self.concentrators:
                 values.extend(concentrator.values)
