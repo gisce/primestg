@@ -28,8 +28,8 @@ with fdescription('Report S52 example'):
             magn=1
         )
 
-        rt_unit = self.report.rt_units[0]
-        line = rt_unit.lines[0]
+        rt_unit = list(self.report.rt_units)[0]
+        line = list(rt_unit.lines)[0]
         values = line.values
 
         first_value_first_line = {}
