@@ -19,7 +19,6 @@ SAGE_BAD_TIMESTAMP = [
 
 S23_BAD_TIMESTAMP = [
     '00000000000000W',
-    '00000101000000W',
     '000000000000000',
     'FFFFFFFFFFFFFF9',
     'FFFFFFFFFFFFFF0',
@@ -59,12 +58,11 @@ class ValueWithTime(object):
         if date_value.upper() in BAD_TIMESTAMP or not date_value:
             date_value = '19000101000000W'
 
-        if date_value.startswith('ffff'):
-            date_value = date_value.replace(date_value[:4], '9999')
+        if date_value.upper().startswith('FFFF') or e.get('DTCard') == 'Y':
+            date_value = '9999' + date_value[4:]
 
         try:
-            time = datetime.strptime(date_value[:-1],
-                                     '%Y%m%d%H%M%S')
+            time = datetime.strptime(date_value[:-1], '%Y%m%d%H%M%S')
         except ValueError as e:
             raise ValueError("Date out of range: {} ({}) {}".format(
                 date_value, name, e))
