@@ -58,7 +58,7 @@ class ValueWithTime(object):
         if date_value.upper() in BAD_TIMESTAMP or not date_value:
             date_value = '19000101000000W'
 
-        if date_value.upper().startswith('FFFF') or e.get('DTCard') == 'Y':
+        if date_value.upper().startswith('FFFF'):
             date_value = '9999' + date_value[4:]
 
         try:
