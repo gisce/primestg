@@ -29,6 +29,11 @@ S23_BAD_TIMESTAMP = [
 BAD_TIMESTAMP = SAGE_BAD_TIMESTAMP + S23_BAD_TIMESTAMP
 
 
+DAYSAVING_START_TS = 'FFFFFDFFFFFFFF0000800000'   # Winter to summer
+DAYSAVING_END_TS = 'FFFFFEFFFFFFFF0000800080'     # Summer to winter
+NOW_ACTIVATION_DATE = 'FFFFFFFFFFFFFFFFFF800009'  # Instantly activate latent contract
+
+
 class ValueWithTime(object):
     """
     Base class for values with time.
