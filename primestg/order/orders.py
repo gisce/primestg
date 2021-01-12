@@ -1,8 +1,6 @@
 from libcomxml.core import XmlModel, XmlField
-from collections import OrderedDict
 from primestg.order.base import (OrderHeader, CntOrderHeader)
 from primestg.utils import ContractTemplates, datetimetoprime
-from datetime import datetime
 from pytz import timezone
 
 
@@ -218,7 +216,7 @@ class B04Payload(XmlModel):
     Supported parameters:
         contract: One of available contracts (1,2,3)
         template: Name of one of available templates
-        activation_date: Activation date if latent. Admits wildcards: YYYYMMDDHH (FFFF0101FF)
+        activation_date: Activation date if latent (localized or not python datetime)
 
     :return: B04 parameters
 
