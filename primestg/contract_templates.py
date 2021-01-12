@@ -57,7 +57,7 @@ CONTRACT_TEMPLATES = {
         }
     },
     'DHS_IT': {
-        'description': '2.xDHS 2 period contracts (Triple Tariff)',
+        'description': '2.xDHS 3 period contracts (Triple Tariff)',
         'origin': 'library',
         'type': '01',
         'seasons': [

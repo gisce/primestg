@@ -7,6 +7,8 @@ from pytz import timezone
 TZ = timezone('Europe/Madrid')
 
 from primestg.service import Service, format_timestamp
+from primestg.contract_templates import CONTRACT_TEMPLATES
+
 
 REPORTS = [
     'get_instant_data',
@@ -33,6 +35,7 @@ def get_id_pet():
 @click.group(name="primestg")
 def primestg(**kwargs):
     pass
+
 
 # Gets a specific report by name
 @primestg.command(name='report')                                                       
@@ -74,6 +77,7 @@ def get_sync_sxx(**kwargs):
    res = s.send(kwargs['sxx'],kwargs['meter'])
    print res
 
+
 # Sends an order
 @primestg.command(name='order')
 @click.argument('order', type=click.Choice(ORDERS), required=True)
@@ -82,7 +86,7 @@ def get_sync_sxx(**kwargs):
 )   
 @click.option("--meter", "-m", default="ZIV0040318130")
 @click.option("--contract", "-c", default="1")
-@click.option("--tariff", "-t", default="2.0_ST")
+@click.option("--tariff", "-t", default="2.0_ST", help="One of available templates (see primestg templates)")
 @click.option("--activation_date", "-d", default="2021-04-01 00:00:00")
 def sends_order(**kwargs):
    id_pet = get_id_pet()
@@ -124,6 +128,7 @@ def sends_order(**kwargs):
    res = func(generic_values, vals)
    print res
 
+
 # Sends a CNC Txx order (B11)
 @primestg.command(name='cnc_control')
 @click.argument('order',required=True)
@@ -145,6 +150,16 @@ def cnc_control(**kwargs):
    }
    res = s.get_order_request(generic_values, vals)
    print res
+
+
+# Gets available contract templates
+@primestg.command(name='templates')
+def get_contract_templates(**kwargs):
+    print('# Available contract templates for B04 order:\n')
+    for name in sorted(CONTRACT_TEMPLATES.keys()):
+        data = CONTRACT_TEMPLATES[name]
+        print(' * {}: {}'.format(name, data['description']))
+
 
 if __name__ == 'main':
     primestg()
