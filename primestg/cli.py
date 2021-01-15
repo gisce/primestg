@@ -2,8 +2,13 @@
 import sys                                                                      
 import click
 from datetime import datetime, timedelta
+from pytz import timezone
+
+TZ = timezone('Europe/Madrid')
 
 from primestg.service import Service, format_timestamp
+from primestg.contract_templates import CONTRACT_TEMPLATES
+
 
 REPORTS = [
     'get_instant_data',
@@ -12,11 +17,14 @@ REPORTS = [
     'get_concentrator_parameters',
 ]
 
-ORDERS = [
-    'cutoff',
-    'reconnect',
-    'connect'
-]
+ORDERS = {
+    # CUTOFF
+    'cutoff': {'order': 'B03', 'func': 'get_cutoff_reconnection'},
+    'reconnect': {'order': 'B03', 'func': 'get_cutoff_reconnection'},
+    'connect': {'order': 'B03', 'func': 'get_cutoff_reconnection'},
+    # CONTRACT
+    'contract': {'order': 'B04', 'func': 'get_contract'},
+}
 
 def get_id_pet():
     now = datetime.now()
@@ -27,6 +35,7 @@ def get_id_pet():
 @click.group(name="primestg")
 def primestg(**kwargs):
     pass
+
 
 # Gets a specific report by name
 @primestg.command(name='report')                                                       
@@ -46,7 +55,7 @@ def get_sync_report(**kwargs):
         res = func(kwargs['meter'])
     except:
         res = func(kwargs['meter'], '2019-01-01 00:00:00', '2019-01-01 00:00:00')
-    print res
+    print(res)
 
 
 # Gets a raw report
@@ -66,7 +75,8 @@ def get_sync_sxx(**kwargs):
    id_pet = get_id_pet()
    s = Service(id_pet, kwargs['cnc_url'], sync=sync, source='DCF')
    res = s.send(kwargs['sxx'],kwargs['meter'])
-   print res
+   print(res)
+
 
 # Sends an order
 @primestg.command(name='order')
@@ -75,34 +85,49 @@ def get_sync_sxx(**kwargs):
                 default="http://cct.gisce.lan:8080"
 )   
 @click.option("--meter", "-m", default="ZIV0040318130")
+@click.option("--contract", "-c", default="1")
+@click.option("--tariff", "-t", default="2.0_ST", help="One of available templates (see primestg templates)")
+@click.option("--activation_date", "-d", default="2021-04-01 00:00:00")
 def sends_order(**kwargs):
    id_pet = get_id_pet()
    s = Service(id_pet, kwargs['cnc_url'], sync=True)
+   order_name = kwargs['order']
+   order_code = ORDERS[order_name]['order']
    generic_values = {
        'id_pet': id_pet,
-       'id_req': 'B03',
+       'id_req': order_code,
        'cnc': 'ZIV0004394488',
        'cnt': kwargs['meter'],
    }
-   if kwargs['order'] == 'cutoff':
+   if order_name == 'cutoff':
        vals = {
            'order_param': '0',
        }
-   elif kwargs['order'] == 'reconnect':
+   elif order_name == 'reconnect':
        vals = {
            'order_param': '1'
        }
-   elif kwargs['order'] == 'connect':
+   elif order_name == 'connect':
        vals = {
            'order_param': '2'
+       }
+   elif order_name == 'contract':
+       vals = {
+           'contract': kwargs['contract'],
+           'name': kwargs['tariff'],
+           'activation_date': TZ.localize(
+               datetime.strptime(kwargs['activation_date'], '%Y-%m-%d %H:%M:%S')
+           )
        }
    vals.update({
        'date_to': format_timestamp(datetime.now()+timedelta(hours=1)),
        'date_from': format_timestamp(datetime.now()),
    })
 
-   res = s.get_cutoff_reconnection(generic_values, vals)
-   print res
+   func = getattr(s, ORDERS[order_name]['func'])
+   res = func(generic_values, vals)
+   print(res)
+
 
 # Sends a CNC Txx order (B11)
 @primestg.command(name='cnc_control')
@@ -124,7 +149,17 @@ def cnc_control(**kwargs):
        'date_to': format_timestamp(datetime.now())
    }
    res = s.get_order_request(generic_values, vals)
-   print res
+   print(res)
+
+
+# Gets available contract templates
+@primestg.command(name='templates')
+def get_contract_templates(**kwargs):
+    print('# Available contract templates for B04 order:\n')
+    for name in sorted(CONTRACT_TEMPLATES.keys()):
+        data = CONTRACT_TEMPLATES[name]
+        print(' * {}: {}'.format(name, data['description']))
+
 
 if __name__ == 'main':
     primestg()
