@@ -1,9 +1,9 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
+
 from lxml.doctestcompare import LXMLOutputChecker
 from doctest import Example
-from contract_templates import CONTRACT_TEMPLATES
-from datetime import datetime
+from .contract_templates import CONTRACT_TEMPLATES
 from pytz import timezone
 from copy import copy
 

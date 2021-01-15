@@ -55,7 +55,7 @@ def get_sync_report(**kwargs):
         res = func(kwargs['meter'])
     except:
         res = func(kwargs['meter'], '2019-01-01 00:00:00', '2019-01-01 00:00:00')
-    print res
+    print(res)
 
 
 # Gets a raw report
@@ -75,7 +75,7 @@ def get_sync_sxx(**kwargs):
    id_pet = get_id_pet()
    s = Service(id_pet, kwargs['cnc_url'], sync=sync, source='DCF')
    res = s.send(kwargs['sxx'],kwargs['meter'])
-   print res
+   print(res)
 
 
 # Sends an order
@@ -126,7 +126,7 @@ def sends_order(**kwargs):
 
    func = getattr(s, ORDERS[order_name]['func'])
    res = func(generic_values, vals)
-   print res
+   print(res)
 
 
 # Sends a CNC Txx order (B11)
@@ -149,7 +149,7 @@ def cnc_control(**kwargs):
        'date_to': format_timestamp(datetime.now())
    }
    res = s.get_order_request(generic_values, vals)
-   print res
+   print(res)
 
 
 # Gets available contract templates
