@@ -65,6 +65,15 @@ class Service(object):
         results = self.DC_service.Order(self.fact_id, 0, order, 1)
         return results
 
+    def get_powers(self, generic_values, payload):
+        """
+        Sends B03 order to meter
+        :return: Success or fail
+        """
+        order = Order('B02')
+        order = order.create(generic_values, payload)
+        return self.send_order('B02', order)
+
     def get_cutoff_reconnection(self, generic_values, payload):
         """
         Sends B03 order to meter
