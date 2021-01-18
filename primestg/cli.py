@@ -24,6 +24,7 @@ ORDERS = {
     'connect': {'order': 'B03', 'func': 'get_cutoff_reconnection'},
     # CONTRACT
     'contract': {'order': 'B04', 'func': 'get_contract'},
+    'powers': {'order': 'B02', 'func': 'get_powers'},
 }
 
 def get_id_pet():
@@ -82,12 +83,15 @@ def get_sync_sxx(**kwargs):
 @primestg.command(name='order')
 @click.argument('order', type=click.Choice(ORDERS), required=True)
 @click.argument("cnc_url", required=True,
-                default="http://cct.gisce.lan:8080"
+                default="http://cct.gisce.lan:8080/WS_DC/WS_DC.asmx"
 )   
 @click.option("--meter", "-m", default="ZIV0040318130")
 @click.option("--contract", "-c", default="1")
 @click.option("--tariff", "-t", default="2.0_ST", help="One of available templates (see primestg templates)")
 @click.option("--activation_date", "-d", default="2021-04-01 00:00:00")
+@click.option("--powers", "-p", default="15000,15000,15000,15000,15000,15000",
+              help='comma separated orders list of 6 powers'
+)
 def sends_order(**kwargs):
    id_pet = get_id_pet()
    s = Service(id_pet, kwargs['cnc_url'], sync=True)
@@ -115,6 +119,13 @@ def sends_order(**kwargs):
        vals = {
            'contract': kwargs['contract'],
            'name': kwargs['tariff'],
+           'activation_date': TZ.localize(
+               datetime.strptime(kwargs['activation_date'], '%Y-%m-%d %H:%M:%S')
+           )
+       }
+   elif order_name == 'powers':
+       vals = {
+           'powers': kwargs['powers'].split(','),
            'activation_date': TZ.localize(
                datetime.strptime(kwargs['activation_date'], '%Y-%m-%d %H:%M:%S')
            )
