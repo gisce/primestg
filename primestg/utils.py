@@ -32,6 +32,24 @@ def datetimetoprime(dt):
     return dt_str
 
 
+def name2octet(txt):
+    octet_str = ''
+    for caracter in '{: >6}'.format(txt):
+        octet_str += '{0:2x}'.format(ord(caracter)).upper()
+    return octet_str
+
+
+def octet2name(txt):
+    name = ''
+    for index in range(0, len(txt), 2):
+        name += chr(int(txt[index] + txt[index + 1], 16))
+    return name
+
+
+def octet2hour(txt):
+    return int(txt[0:2], 16)
+
+
 class ContractTemplates:
 
     def __init__(self):
