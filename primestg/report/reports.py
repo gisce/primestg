@@ -678,7 +678,7 @@ class ParameterS23(Parameter):
                     for x, special_day_obj in enumerate(contract_obj.SpecialDays):
                         special_day = {
                             'dt': Measure(special_day_obj)._get_special_days('DT'),
-                            'dt_card': special_day_obj.get('DTCard', False) & True,
+                            'dt_card': False if special_day_obj.get('DTCard', 'N') == 'N' else True,
                             'day_id': special_day_obj.get('DayID'),
                         }
                         special_days.append(special_day)
@@ -686,7 +686,7 @@ class ParameterS23(Parameter):
                 if getattr(contract_obj, 'Day', None) is not None:
                     days = []
                     for x, day_obj in enumerate(contract_obj.Day):
-                        day = {'id': getattr(day_obj, 'Id', None)}
+                        day = {'day_id': day_obj.get('id', None)}
                         changes = []
                         for y, change_obj in enumerate(contract_obj.Day[x].Change):
                             if getattr(day_obj, 'Change', None) is not None:

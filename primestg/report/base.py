@@ -86,15 +86,19 @@ class ValueWithTime(object):
         """
         e = self.objectified if element is None else element
         value = e.get(name)
+
+        if not value:
+            return None
+
         year = value[0:4]
 
         if e.get('DTCard') == 'Y':
             value = '9999' + value[4:]
 
         return {
-            'year': +year if year.isdigit() else False,
-            'month': +value[4:6],
-            'day': +value[6:8],
+            'year': int(year) if year.isdigit() else False,
+            'month': int(value[4:6]),
+            'day': int(value[6:8]),
             'timestamp': self._to_timestamp(value, name)
         }
 
