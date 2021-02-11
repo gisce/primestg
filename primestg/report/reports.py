@@ -638,7 +638,7 @@ class ParameterS23(Parameter):
     :return: formated values for ActiveCalendar and LatentCalendar sections
     """
     @staticmethod
-    def get_calendars(obj):
+    def get_calendars(obj, is_active_calendar=False):
         obj_values = {}
         if getattr(obj, 'Contract', None) is not None:
             contracts = []
@@ -648,6 +648,7 @@ class ParameterS23(Parameter):
                     'calendar_type': contract_obj.get('CalendarType'),
                     'calendar_name': octet2name(contract_obj.get('CalendarName')),
                     'act_date': Measure(contract_obj)._get_timestamp('ActDate'),
+                    'is_active_calendar': is_active_calendar
                 }
                 if getattr(contract_obj, 'Season', None) is not None:
                     seasons = []
@@ -726,13 +727,13 @@ class ParameterS23(Parameter):
                 values['pc_act'] = 'supervisor'
             if hasattr(self.objectified, 'ActiveCalendars'):
                 active_calendars = self.objectified.ActiveCalendars
-                obj_values = self.get_calendars(active_calendars)
+                obj_values = self.get_calendars(active_calendars, True)
                 values['active_calendars'] = obj_values
             else:
                 values['active_calendars'] = []
             if hasattr(self.objectified, 'LatentCalendars'):
                 latent_calendars = self.objectified.LatentCalendars
-                obj_values = self.get_calendars(latent_calendars)
+                obj_values = self.get_calendars(latent_calendars, False)
                 values['latent_calendars'] = obj_values
             else:
                 values['latent_calendars'] = []
