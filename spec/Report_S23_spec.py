@@ -27,6 +27,7 @@ with description('Report S23 examples'):
                     "latent_calendars": {
                         "contracts": [
                             {
+                                "is_active_calendar": False,
                                 "c": "1",
                                 "days": [
                                     {
@@ -99,12 +100,14 @@ with description('Report S23 examples'):
                                 "act_date": "1900-01-01 00:00:00"
                             },
                             {
+                                "is_active_calendar": False,
                                 "c": "2",
                                 "calendar_type": "01",
                                 "calendar_name": "      ",
                                 "act_date": "1900-01-01 00:00:00"
                             },
                             {
+                                "is_active_calendar": False,
                                 "c": "3",
                                 "calendar_type": "01",
                                 "calendar_name": "      ",
@@ -137,6 +140,7 @@ with description('Report S23 examples'):
                     "active_calendars": {
                         "contracts": [
                             {
+                                "is_active_calendar": True,
                                 "c": "1",
                                 "days": [
                                     {
@@ -251,12 +255,14 @@ with description('Report S23 examples'):
                                 "act_date": "2018-03-06 15:26:21"
                             },
                             {
+                                "is_active_calendar": True,
                                 "c": "2",
                                 "calendar_type": "01",
                                 "calendar_name": "      ",
                                 "act_date": "1900-01-01 00:00:00"
                             },
                             {
+                                "is_active_calendar": True,
                                 "c": "3",
                                 "calendar_type": "01",
                                 "calendar_name": "      ",
