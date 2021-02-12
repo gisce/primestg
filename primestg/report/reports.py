@@ -670,7 +670,7 @@ class ParameterS23(Parameter):
                             'index': x,
                         }
                         for index in range(0, len(week_days), 2):
-                            day = 'day{}'.format(index/2)
+                            day = 'day{}'.format(int(index/2))
                             week.update({day: week_days[index:index+2]})
                         weeks.append(week)
                     contract.update({'weeks': weeks})
