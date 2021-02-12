@@ -1,6 +1,6 @@
 from libcomxml.core import XmlModel, XmlField
 from primestg.order.base import (OrderHeader, CntOrderHeader)
-from primestg.utils import ContractTemplates, datetimetoprime
+from primestg.utils import ContractTemplates, datetimetoprime, name2octet
 from pytz import timezone
 
 
@@ -73,7 +73,7 @@ class Contract(XmlModel):
             'Contract', attributes={
                 'c': str(payload.get('contract')),
                 'CalendarType': payload.get('calendar_type', '01'),
-                'CalendarName': self.name2octet(payload.get('name')),
+                'CalendarName': name2octet(payload.get('name')),
                 'ActDate': payload.get('activation_date'),
             }
         )
@@ -84,20 +84,6 @@ class Contract(XmlModel):
         super(Contract, self).__init__(
             'Contract', 'contract', drop_empty=drop_empty
         )
-
-    @staticmethod
-    def name2octet(txt):
-        octet_str = ''
-        for caracter in '{: >6}'.format(txt):
-            octet_str += '{0:2x}'.format(ord(caracter)).upper()
-        return octet_str
-
-    @staticmethod
-    def octet2name(txt):
-        name = ''
-        for index in range(0, len(txt), 2):
-            name += chr(int(txt[index] + txt[index + 1], 16))
-        return name
 
 
 class Season(XmlModel):
