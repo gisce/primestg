@@ -4,6 +4,7 @@ from __future__ import absolute_import
 from lxml.doctestcompare import LXMLOutputChecker
 from doctest import Example
 from .contract_templates import CONTRACT_TEMPLATES
+from .dlms_templates import DLMS_TEMPLATES
 from pytz import timezone
 from copy import copy
 
@@ -32,10 +33,10 @@ def datetimetoprime(dt):
     return dt_str
 
 
-class ContractTemplates:
+class PrimeTemplates:
 
     def __init__(self):
-        self.templates = CONTRACT_TEMPLATES
+        self.templates = {}
 
     def get_available_templates(self, origin=None):
         template_list = []
@@ -53,3 +54,15 @@ class ContractTemplates:
             return self.templates[name]
         except Exception as e:
             raise KeyError('Template not available')
+
+
+class ContractTemplates(PrimeTemplates):
+
+    def __init__(self):
+        self.templates = CONTRACT_TEMPLATES
+
+
+class DLMSTemplates(PrimeTemplates):
+
+    def __init__(self):
+        self.templates = DLMS_TEMPLATES

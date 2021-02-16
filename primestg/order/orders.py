@@ -1,6 +1,6 @@
 from libcomxml.core import XmlModel, XmlField
 from primestg.order.base import (OrderHeader, CntOrderHeader)
-from primestg.utils import ContractTemplates, datetimetoprime
+from primestg.utils import ContractTemplates, DLMSTemplates, datetimetoprime
 from pytz import timezone
 
 
@@ -378,6 +378,76 @@ class B11Payload(XmlModel):
             })
         super(B11Payload, self).__init__('b11Payload', 'payload', drop_empty=drop_empty)
 
+# Not documented
+
+class B12:
+    """
+    The class used to instance B12 order.
+
+    :return: B12 order with parameters
+    """
+    def __init__(self, generic_values, payload):
+        self.generic_values = generic_values
+        self.order = CntOrderHeader(
+            generic_values.get('id_pet'),
+            generic_values.get('id_req'),
+            generic_values.get('cnc'),
+            generic_values.get('cnt')
+        )
+        self.order.cnc.cnt.feed({'payload': B12Payload(payload)})
+        # Load generic order with values
+
+class Set(XmlModel):
+    """
+    The class to instance B12 RAW
+    Parameters:
+        obis: obis code string
+        class: class number
+        element: element number
+        data: raw str
+    """
+
+    def __init__(self, payload, drop_empty=False):
+        self.set = XmlField(
+            'set', attributes={
+                'obis': format(payload.get('obis')),
+                'class': str(payload.get('class')),
+                'element': str(payload.get('element')),
+                'data': str(payload.get('data')),
+            }
+        )
+        super(Set, self).__init__('Set', 'set')
+
+
+class B12Payload(XmlModel):
+    """
+    The class used to instance 12 parameters.
+    Supported parameters:
+        Fini: Execution date
+        Ffin: Maximum Execution Date
+        Template:
+            DLMS Template name
+    :return: B12 parameters
+
+    """
+    def __init__(self, payload, drop_empty=False):
+        self.payload = XmlField(
+            'B12', attributes={
+                'Fini': payload.get('date_from'),
+                'Ffin': payload.get('date_to'),
+            })
+        tmpl_name = payload.get('template', 'TAR_20TD')
+        dt = DLMSTemplates()
+        template = dt.get_template(tmpl_name)
+
+        data = template['data']
+        sets = []
+        for set in data:
+            sets.append(Set(set))
+        self.sets = sets
+
+        super(B12Payload, self).__init__('b12Payload', 'payload', drop_empty=drop_empty)
+
 
 class Order(object):
     """
@@ -413,6 +483,10 @@ class Order(object):
             },
             'B11': {
                 'class': B11,
+                'args': [generic_values, payload]
+            },
+            'B12': {
+                'class': B12,
                 'args': [generic_values, payload]
             }
         }

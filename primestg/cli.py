@@ -8,6 +8,7 @@ TZ = timezone('Europe/Madrid')
 
 from primestg.service import Service, format_timestamp
 from primestg.contract_templates import CONTRACT_TEMPLATES
+from primestg.utils import DLMSTemplates
 
 
 REPORTS = [
@@ -24,6 +25,7 @@ ORDERS = {
     'connect': {'order': 'B03', 'func': 'get_cutoff_reconnection'},
     # CONTRACT
     'contract': {'order': 'B04', 'func': 'get_contract'},
+    'dlms': {'order': 'B12', 'func': 'order_raw_dlms'},
 }
 
 def get_id_pet():
@@ -82,13 +84,14 @@ def get_sync_sxx(**kwargs):
 @primestg.command(name='order')
 @click.argument('order', type=click.Choice(ORDERS), required=True)
 @click.argument("cnc_url", required=True,
-                default="http://cct.gisce.lan:8080"
+                default="http://cct.gisce.lan:8080/WS_DC/WS_DC.asmx"
 )   
 @click.option("--meter", "-m", default="ZIV0040318130")
 @click.option("--contract", "-c", default="1")
 @click.option("--tariff", "-t", default="2.0_ST", help="One of available templates (see primestg templates)")
 @click.option("--activation_date", "-d", default="2021-04-01 00:00:00")
 def sends_order(**kwargs):
+   """Sends on of available Orders to Meter or CNC"""
    id_pet = get_id_pet()
    s = Service(id_pet, kwargs['cnc_url'], sync=True)
    order_name = kwargs['order']
@@ -119,6 +122,9 @@ def sends_order(**kwargs):
                datetime.strptime(kwargs['activation_date'], '%Y-%m-%d %H:%M:%S')
            )
        }
+   elif order_name == 'dlms':
+       vals = {
+       }
    vals.update({
        'date_to': format_timestamp(datetime.now()+timedelta(hours=1)),
        'date_from': format_timestamp(datetime.now()),
@@ -136,6 +142,7 @@ def sends_order(**kwargs):
                 default="http://cct.gisce.lan:8080"
 )   
 def cnc_control(**kwargs):
+   """Sends a TXX order to CNC"""
    id_pet = get_id_pet()
    s = Service(id_pet, kwargs['cnc_url'], sync=True)
    generic_values = {
@@ -155,11 +162,22 @@ def cnc_control(**kwargs):
 # Gets available contract templates
 @primestg.command(name='templates')
 def get_contract_templates(**kwargs):
+    """Available contract templates for B04 order"""
     print('# Available contract templates for B04 order:\n')
     for name in sorted(CONTRACT_TEMPLATES.keys()):
         data = CONTRACT_TEMPLATES[name]
         print(' * {}: {}'.format(name, data['description']))
 
+
+@primestg.command(name='dlms_cycles')
+def get_dlms_cycles(**kwargs):
+    """Available DLMS cycles for B12 a.k.a dlms order"""
+    print('# Available DLMS cycles for B12 a.k.a dlms order:\n')
+    dt = DLMSTemplates()
+    templates = dt.get_available_templates()
+    for name in sorted([t[0] for t in templates]):
+        data = dt.get_template(name)
+        print(' * {}: {}'.format(name, data['description']))
 
 if __name__ == 'main':
     primestg()

@@ -101,6 +101,15 @@ class Service(object):
         order = order.create(generic_values, payload)
         return self.send_order('B11', order)
 
+    def order_raw_dlms(self, generic_values, payload):
+        """
+        Sends B12 order to concentrator
+        :return: Success or fail
+        """
+        order = Order('B12')
+        order = order.create(generic_values, payload)
+        return self.send_order('B12', order)
+
     def create_service(self):
         binding = '{http://www.asais.fr/ns/Saturne/DC/ws}WS_DCSoap'
         client = Client(wsdl=primestg.get_data('WS_DC.wsdl'))
