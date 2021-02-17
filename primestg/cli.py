@@ -88,7 +88,7 @@ def get_sync_sxx(**kwargs):
 )   
 @click.option("--meter", "-m", default="ZIV0040318130")
 @click.option("--contract", "-c", default="1")
-@click.option("--tariff", "-t", default="2.0_ST", help="One of available templates (see primestg templates)")
+@click.option("--tariff", "-t", default="2.0_ST", help="One of available templates (see primestg templates or dlms_cycles)")
 @click.option("--activation_date", "-d", default="2021-04-01 00:00:00")
 def sends_order(**kwargs):
    """Sends on of available Orders to Meter or CNC"""
@@ -124,6 +124,7 @@ def sends_order(**kwargs):
        }
    elif order_name == 'dlms':
        vals = {
+           'template': kwargs['tariff'],
        }
    vals.update({
        'date_to': format_timestamp(datetime.now()+timedelta(hours=1)),
