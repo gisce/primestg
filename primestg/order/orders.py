@@ -423,12 +423,22 @@ class B12Payload(XmlModel):
                 'Ffin': payload.get('date_to'),
             })
         tmpl_name = payload.get('template', 'TAR_20TD')
+        powers = payload.get('powers', ['15000', '15000', '15000', '15000', '15000', '15000'])
+
+        params = {}
+        hex_powers = dict(zip(['p1', 'p2', 'p3', 'p4', 'p5', 'p6'], powers))
+        for period, power in hex_powers.items():
+            hexnumber = '{0:08x}'.format(int(power))
+            hex_powers[period] = ' '.join([hexnumber[i:i + 2] for i in xrange(0, 8, 2)])
+        params.update(hex_powers)
+
         dt = DLMSTemplates()
         template = dt.get_template(tmpl_name)
 
         data = template['data']
         sets = []
         for set in data:
+            set['data'] = set['data'].format(**params)
             sets.append(Set(set))
         self.sets = sets
 
