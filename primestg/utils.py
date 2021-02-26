@@ -8,6 +8,8 @@ from .dlms_templates import DLMS_TEMPLATES
 from pytz import timezone
 from copy import copy
 
+from datetime import datetime
+
 TZ = timezone('Europe/Madrid')
 
 
@@ -47,8 +49,19 @@ def octet2name(txt):
     return name
 
 
-def octet2hour(txt):
-    return int(txt[0:2], 16)
+def octet2number(txt):
+    return int(txt, 16)
+
+
+def octet2date(txt):
+    year = octet2number(txt[0:4])
+    month = octet2number(txt[4:6])
+    day = octet2number(txt[6:8])
+    hour = octet2number(txt[8:10])
+    minute = octet2number(txt[10:12])
+    second = octet2number(txt[12:14])
+
+    return datetime.strptime('{}-{}-{} {}:{}:{}'.format(year, month, day, hour, minute, second), '%Y-%m-%d %H:%M:%S')
 
 
 class PrimeTemplates:
@@ -89,16 +102,16 @@ class DLMSTemplates(PrimeTemplates):
     def generate_cycle_file(self, template_name, meters_name):
         elements = self.get_template(template_name)['data']
 
-        xml = '<cycles><cycle name="Ciclo_{}_raw" period="1" immediate="true" repeat="1" priority="1">'.format(
+        xml = '<cycles>\n<cycle name="Ciclo_{}_raw" period="1" immediate="true" repeat="1" priority="1">\n'.format(
             template_name)
 
         for meter_name in meters_name:
-            xml += '<device sn="{}"/>'.format(meter_name)
+            xml += '<device sn="{}"/>\n'.format(meter_name)
 
         for element in elements:
-            xml += '<set obis="{}" class="{}" element="{}">{}</set>'.format(
+            xml += '<set obis="{}" class="{}" element="{}">{}</set>\n'.format(
                 element['obis'], element['class'], element['element'], element['data'])
 
-        xml += '</cycle></cycles>'
+        xml += '</cycle>\n</cycles>'
 
         return xml

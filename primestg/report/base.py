@@ -1,5 +1,7 @@
 from datetime import datetime
 import binascii
+import re
+from primestg.utils import octet2date
 
 
 MAGNITUDE_W = 1
@@ -64,6 +66,9 @@ class ValueWithTime(object):
             date_value = '9999{}'.format(date_value[:4])
 
         try:
+            if re.search('[A-F]', date_value[0:4]):
+                date_value = octet2date(date_value)
+
             time = datetime.strptime(date_value[:-1], '%Y%m%d%H%M%S')
         except ValueError as e:
             raise ValueError("Date out of range: {} ({}) {}".format(
