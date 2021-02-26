@@ -90,6 +90,9 @@ def get_sync_sxx(**kwargs):
 @click.option("--contract", "-c", default="1")
 @click.option("--tariff", "-t", default="2.0_ST", help="One of available templates (see primestg templates or dlms_cycles)")
 @click.option("--activation_date", "-d", default="2021-04-01 00:00:00")
+@click.option("--powers", "-p", default="15000,15000,15000,15000,15000,15000",
+              help='comma separated orders list of 6 powers'
+)
 def sends_order(**kwargs):
    """Sends on of available Orders to Meter or CNC"""
    id_pet = get_id_pet()
@@ -102,6 +105,7 @@ def sends_order(**kwargs):
        'cnc': 'ZIV0004394488',
        'cnt': kwargs['meter'],
    }
+   vals = {}
    if order_name == 'cutoff':
        vals = {
            'order_param': '0',
@@ -125,6 +129,7 @@ def sends_order(**kwargs):
    elif order_name == 'dlms':
        vals = {
            'template': kwargs['tariff'],
+           'powers': kwargs['powers'].split(','),
        }
    vals.update({
        'date_to': format_timestamp(datetime.now()+timedelta(hours=1)),
@@ -178,7 +183,8 @@ def get_dlms_cycles(**kwargs):
     templates = dt.get_available_templates()
     for name in sorted([t[0] for t in templates]):
         data = dt.get_template(name)
-        print(' * {}: {}'.format(name, data['description']))
+        params_txt = data['params'] and '.requires {}'.format(','.join(data['params'])) or ''
+        print(' * {}: {}'.format(name, data['description'], params_txt))
 
 if __name__ == 'main':
     primestg()
