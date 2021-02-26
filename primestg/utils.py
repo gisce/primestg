@@ -85,3 +85,20 @@ class DLMSTemplates(PrimeTemplates):
 
     def __init__(self):
         self.templates = DLMS_TEMPLATES
+
+    def generate_cycle_file(self, template_name, meters_name):
+        elements = self.get_template(template_name)['data']
+
+        xml = '<cycles><cycle name="Ciclo_{}_raw" period="1" immediate="true" repeat="1" priority="1">'.format(
+            template_name)
+
+        for meter_name in meters_name:
+            xml += '<device sn="{}"/>'.format(meter_name)
+
+        for element in elements:
+            xml += '<set obis="{}" class="{}" element="{}">{}</set>'.format(
+                element['obis'], element['class'], element['element'], element['data'])
+
+        xml += '</cycle></cycles>'
+
+        return xml
