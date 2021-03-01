@@ -26,7 +26,6 @@ with description('Utils'):
                 for category in available_categories:
                     retrieved = dt.get_available_templates(template_type=category)
                     retrieved_names = [t[0] for t in retrieved]
-                    print(retrieved_names)
 
                     available_names = [n for n, t in all_templates.items() if t['category'] == category]
                     expect(available_names).to(equal(retrieved_names))
@@ -40,7 +39,6 @@ with description('Utils'):
                 for origin in available_origins:
                     retrieved = dt.get_available_templates(origin=origin)
                     retrieved_names = [t[0] for t in retrieved]
-                    print(retrieved_names)
 
                     available_names = [n for n, t in all_templates.items() if t['origin'] == origin]
                     expect(available_names).to(equal(retrieved_names))
@@ -54,7 +52,6 @@ with description('Utils'):
                 origin = 'library'
                 retrieved = dt.get_available_templates(origin=origin, template_type=category)
                 retrieved_names = [t[0] for t in retrieved]
-                print(retrieved_names)
 
                 available_names = [n for n, t in all_templates.items()
                                    if t['origin'] == origin and t['category'] == category]
