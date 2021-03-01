@@ -67,9 +67,9 @@ class ValueWithTime(object):
 
         try:
             if re.search('[A-F]', date_value[0:4]):
-                date_value = octet2date(date_value)
-
-            time = datetime.strptime(date_value[:-1], '%Y%m%d%H%M%S')
+                time = octet2date(date_value)
+            else:
+                time = datetime.strptime(date_value[:-1], '%Y%m%d%H%M%S')
         except ValueError as e:
             raise ValueError("Date out of range: {} ({}) {}".format(
                 date_value, name, e))
