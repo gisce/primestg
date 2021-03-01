@@ -37,12 +37,12 @@ DLMS_TEMPLATES = {
         'category': 'powers',
         'params': ['powers'],
         'data': [
-            {'obis': "0.1.94.34.11.255", 'class': "3", 'element': "2", 'data': "raw{{ 06 {p1} }}"},
-            {'obis': "0.1.94.34.12.255", 'class': "3", 'element': "2", 'data': "raw{{ 06 {p2} }}"},
-            {'obis': "0.1.94.34.13.255", 'class': "3", 'element': "2", 'data': "raw{{ 06 {p3} }}"},
-            {'obis': "0.1.94.34.14.255", 'class': "3", 'element': "2", 'data': "raw{{ 06 {p4} }}"},
-            {'obis': "0.1.94.34.15.255", 'class': "3", 'element': "2", 'data': "raw{{ 06 {p5} }}"},
-            {'obis': "0.1.94.34.16.255", 'class': "3", 'element': "2", 'data':  "raw{{ 06 {p6} }}"},
+            {'obis': "0.1.94.34.11.255", 'class': "3", 'element': "2", 'data': "raw{{ 06{p1} }}"},
+            {'obis': "0.1.94.34.12.255", 'class': "3", 'element': "2", 'data': "raw{{ 06{p2} }}"},
+            {'obis': "0.1.94.34.13.255", 'class': "3", 'element': "2", 'data': "raw{{ 06{p3} }}"},
+            {'obis': "0.1.94.34.14.255", 'class': "3", 'element': "2", 'data': "raw{{ 06{p4} }}"},
+            {'obis': "0.1.94.34.15.255", 'class': "3", 'element': "2", 'data': "raw{{ 06{p5} }}"},
+            {'obis': "0.1.94.34.16.255", 'class': "3", 'element': "2", 'data':  "raw{{ 06{p6} }}"},
         ],
     },
 }
