@@ -31,11 +31,11 @@ DLMS_TEMPLATES = {
         ],
     },
     # POWERS
-    'C1_ACT_POWERS': {
-        'description': 'Set powers on c1. pn: power in hex i.e "00 00 16 76"',
+    'C1_LAT_POWERS': {
+        'description': 'Set powers on latent c1. Ordered power list p1,2,p3,p4,p5,p6 and date.',
         'origin': 'library',
         'category': 'powers',
-        'params': ['powers'],
+        'params': ['powers', 'date'],
         'data': [
             {'obis': "0.1.94.34.11.255", 'class': "3", 'element': "2", 'data': "raw{{06{p1}}}"},
             {'obis': "0.1.94.34.12.255", 'class': "3", 'element': "2", 'data': "raw{{06{p2}}}"},
@@ -43,6 +43,7 @@ DLMS_TEMPLATES = {
             {'obis': "0.1.94.34.14.255", 'class': "3", 'element': "2", 'data': "raw{{06{p4}}}"},
             {'obis': "0.1.94.34.15.255", 'class': "3", 'element': "2", 'data': "raw{{06{p5}}}"},
             {'obis': "0.1.94.34.16.255", 'class': "3", 'element': "2", 'data':  "raw{{06{p6}}}"},
+            {'obis': "0.0.13.0.1.255", 'class': "20", 'element': "10", 'data': "raw{{090C{date}FF000000000800FF}}"},
         ],
     },
 }

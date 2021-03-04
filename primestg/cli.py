@@ -139,9 +139,17 @@ def sends_order(**kwargs):
            )
        }
    elif order_name == 'dlms':
+       try:
+           # datetime
+           activation_date = (datetime.strptime(kwargs['activation_date'], '%Y-%m-%d %H:%M:%S')).date()
+       except Exception as e:
+           # date
+           activation_date = (datetime.strptime(kwargs['activation_date'], '%Y-%m-%d')).date()
+
        vals = {
            'template': kwargs['tariff'],
            'powers': kwargs['powers'].split(','),
+           'date': activation_date,
        }
    vals.update({
        'date_to': format_timestamp(datetime.now()+timedelta(hours=1)),
