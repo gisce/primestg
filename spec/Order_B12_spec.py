@@ -2,6 +2,7 @@
 from primestg.order.orders import Order
 from expects import expect, equal
 from primestg.utils import assertXMLEqual
+from datetime import date
 
 with description('Order B12 Generation'):
 
@@ -17,6 +18,7 @@ with description('Order B12 Generation'):
                                 <set class="3" data="raw{060000154a}" element="2" obis="0.1.94.34.14.255"/>
                                 <set class="3" data="raw{06000015ae}" element="2" obis="0.1.94.34.15.255"/>
                                 <set class="3" data="raw{0600001612}" element="2" obis="0.1.94.34.16.255"/>
+                                <set class="20" data="raw{090C07E50601FF000000000800FF}" element="10" obis="0.0.13.0.1.255"/>
                             </B12>
                         </Cnt>
                     </Cnc>
@@ -29,10 +31,12 @@ with description('Order B12 Generation'):
             'cnt': 'CNT000000000',
         }
         payload = {
-            'template': 'C1_ACT_POWERS',
+            'template': 'C1_LAT_POWERS',
             'powers': [5150, 5250, 5350, 5450, 5550, 5650],
+            'date': date(2021, 06, 01),
             'date_from': '',
             'date_to': '',
+
         }
 
         order = Order('B12')

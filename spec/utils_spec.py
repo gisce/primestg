@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from expects import expect, raise_error, be_a, equal
-from primestg.utils import DLMSTemplates, ContractTemplates
+from primestg.utils import DLMSTemplates, ContractTemplates, datetohexprime
 from primestg.dlms_templates import DLMS_TEMPLATES
+from datetime import date
 
 
 with description('Utils'):
@@ -57,3 +58,15 @@ with description('Utils'):
                                    if t['origin'] == origin and t['category'] == category]
 
                 expect(available_names).to(equal(retrieved_names))
+
+    with context("datetohexprime"):
+        with it('returns an hexadecimal date'):
+            dts = {
+                '07E40B01': date(2020, 11, 1),
+                '07E50401': date(2021, 4, 1),
+                '07E50601': date(2021, 6, 1),
+                '07B60410': date(1974, 4, 16),
+                '07E60C19': date(2022, 12, 25),
+            }
+            for res, dt in dts.items():
+                expect(res).to(equal(datetohexprime(dt)))
