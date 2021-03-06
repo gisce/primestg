@@ -32,7 +32,7 @@ DLMS_TEMPLATES = {
     },
     # POWERS
     'C1_LAT_POWERS': {
-        'description': 'Set powers on latent c1. Ordered power list p1,2,p3,p4,p5,p6 and date.',
+        'description': 'Set powers on LATENT c1. Ordered power list p1,p2,p3,p4,p5,p6 and date.',
         'origin': 'library',
         'category': 'powers',
         'params': ['powers', 'date'],
@@ -44,6 +44,20 @@ DLMS_TEMPLATES = {
             {'obis': "0.1.94.34.15.255", 'class': "3", 'element': "2", 'data': "raw{{06{p5}}}"},
             {'obis': "0.1.94.34.16.255", 'class': "3", 'element': "2", 'data':  "raw{{06{p6}}}"},
             {'obis': "0.0.13.0.1.255", 'class': "20", 'element': "10", 'data': "raw{{090C{date}FF000000000800FF}}"},
+        ],
+    },
+    'C1_ACT_POWERS': {
+        'description': 'Set powers on ACTUAL c1. Ordered power list p1,p2,p3,p4,p5,p6',
+        'origin': 'library',
+        'category': 'powers',
+        'params': ['powers'],
+        'data': [
+            {'obis': "0.1.94.34.1.255", 'class': "3", 'element': "2", 'data': "raw{{06{p1}}}"},
+            {'obis': "0.1.94.34.2.255", 'class': "3", 'element': "2", 'data': "raw{{06{p2}}}"},
+            {'obis': "0.1.94.34.3.255", 'class': "3", 'element': "2", 'data': "raw{{06{p3}}}"},
+            {'obis': "0.1.94.34.4.255", 'class': "3", 'element': "2", 'data': "raw{{06{p4}}}"},
+            {'obis': "0.1.94.34.5.255", 'class': "3", 'element': "2", 'data': "raw{{06{p5}}}"},
+            {'obis': "0.1.94.34.6.255", 'class': "3", 'element': "2", 'data': "raw{{06{p6}}}"},
         ],
     },
 }

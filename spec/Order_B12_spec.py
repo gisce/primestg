@@ -6,7 +6,7 @@ from datetime import date
 
 with description('Order B12 Generation'):
 
-    with it('generates expected B12 Powers xml'):
+    with it('generates expected B12 Latent Powers xml'):
         expected_result = (
             """<Order IdPet="1234" IdReq="B12" Version="3.1.c">   
                     <Cnc Id="CIR4621544074">
@@ -33,7 +33,42 @@ with description('Order B12 Generation'):
         payload = {
             'template': 'C1_LAT_POWERS',
             'powers': [5150, 5250, 5350, 5450, 5550, 5650],
-            'date': date(2021, 06, 01),
+            'date': date(2021, 6, 1),
+            'date_from': '',
+            'date_to': '',
+
+        }
+
+        order = Order('B12')
+        order = order.create(generic_values, payload)
+        assertXMLEqual(order, expected_result)
+
+    with it('generates expected B12 Actual Powers xml'):
+        expected_result = (
+            """<Order IdPet="1234" IdReq="B12" Version="3.1.c">
+                    <Cnc Id="CIR4621544074">
+                        <Cnt Id="CNT000000000">
+                            <B12 Ffin="" Fini="">
+                                <set class="3" data="raw{060000141e}" element="2" obis="0.1.94.34.1.255"/>
+                                <set class="3" data="raw{0600001482}" element="2" obis="0.1.94.34.2.255"/>
+                                <set class="3" data="raw{06000014e6}" element="2" obis="0.1.94.34.3.255"/>
+                                <set class="3" data="raw{060000154a}" element="2" obis="0.1.94.34.4.255"/>
+                                <set class="3" data="raw{06000015ae}" element="2" obis="0.1.94.34.5.255"/>
+                                <set class="3" data="raw{0600001612}" element="2" obis="0.1.94.34.6.255"/>
+                            </B12>
+                        </Cnt>
+                    </Cnc>
+                </Order>""")
+
+        generic_values = {
+            'id_pet': str(1234),
+            'id_req': 'B12',
+            'cnc': 'CIR4621544074',
+            'cnt': 'CNT000000000',
+        }
+        payload = {
+            'template': 'C1_ACT_POWERS',
+            'powers': [5150, 5250, 5350, 5450, 5550, 5650],
             'date_from': '',
             'date_to': '',
 
