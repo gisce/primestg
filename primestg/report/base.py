@@ -61,8 +61,7 @@ class ValueWithTime(object):
             date_value = '19000101000000W'
 
         if date_value.upper().startswith('FFFF'):
-            date_value = '9999{}'.format(date_value[:4])
-
+            date_value = '9999' + date_value[4:]
         try:
             time = datetime.strptime(date_value[:-1], '%Y%m%d%H%M%S')
         except ValueError as e:
