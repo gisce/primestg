@@ -321,7 +321,7 @@ with description('Report S23 examples'):
     with it('With hexadecimal datetime report'):
         with open('spec/data/ZIV0004389874_7_S23_0_20210226020937') as data_file:
             report = Report(data_file)
-            print report.concentrators[0].meters[0].values[0].get('latent_calendars').get('contracts')[0].get('act_date')
             expect('2021-04-01 04:00:00').to(
-                equal(report.concentrators[0].meters[0].values[0].get('latent_calendars').get('contracts')[0].get(
-                    'act_date')))
+                equal([x for x in report.concentrators][0].meters[0].values[0].get('latent_calendars').get(
+                    'contracts')[0].get('act_date'))
+            )
