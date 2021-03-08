@@ -28,6 +28,16 @@ ORDERS = {
     'dlms': {'order': 'B12', 'func': 'order_raw_dlms'},
 }
 
+
+def get_meter_cnc_name(param):
+    if '@' in param:
+        meter, cnc = param.split('@')
+    else:
+        meter = param
+        cnc = 'ZIV0004394488'
+    return meter, cnc
+
+
 def get_id_pet():
     now = datetime.now()
     return (
@@ -45,7 +55,7 @@ def primestg(**kwargs):
                 required=True
 )
 @click.argument("cnc_url", required=True,
-                default="http://cct.gisce.lan:8080"
+                default="http://cct.gisce.lan:8080/WS_DC/WS_DC.asmx"
 )   
 @click.option("--meter", "-m", default="ZIV0040318130")
 def get_sync_report(**kwargs):
@@ -64,7 +74,7 @@ def get_sync_report(**kwargs):
 @primestg.command(name='get_raw')
 @click.argument('sxx', required=True)
 @click.argument("cnc_url", required=True,
-                default="http://cct.gisce.lan:8080"
+                default="http://cct.gisce.lan:8080/WS_DC/WS_DC.asmx"
 )   
 @click.option("--meter", "-m", default="ZIV0040318130")
 @click.option(
@@ -76,7 +86,8 @@ def get_sync_sxx(**kwargs):
    sync = not kwargs['async']
    id_pet = get_id_pet()
    s = Service(id_pet, kwargs['cnc_url'], sync=sync, source='DCF')
-   res = s.send(kwargs['sxx'],kwargs['meter'])
+   meter_name, cnc_name = get_meter_cnc_name(kwargs['meter'])
+   res = s.send(kwargs['sxx'],meter_name)
    print(res)
 
 
@@ -90,18 +101,23 @@ def get_sync_sxx(**kwargs):
 @click.option("--contract", "-c", default="1")
 @click.option("--tariff", "-t", default="2.0_ST", help="One of available templates (see primestg templates or dlms_cycles)")
 @click.option("--activation_date", "-d", default="2021-04-01 00:00:00")
+@click.option("--powers", "-p", default="15000,15000,15000,15000,15000,15000",
+              help='comma separated orders list of 6 powers'
+)
 def sends_order(**kwargs):
    """Sends on of available Orders to Meter or CNC"""
    id_pet = get_id_pet()
    s = Service(id_pet, kwargs['cnc_url'], sync=True)
    order_name = kwargs['order']
    order_code = ORDERS[order_name]['order']
+   meter_name, cnc_name = get_meter_cnc_name(kwargs['meter'])
    generic_values = {
        'id_pet': id_pet,
        'id_req': order_code,
-       'cnc': 'ZIV0004394488',
-       'cnt': kwargs['meter'],
+       'cnc': cnc_name,
+       'cnt': meter_name,
    }
+   vals = {}
    if order_name == 'cutoff':
        vals = {
            'order_param': '0',
@@ -123,8 +139,17 @@ def sends_order(**kwargs):
            )
        }
    elif order_name == 'dlms':
+       try:
+           # datetime
+           activation_date = (datetime.strptime(kwargs['activation_date'], '%Y-%m-%d %H:%M:%S')).date()
+       except Exception as e:
+           # date
+           activation_date = (datetime.strptime(kwargs['activation_date'], '%Y-%m-%d')).date()
+
        vals = {
            'template': kwargs['tariff'],
+           'powers': kwargs['powers'].split(','),
+           'date': activation_date,
        }
    vals.update({
        'date_to': format_timestamp(datetime.now()+timedelta(hours=1)),
@@ -140,7 +165,7 @@ def sends_order(**kwargs):
 @primestg.command(name='cnc_control')
 @click.argument('order',required=True)
 @click.argument("cnc_url", required=True,
-                default="http://cct.gisce.lan:8080"
+                default="http://cct.gisce.lan:8080/WS_DC/WS_DC.asmx"
 )   
 def cnc_control(**kwargs):
    """Sends a TXX order to CNC"""
@@ -178,7 +203,8 @@ def get_dlms_cycles(**kwargs):
     templates = dt.get_available_templates()
     for name in sorted([t[0] for t in templates]):
         data = dt.get_template(name)
-        print(' * {}: {}'.format(name, data['description']))
+        params_txt = data['params'] and '.requires {}'.format(','.join(data['params'])) or ''
+        print(' * {}: {}'.format(name, data['description'], params_txt))
 
 if __name__ == 'main':
     primestg()

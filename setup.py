@@ -13,7 +13,8 @@ setup(
         'lxml',
         'zeep',
         'libcomxml',
-        'click'
+        'click',
+        'python-dateutil'
     ],
     description='Prime STG-DC Interface Specification',
     classifiers=[

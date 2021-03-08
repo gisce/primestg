@@ -33,6 +33,19 @@ def datetimetoprime(dt):
     return dt_str
 
 
+def datetohexprime(dt):
+    """
+    Converts a date to a hexadecimal prime date string
+    """
+    year = dt.year
+    month = dt.month
+    day = dt.day
+
+    date_string = '{0:04x}{1:02x}{2:02x}'.format(year, month, day).upper()
+
+    return date_string
+
+
 def name2octet(txt):
     octet_str = ''
     for caracter in '{: >6}'.format(txt):
@@ -59,10 +72,10 @@ class PrimeTemplates:
     def get_available_templates(self, origin=None, template_type=None):
         template_list = []
         for name, contract in self.templates.items():
-            if origin is not None and template_type is not None:
-                if (origin is not None and contract['origin'] != origin) or (
-                        template_type is not None and contract['type'] != template_type):
-                    continue
+            if origin is not None and contract['origin'] != origin:
+                continue
+            if template_type is not None and contract['category'] != template_type:
+                continue
 
             template_list.append((name, contract['description'], contract['origin']))
 
