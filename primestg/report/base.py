@@ -28,6 +28,11 @@ S23_BAD_TIMESTAMP = [
 BAD_TIMESTAMP = SAGE_BAD_TIMESTAMP + S23_BAD_TIMESTAMP
 
 
+DAYSAVING_START_TS = 'FFFFFDFFFFFFFF0000800000'   # Winter to summer
+DAYSAVING_END_TS = 'FFFFFEFFFFFFFF0000800080'     # Summer to winter
+NOW_ACTIVATION_DATE = 'FFFFFFFFFFFFFFFFFF800009'  # Instantly activate latent contract
+
+
 class ValueWithTime(object):
     """
     Base class for values with time.
@@ -43,30 +48,58 @@ class ValueWithTime(object):
         :return: a formatted string representing a timestamp \
             ('%Y-%m-%d %H:%M:%S')
         """
-        if element is None:
-            e = self.objectified
-        else:
-            e = element
-        value = e.get(name)
-        if len(value) > 15:
-            date_value = value[0:14] + value[-1]
-        else:
-            date_value = value
+        e = self.objectified if element is None else element
 
-        # Fix for SAGECOM which puts this timestamp when the period doesn't
-        # affect the contracted tariff
+        return self._to_timestamp(e.get(name), name)
+
+    @staticmethod
+    def _to_timestamp(value, name):
+        date_value = value[0:14] + value[-1] if len(value) > 15 else value
+
+        # Fix for SAGECOM which puts this timestamp when the period doesn't affect the contracted tariff
         if date_value.upper() in BAD_TIMESTAMP or not date_value:
             date_value = '19000101000000W'
 
         if date_value.upper().startswith('FFFF'):
             date_value = '9999' + date_value[4:]
-
         try:
             time = datetime.strptime(date_value[:-1], '%Y%m%d%H%M%S')
         except ValueError as e:
             raise ValueError("Date out of range: {} ({}) {}".format(
                 date_value, name, e))
+
         return time.strftime('%Y-%m-%d %H:%M:%S')
+
+    def _get_special_days(self, name, element=None):
+        """
+        Formats a timestamp from the name of the value.
+
+        :param name: a string with the name
+        :param element: an lxml.objectify.StringElement, by default self.objectified
+        :return: {
+            timestamp: a formatted string representing a timestamp ('%Y-%m-%d %H:%M:%S')
+            year: number|False,
+            month: number,
+            day: number
+        }
+        """
+        e = self.objectified if element is None else element
+        value = e.get(name)
+
+        if not value:
+            return None
+
+        year = value[0:4]
+
+        if e.get('DTCard') == 'Y':
+            value = '9999' + value[4:]
+
+        return {
+            'year': int(year) if year.isdigit() else False,
+            'month': int(value[4:6]),
+            'day': int(value[6:8]),
+            'timestamp': self._to_timestamp(value, name)
+        }
 
 
 class Measure(ValueWithTime):

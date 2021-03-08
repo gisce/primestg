@@ -4,6 +4,7 @@ from primestg.report.base import (
     Concentrator, Measure, MeterWithConcentratorName, LineDetails, RemoteTerminalUnitDetails
 )
 from primestg.message import MessageS
+from primestg.utils import octet2name, octet2hour
 
 SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S15',
                      'S17', 'S18', 'S23', 'S24', 'S27', 'S52']
@@ -632,71 +633,74 @@ class ParameterS23(Parameter):
         return obj_values
 
     """
-    Static method to retrieve values with common structure for S233.
+    Static method to retrieve values with common structure for S23.
 
     :return: formated values for ActiveCalendar and LatentCalendar sections
     """
     @staticmethod
-    def get_calendars(obj):
+    def get_calendars(obj, is_active_calendar=False):
         obj_values = {}
         if getattr(obj, 'Contract', None) is not None:
+            contracts = []
             for i, contract_obj in enumerate(obj.Contract):
-                contract = {}
-                contract_num = 'c' + str(i + 1)
-                contract_values = {
+                contract = {
+                    'c': contract_obj.get('c'),
                     'calendar_type': contract_obj.get('CalendarType'),
-                    'calendar_name': contract_obj.get('CalendarName'),
+                    'calendar_name': octet2name(contract_obj.get('CalendarName')),
                     'act_date': Measure(contract_obj)._get_timestamp('ActDate'),
+                    'is_active_calendar': is_active_calendar
                 }
                 if getattr(contract_obj, 'Season', None) is not None:
-                    seasons = {}
+                    seasons = []
                     for x, season_obj in enumerate(contract_obj.Season):
-                        season = 'season' + str(x + 1)
-                        season_value = {
+                        season = {
                             'name': season_obj.get('Name'),
                             'start': season_obj.get('Start'),
                             'week': season_obj.get('Week'),
                         }
-                        seasons.update({season: season_value})
+                        seasons.append(season)
                     contract.update({'seasons': seasons})
                 if getattr(contract_obj, 'Week', None) is not None:
-                    weeks = {}
+                    weeks = []
                     for x, week_obj in enumerate(contract_obj.Week):
-                        week = 'week' + str(x + 1)
-                        week_value = {
+                        week_days = week_obj.get('Week')
+                        week = {
                             'name': week_obj.get('Name'),
                             'week': week_obj.get('Week'),
+                            'index': x,
                         }
-                        weeks.update({week: week_value})
+                        for index in range(0, len(week_days), 2):
+                            day = 'day{}'.format(int(index/2))
+                            week.update({day: week_days[index:index+2]})
+                        weeks.append(week)
                     contract.update({'weeks': weeks})
                 if getattr(contract_obj, 'SpecialDays', None) is not None:
-                    special_days = {}
+                    special_days = []
                     for x, special_day_obj in enumerate(contract_obj.SpecialDays):
-                        special_day = 'special_day' + str(x + 1)
-                        special_day_value = {
-                            'dt': Measure(special_day_obj)._get_timestamp('DT'),
-                            'dt_card': special_day_obj.get('DTCard'),
+                        special_day = {
+                            'dt': Measure(special_day_obj)._get_special_days('DT'),
+                            'dt_card': False if special_day_obj.get('DTCard', 'N') == 'N' else True,
                             'day_id': special_day_obj.get('DayID'),
                         }
-                        special_days.update({special_day: special_day_value})
+                        special_days.append(special_day)
                     contract.update({'special_days': special_days})
                 if getattr(contract_obj, 'Day', None) is not None:
-                    days = {}
+                    days = []
                     for x, day_obj in enumerate(contract_obj.Day):
-                        day = 'day' + str(x + 1)
-                        changes = {}
+                        day = {'day_id': day_obj.get('id', None)}
+                        changes = []
                         for y, change_obj in enumerate(contract_obj.Day[x].Change):
-                            change = 'change' + str(y + 1)
                             if getattr(day_obj, 'Change', None) is not None:
-                                change_value = {
-                                    'hour': change_obj.get('Hour'),
+                                change = {
+                                    'hour': octet2hour(change_obj.get('Hour')),
                                     'tariffrate': change_obj.get('TariffRate'),
                                 }
-                            changes.update({change: change_value})
-                        days.update({day: changes})
+                                changes.append(change)
+                        day.update({'changes': changes})
+                        days.append(day)
                     contract.update({'days': days})
-                contract.update(contract_values)
-                obj_values.update({contract_num: contract})
+                contracts.append(contract)
+            obj_values.update({'contracts': contracts})
         return obj_values
 
     @property
@@ -723,13 +727,13 @@ class ParameterS23(Parameter):
                 values['pc_act'] = 'supervisor'
             if hasattr(self.objectified, 'ActiveCalendars'):
                 active_calendars = self.objectified.ActiveCalendars
-                obj_values = self.get_calendars(active_calendars)
+                obj_values = self.get_calendars(active_calendars, True)
                 values['active_calendars'] = obj_values
             else:
                 values['active_calendars'] = []
             if hasattr(self.objectified, 'LatentCalendars'):
                 latent_calendars = self.objectified.LatentCalendars
-                obj_values = self.get_calendars(latent_calendars)
+                obj_values = self.get_calendars(latent_calendars, False)
                 values['latent_calendars'] = obj_values
             else:
                 values['latent_calendars'] = []

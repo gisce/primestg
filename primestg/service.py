@@ -74,6 +74,15 @@ class Service(object):
         order = order.create(generic_values, payload)
         return self.send_order('B03', order)
 
+    def get_contract(self, generic_values, payload):
+        """
+        Sends B03 order to meter
+        :return: Success or fail
+        """
+        order = Order('B04')
+        order = order.create(generic_values, payload)
+        return self.send_order('B04', order)
+
     def get_meter_modification(self, generic_values, payload):
         """
         Sends B09 order to meter
@@ -91,6 +100,15 @@ class Service(object):
         order = Order('B11')
         order = order.create(generic_values, payload)
         return self.send_order('B11', order)
+
+    def order_raw_dlms(self, generic_values, payload):
+        """
+        Sends B12 order to concentrator
+        :return: Success or fail
+        """
+        order = Order('B12')
+        order = order.create(generic_values, payload)
+        return self.send_order('B12', order)
 
     def create_service(self):
         binding = '{http://www.asais.fr/ns/Saturne/DC/ws}WS_DCSoap'

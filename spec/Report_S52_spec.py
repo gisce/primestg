@@ -2,7 +2,7 @@ from expects import expect, equal
 from primestg.report import Report
 
 
-with fdescription('Report S52 example'):
+with description('Report S52 example'):
     with before.all:
 
         self.data_filename = 'spec/data/MRTR000000822522_0_S52_1_20200929001048'
