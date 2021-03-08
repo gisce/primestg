@@ -67,6 +67,7 @@ with description('Utils'):
                 '07E50601': date(2021, 6, 1),
                 '07B60410': date(1974, 4, 16),
                 '07E60C19': date(2022, 12, 25),
+                '07D10101': date(2001, 1, 1),
             }
             for res, dt in dts.items():
                 expect(res).to(equal(datetohexprime(dt)))
