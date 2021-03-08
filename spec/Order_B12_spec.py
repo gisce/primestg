@@ -49,12 +49,13 @@ with description('Order B12 Generation'):
                     <Cnc Id="CIR4621544074">
                         <Cnt Id="CNT000000000">
                             <B12 Ffin="" Fini="">
-                                <set class="3" data="raw{060000141e}" element="2" obis="0.1.94.34.1.255"/>
-                                <set class="3" data="raw{0600001482}" element="2" obis="0.1.94.34.2.255"/>
-                                <set class="3" data="raw{06000014e6}" element="2" obis="0.1.94.34.3.255"/>
-                                <set class="3" data="raw{060000154a}" element="2" obis="0.1.94.34.4.255"/>
-                                <set class="3" data="raw{06000015ae}" element="2" obis="0.1.94.34.5.255"/>
-                                <set class="3" data="raw{0600001612}" element="2" obis="0.1.94.34.6.255"/>
+                                <set class="3" data="raw{060000141e}" element="2" obis="0.1.94.34.11.255"/>
+                                <set class="3" data="raw{0600001482}" element="2" obis="0.1.94.34.12.255"/>
+                                <set class="3" data="raw{06000014e6}" element="2" obis="0.1.94.34.13.255"/>
+                                <set class="3" data="raw{060000154a}" element="2" obis="0.1.94.34.14.255"/>
+                                <set class="3" data="raw{06000015ae}" element="2" obis="0.1.94.34.15.255"/>
+                                <set class="3" data="raw{0600001612}" element="2" obis="0.1.94.34.16.255"/>
+                                <set class="20" data="raw{090C07D10101FF000000000800FF}" element="10" obis="0.0.13.0.1.255"/>
                             </B12>
                         </Cnt>
                     </Cnc>
