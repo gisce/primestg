@@ -11,7 +11,7 @@ setup(
     author_email='devel@gisce.net',
     install_requires=[
         'lxml',
-        'zeep',
+        'zeep<4.0',
         'libcomxml',
         'click'
     ],
