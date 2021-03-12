@@ -4,7 +4,7 @@ from primestg.report.base import (
     Concentrator, Measure, MeterWithConcentratorName, LineDetails, RemoteTerminalUnitDetails
 )
 from primestg.message import MessageS
-from primestg.utils import octet2name, octet2hour
+from primestg.utils import octet2name, octet2number
 
 SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S15',
                      'S17', 'S18', 'S23', 'S24', 'S27', 'S52']
@@ -692,7 +692,7 @@ class ParameterS23(Parameter):
                         for y, change_obj in enumerate(contract_obj.Day[x].Change):
                             if getattr(day_obj, 'Change', None) is not None:
                                 change = {
-                                    'hour': octet2hour(change_obj.get('Hour')),
+                                    'hour': octet2number(change_obj.get('Hour', '00')[0:2]),
                                     'tariffrate': change_obj.get('TariffRate'),
                                 }
                                 changes.append(change)
