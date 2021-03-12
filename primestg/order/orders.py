@@ -442,9 +442,10 @@ class B12Payload(XmlModel):
 
         data = template['data']
         sets = []
-        for set in data:
-            set['data'] = set['data'].format(**params)
-            sets.append(Set(set))
+        for set_line in data:
+            new_set = set_line.copy()
+            new_set['data'] = set_line['data'].format(**params)
+            sets.append(Set(new_set))
         self.sets = sets
 
         super(B12Payload, self).__init__('b12Payload', 'payload', drop_empty=drop_empty)
