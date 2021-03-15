@@ -3,6 +3,8 @@ import sys
 import click
 from datetime import datetime, timedelta
 from pytz import timezone
+from ziv_service import ZivService
+import base64
 
 TZ = timezone('Europe/Madrid')
 
@@ -205,6 +207,18 @@ def get_dlms_cycles(**kwargs):
         data = dt.get_template(name)
         params_txt = data['params'] and '.requires {}'.format(','.join(data['params'])) or ''
         print(' * {}: {}'.format(name, data['description'], params_txt))
+
+@primestg.command(name='ziv_cycle')
+@click.argument('cnc_url',required=True)
+@click.argument('filename',required=True)
+@click.argument('user',required=True)
+@click.argument('password',required=True)
+def send_ziv_cycle(**kwargs):
+    """Sends a cycle to a ZIV CNC"""
+    zs = ZivService(kwargs['cnc_url'], user=kwargs['user'], password=kwargs['password'], sync=True)
+    content = base64.b64encode(open(kwargs['filename'],'rb').read())
+    result = zs.send_cycle(filename=kwargs['filename'], cycle_filedata=content)
+    print(result.content)
 
 if __name__ == 'main':
     primestg()
