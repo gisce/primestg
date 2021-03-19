@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from expects import expect, raise_error, be_a, equal
-from primestg.utils import DLMSTemplates, ContractTemplates, datetohexprime
+from primestg.utils import DLMSTemplates, ContractTemplates, datetohexprime, octet2name, name2octet
 from primestg.dlms_templates import DLMS_TEMPLATES
 from datetime import date
 
@@ -71,3 +71,32 @@ with description('Utils'):
             }
             for res, dt in dts.items():
                 expect(res).to(equal(datetohexprime(dt)))
+
+    with context("octet2name"):
+        with it("returns a text"):
+            names = {
+                "000000000000": '',
+                "202020202020": '      ',
+                "202020444833": '   DH3',
+                "2020322E3041": '  2.0A',
+                "322E30412020": '2.0A  ',
+                "322E30444841": '2.0DHA',
+                "322E305F5354": '2.0_ST',
+                "324153544152": '2ASTAR',
+                "332E302E3220": '3.0.2 ',
+                "332E30413650": '3.0A6P',
+                "33545F544441": '3T_TDA',
+                "363353544152": '63STAR',
+                "36545F544441": '6T_TDA',
+                "414354495645": 'ACTIVE',
+                "43414C303032": 'CAL002',
+                "43414C303033": 'CAL003',
+                "4448320031FF": 'DH2',
+                "444841000000": 'DHA',
+                "4448415F4954": 'DHA_IT',
+                "4448415F5544": 'DHA_UD',
+                "444853000000": 'DHS',
+                "504153495645": 'PASIVE',
+            }
+            for octet, name in names.items():
+                expect(name).to(equal(octet2name(octet)))
