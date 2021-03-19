@@ -5,6 +5,9 @@ from datetime import datetime, timedelta
 from pytz import timezone
 from ziv_service import ZivService
 import base64
+from os import access, R_OK
+from os.path import isfile
+from report import Report
 
 TZ = timezone('Europe/Madrid')
 
@@ -219,6 +222,31 @@ def send_ziv_cycle(**kwargs):
     content = base64.b64encode(open(kwargs['filename'],'rb').read())
     result = zs.send_cycle(filename=kwargs['filename'], cycle_filedata=content)
     print(result.content)
+
+@primestg.command(name='parse')
+@click.argument('filename',required=True)
+def parse_report(**kwargs):
+    """Load and parses a PRIME file"""
+    filepath = kwargs['filename']
+    if isfile(filepath) and access(filepath, R_OK):
+        with open(filepath) as data_file:
+            report = Report(data_file)
+            print(report)
+            print("Report: {}".format(report.report_type))
+            cnc = report.concentrators[0]
+            print("Concentrator: {}".format(cnc.name))
+            # rtu = report.get_rt_unit(report.rt_units)
+            # if rtu:
+            #    print("RTU Unit: {}".format(rtu))
+            meters = cnc.meters
+            for meter in meters:
+                print(" * Meter: {}".format(meter.name))
+                for value in meter.values:
+                    print("     - {}".format(value.keys()))
+                    #break
+
+    else:
+        print("File {} not accessible or inexistent")
 
 if __name__ == 'main':
     primestg()
