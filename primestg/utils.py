@@ -7,6 +7,7 @@ from .contract_templates import CONTRACT_TEMPLATES
 from .dlms_templates import DLMS_TEMPLATES
 from pytz import timezone
 from copy import copy
+from string import printable
 
 from datetime import datetime
 
@@ -58,7 +59,11 @@ def name2octet(txt):
 def octet2name(txt):
     name = ''
     for index in range(0, len(txt), 2):
-        name += chr(int(txt[index] + txt[index + 1], 16))
+        c = chr(int(txt[index] + txt[index + 1], 16))
+        if c in printable:
+            name += c
+        else:
+            break
     return name
 
 
