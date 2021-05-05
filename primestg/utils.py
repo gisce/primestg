@@ -72,12 +72,31 @@ def octet2number(txt):
 
 
 def octet2date(txt):
+    hexadecimal = True
     year = octet2number(txt[0:4])
-    month = octet2number(txt[4:6])
-    day = octet2number(txt[6:8])
-    hour = octet2number(txt[8:10])
-    minute = octet2number(txt[10:12])
-    second = octet2number(txt[12:14])
+    if txt.startswith('FFFF'):
+        year = 9999
+        hexadecimal = False
+    elif year > 3000:
+        hexadecimal = False
+        year = int(txt[0:4])
+    month = hexadecimal and octet2number(txt[4:6]) or int(txt[4:6])
+    day = hexadecimal and octet2number(txt[6:8]) or int(txt[6:8])
+    hour_txt = txt[8:10]
+    if hour_txt == 'FF':
+        hour = 0
+    else:
+        hour = hexadecimal and octet2number(hour_txt) or int(hour_txt)
+    minute_txt = txt[10:12]
+    if minute_txt == 'FF':
+        minute = 0
+    else:
+        minute = hexadecimal and octet2number(minute_txt) or int(minute_txt)
+    second_txt = txt[12:14]
+    if second_txt == 'FF':
+        second = 0
+    else:
+        second = hexadecimal and octet2number(txt[12:14]) or int(second_txt)
 
     return datetime.strptime('{}-{}-{} {}:{}:{}'.format(year, month, day, hour, minute, second), '%Y-%m-%d %H:%M:%S')
 
