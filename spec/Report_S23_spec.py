@@ -1,6 +1,6 @@
 from ast import literal_eval
 
-from expects import expect, equal
+from expects import expect, equal, be_empty, be_none
 from primestg.report import Report
 
 
@@ -325,3 +325,12 @@ with description('Report S23 examples'):
                 equal([x for x in report.concentrators][0].meters[0].values[0].get('latent_calendars').get(
                     'contracts')[0].get('act_date'))
             )
+
+    with it('PC latent for every neter except supervisor'):
+        with open('spec/data/CIR4621424127_188DE4_S23_0_20210504202212') as data_file:
+            report = Report(data_file)
+            for cnc in report.concentrators:
+                for meter in cnc.meters:
+                    expect(meter.values[0].get('pc_act')).not_to(be_empty)
+                    if meter.values[0].get('pc_act') != 'supervisor':
+                        expect(meter.values[0].get('pc_latent')).to_not(be_none)

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from expects import expect, raise_error, be_a, equal
-from primestg.utils import DLMSTemplates, ContractTemplates, datetohexprime, octet2name, name2octet
+from primestg.utils import DLMSTemplates, ContractTemplates, datetohexprime, octet2name, name2octet, octet2date
 from primestg.dlms_templates import DLMS_TEMPLATES
-from datetime import date
+from datetime import date, datetime
 
 
 with description('Utils'):
@@ -100,3 +100,29 @@ with description('Utils'):
             }
             for octet, name in names.items():
                 expect(name).to(equal(octet2name(octet)))
+
+    with context("octet2date"):
+        with it("returns a date"):
+            dates = {
+                "07E504010400000": datetime(2021, 4, 1, 4, 0, 0),
+                "07E5060102000000FF800080": datetime(2021, 6, 1, 2, 0, 0),
+                "07E50601FF000000FF800009": datetime(2021, 6, 1, 0, 0, 0),
+                "07E50601FF00009": datetime(2021, 6, 1, 0, 0, 0),
+                "07E506010200000": datetime(2021, 6, 1, 2, 0, 0),
+                "07E50601FF00009": datetime(2021, 6, 1, 0, 0, 0),
+                "20140204110552000W": datetime(2014, 2, 4, 11, 5, 52),
+                "20190102134203000W": datetime(2019, 1, 2, 13, 42, 3),
+                "20210501000000000S": datetime(2021, 5, 1, 0, 0, 0),
+                # special days
+                "FFFF0101000000000W": datetime(9999, 1, 1, 0, 0, 0),
+                "FFFF0106000000000W": datetime(9999, 1, 6, 0, 0, 0),
+                "FFFF0501000000000W": datetime(9999, 5, 1, 0, 0, 0),
+                "FFFF0815000000000W": datetime(9999, 8, 15, 0, 0, 0),
+                "FFFF1012000000000W": datetime(9999, 10, 12, 0, 0, 0),
+                "FFFF1101000000000W": datetime(9999, 11, 1, 0, 0, 0),
+                "FFFF1206000000000W": datetime(9999, 12, 6, 0, 0, 0),
+                "FFFF1208000000000W": datetime(9999, 12, 8, 0, 0, 0),
+                "FFFF1225000000000W": datetime(9999, 12, 25, 0, 0, 0)
+            }
+            for octet, dt in dates.items():
+                expect(dt).to(equal(octet2date(octet)))
