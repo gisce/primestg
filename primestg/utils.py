@@ -81,7 +81,11 @@ def octet2date(txt):
         hexadecimal = False
         year = int(txt[0:4])
     month = hexadecimal and octet2number(txt[4:6]) or int(txt[4:6])
+    if month < 1 or month > 12:
+        month = 1
     day = hexadecimal and octet2number(txt[6:8]) or int(txt[6:8])
+    if day < 1 or day > 31:
+        day = 1
     hour_txt = txt[8:10]
     if hour_txt == 'FF':
         hour = 0
