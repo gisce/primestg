@@ -106,9 +106,8 @@ with description('Utils'):
             dates = {
                 "07E504010400000": datetime(2021, 4, 1, 4, 0, 0),
                 "07E5060102000000FF800080": datetime(2021, 6, 1, 2, 0, 0),
-                "07E50601FF000000FF800009": datetime(2021, 6, 1, 0, 0, 0),
-                "07E50601FF00009": datetime(2021, 6, 1, 0, 0, 0),
                 "07E506010200000": datetime(2021, 6, 1, 2, 0, 0),
+                "07E50601FF000000FF800009": datetime(2021, 6, 1, 0, 0, 0),
                 "07E50601FF00009": datetime(2021, 6, 1, 0, 0, 0),
                 "20140204110552000W": datetime(2014, 2, 4, 11, 5, 52),
                 "20190102134203000W": datetime(2019, 1, 2, 13, 42, 3),
@@ -122,7 +121,9 @@ with description('Utils'):
                 "FFFF1101000000000W": datetime(9999, 11, 1, 0, 0, 0),
                 "FFFF1206000000000W": datetime(9999, 12, 6, 0, 0, 0),
                 "FFFF1208000000000W": datetime(9999, 12, 8, 0, 0, 0),
-                "FFFF1225000000000W": datetime(9999, 12, 25, 0, 0, 0)
+                "FFFF1225000000000W": datetime(9999, 12, 25, 0, 0, 0),
+                #wrong month
+                "21110021000000000W": datetime(2111, 1, 21, 0, 0, 0),
             }
             for octet, dt in dates.items():
                 expect(dt).to(equal(octet2date(octet)))

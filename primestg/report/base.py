@@ -62,13 +62,8 @@ class ValueWithTime(object):
         if date_value.upper() in BAD_TIMESTAMP or not date_value:
             date_value = '19000101000000W'
 
-        if date_value.upper().startswith('FFFF'):
-            date_value = '9999' + date_value[4:]
         try:
-            if re.search('[A-F]', date_value[0:4]):
-                time = octet2date(date_value)
-            else:
-                time = datetime.strptime(date_value[:-1], '%Y%m%d%H%M%S')
+            time = octet2date(date_value)
         except ValueError as e:
             raise ValueError("Date out of range: {} ({}) {}".format(
                 date_value, name, e))

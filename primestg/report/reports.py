@@ -689,14 +689,15 @@ class ParameterS23(Parameter):
                     for x, day_obj in enumerate(contract_obj.Day):
                         day = {'day_id': day_obj.get('id', None)}
                         changes = []
-                        for y, change_obj in enumerate(contract_obj.Day[x].Change):
-                            if getattr(day_obj, 'Change', None) is not None:
-                                change = {
-                                    'hour': octet2number(change_obj.get('Hour', '00')[0:2]),
-                                    'tariffrate': change_obj.get('TariffRate'),
-                                }
-                                changes.append(change)
-                        day.update({'changes': changes})
+                        if contract_obj.Day[x].getchildren():
+                            for y, change_obj in enumerate(contract_obj.Day[x].Change):
+                                if getattr(day_obj, 'Change', None) is not None:
+                                    change = {
+                                        'hour': octet2number(change_obj.get('Hour', '00')[0:2]),
+                                        'tariffrate': change_obj.get('TariffRate'),
+                                    }
+                                    changes.append(change)
+                            day.update({'changes': changes})
                         days.append(day)
                     contract.update({'days': days})
                 contracts.append(contract)
