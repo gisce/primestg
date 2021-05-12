@@ -1,0 +1,63 @@
+<Report IdRpt="S23" IdPet="398787" Version="3.1.c">
+	<Cnc Id="ORM1142490553">		
+		<Cnt Id="ORB0000689147">
+			<S23 Fh="20210511065646000S">
+				<PCact ActDate="20150514160751000S">
+					<Contrato1 TR1="3450" TR2="3450" TR3="0" TR4="0" TR5="0" TR6="0"/>
+				</PCact>
+				<PCLatent ActDate="07E50601FF00000000800000">
+					<Contrato1 TR1="3450" TR2="3450" TR3="0" TR4="0" TR5="0" TR6="0"/>
+				</PCLatent>
+				<ActiveCalendars>
+					<Contract c="1" CalendarType="01" CalendarName="322E30444841" ActDate="20150514160751000S">
+						<Season Name="01" Start="FFFFFEFFFFFFFFFFFF800080" Week="01" />
+						<Season Name="02" Start="FFFFFDFFFFFFFFFFFF800000" Week="02" />
+						<Week Name="01" Week="01010101010202" />
+						<Week Name="02" Week="02020202020202" />
+						<Day id="01">
+							<Change Hour="0D000000" TariffRate="0001" />
+							<Change Hour="17000000" TariffRate="0102" />
+						</Day>
+						<Day id="02">
+							<Change Hour="0C000000" TariffRate="0001" />
+							<Change Hour="16000000" TariffRate="0102" />
+						</Day>
+					</Contract>
+					<Contract c="2" CalendarType="01" CalendarName="202020202020" ActDate="20140328074903000W">
+					</Contract>
+					<Contract c="3" CalendarType="01" CalendarName="202020202020" ActDate="20140328074903000W">
+					</Contract>
+				</ActiveCalendars>
+				<LatentCalendars>
+					<Contract c="1" CalendarType="01" CalendarName="322E30544420" ActDate="07E50601FF00000000800000">
+						<Season Name="01" Start="FFFF0101FF00000000800000" Week="01" />
+						<Week Name="01" Week="01010101010202" />
+						<Day id="01">
+							<Change Hour="00000000" TariffRate="0003" />
+							<Change Hour="08000000" TariffRate="0002" />
+							<Change Hour="0A000000" TariffRate="0001" />
+							<Change Hour="0E000000" TariffRate="0002" />
+							<Change Hour="12000000" TariffRate="0001" />
+							<Change Hour="02100000" TariffRate="0000" />
+						</Day>
+						<Day id="00">
+						</Day>
+						<SpecialDays DT="FFFF0101000000000S" DTCard="Y" DayID="02" />
+						<SpecialDays DT="FFFF0106000000000S" DTCard="Y" DayID="02" />
+						<SpecialDays DT="FFFF0501000000000S" DTCard="Y" DayID="02" />
+						<SpecialDays DT="FFFF0815000000000S" DTCard="Y" DayID="02" />
+						<SpecialDays DT="FFFF1012000000000S" DTCard="Y" DayID="02" />
+						<SpecialDays DT="FFFF1101000000000S" DTCard="Y" DayID="02" />
+						<SpecialDays DT="FFFF1206000000000S" DTCard="Y" DayID="02" />
+						<SpecialDays DT="FFFF1208000000000S" DTCard="Y" DayID="02" />
+						<SpecialDays DT="FFFF1225000000000S" DTCard="Y" DayID="02" />
+					</Contract>
+					<Contract c="2" CalendarType="01" CalendarName="202020202020" ActDate="FFFFFFFFFFFFFFFFFF800009">
+					</Contract>
+					<Contract c="3" CalendarType="01" CalendarName="202020202020" ActDate="FFFFFFFFFFFFFFFFFF800009">
+					</Contract>
+				</LatentCalendars>
+			</S23>
+		</Cnt>
+	</Cnc>
+</Report>
