@@ -346,7 +346,7 @@ with description('Report S23 examples'):
                         if meter.values[0].get('pc_act') != 'supervisor':
                             expect(meter.values[0].get('pc_latent')).to_not(be_none)
 
-    with fit('Latent contract when empty day'):
+    with it('Latent contract when empty day'):
         for filename in ['spec/data/S23_empty_day.xml']:
             with open(filename) as data_file:
                 report = Report(data_file)
