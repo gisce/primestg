@@ -3,6 +3,7 @@ from expects import expect, raise_error, be_a, equal, match
 from primestg.utils import DLMSTemplates, ContractTemplates, datetohexprime, octet2name, name2octet, octet2date
 from primestg.dlms_templates import DLMS_TEMPLATES
 from datetime import date, datetime
+import six
 
 
 with description('Utils'):
@@ -128,7 +129,7 @@ with description('Utils'):
                 "00001228230000000W": "time data '0-12-28 23:0:0' does not match format '%Y-%m-%d %H:%M:%S'"
             }
             for octet, dt in dates.items():
-                if isinstance(dt, (basestring)):
+                if isinstance(dt, six.string_types):
                     expect(lambda: octet2date(octet)).to(raise_error(ValueError, dt))
                 else:
                     result_date = octet2date(octet)
