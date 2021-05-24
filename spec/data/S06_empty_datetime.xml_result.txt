@@ -2,7 +2,7 @@
     {
         'protocol': 'DLMS0106',
         'concentrator': 'ZIV0004394488',
-        'timestamp': '1900-01-01 00:00:00',
+        'timestamp': '1901-01-01 00:00:00',
         'secondary_voltage': 2300,
         'prime_firmware_version': 'V2203',
         'meter': 'ZIV0040318130',
