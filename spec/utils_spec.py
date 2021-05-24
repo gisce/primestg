@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from expects import expect, raise_error, be_a, equal
+from expects import expect, raise_error, be_a, equal, match
 from primestg.utils import DLMSTemplates, ContractTemplates, datetohexprime, octet2name, name2octet, octet2date
 from primestg.dlms_templates import DLMS_TEMPLATES
 from datetime import date, datetime
@@ -124,6 +124,13 @@ with description('Utils'):
                 "FFFF1225000000000W": datetime(9999, 12, 25, 0, 0, 0),
                 #wrong month
                 "21110021000000000W": datetime(2111, 1, 21, 0, 0, 0),
+                # wrong year
+                "00001228230000000W": "time data '0-12-28 23:0:0' does not match format '%Y-%m-%d %H:%M:%S'"
             }
             for octet, dt in dates.items():
-                expect(dt).to(equal(octet2date(octet)))
+                if isinstance(dt, (basestring)):
+                    expect(lambda: octet2date(octet)).to(raise_error(ValueError, dt))
+                else:
+                    result_date = octet2date(octet)
+                    expect(dt).to(equal(result_date))
+
