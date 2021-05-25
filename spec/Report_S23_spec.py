@@ -97,21 +97,21 @@ with description('Report S23 examples'):
                                 ],
                                 "calendar_type": "01",
                                 "calendar_name": "2.0DHA",
-                                "act_date": "1900-01-01 00:00:00"
+                                "act_date": "1901-01-01 00:00:00"
                             },
                             {
                                 "is_active_calendar": False,
                                 "c": "2",
                                 "calendar_type": "01",
                                 "calendar_name": "      ",
-                                "act_date": "1900-01-01 00:00:00"
+                                "act_date": "1901-01-01 00:00:00"
                             },
                             {
                                 "is_active_calendar": False,
                                 "c": "3",
                                 "calendar_type": "01",
                                 "calendar_name": "      ",
-                                "act_date": "1900-01-01 00:00:00"
+                                "act_date": "1901-01-01 00:00:00"
                             }
                         ]
                     },
@@ -135,7 +135,7 @@ with description('Report S23 examples'):
                             "tr4": 55000,
                             "tr6": 55000
                         },
-                        "act_date": "1900-01-01 00:00:00"
+                        "act_date": "1901-01-01 00:00:00"
                     },
                     "active_calendars": {
                         "contracts": [
@@ -259,14 +259,14 @@ with description('Report S23 examples'):
                                 "c": "2",
                                 "calendar_type": "01",
                                 "calendar_name": "      ",
-                                "act_date": "1900-01-01 00:00:00"
+                                "act_date": "1901-01-01 00:00:00"
                             },
                             {
                                 "is_active_calendar": True,
                                 "c": "3",
                                 "calendar_type": "01",
                                 "calendar_name": "      ",
-                                "act_date": "1900-01-01 00:00:00"
+                                "act_date": "1901-01-01 00:00:00"
                             }
                         ]
                     }

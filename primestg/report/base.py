@@ -60,7 +60,7 @@ class ValueWithTime(object):
 
         # Fix for SAGECOM which puts this timestamp when the period doesn't affect the contracted tariff
         if date_value.upper() in BAD_TIMESTAMP or not date_value:
-            date_value = '19000101000000W'
+            date_value = '19010101000000W'
 
         try:
             time = octet2date(date_value)
