@@ -1,9 +1,7 @@
 from libcomxml.core import XmlModel, XmlField
 from primestg.order.base import (OrderHeader, CntOrderHeader)
-from primestg.utils import ContractTemplates, DLMSTemplates, datetimetoprime, name2octet, datetohexprime
+from primestg.utils import ContractTemplates, DLMSTemplates, datetimetoprime, name2octet, prepare_params
 from pytz import timezone
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
 
 TZ = timezone('Europe/Madrid')
@@ -425,17 +423,8 @@ class B12Payload(XmlModel):
                 'Ffin': payload.get('date_to'),
             })
         tmpl_name = payload.get('template', 'TAR_20TD')
-        powers = payload.get('powers', ['15000', '15000', '15000', '15000', '15000', '15000'])
-        latent_date = payload.get('date', (datetime.today() + relativedelta(days=1)).date())
 
-
-        params = {}
-        hex_powers = dict(zip(['p1', 'p2', 'p3', 'p4', 'p5', 'p6'], powers))
-        for period, power in hex_powers.items():
-            hexnumber = '{0:08x}'.format(int(power))
-            hex_powers[period] = ''.join([hexnumber[i:i + 2] for i in range(0, 8, 2)])
-        params.update(hex_powers)
-        params.update({'date': datetohexprime(latent_date)})
+        params = prepare_params(payload)
 
         dt = DLMSTemplates()
         template = dt.get_template(tmpl_name)
