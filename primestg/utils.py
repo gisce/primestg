@@ -10,6 +10,7 @@ from copy import copy
 from string import printable
 
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 TZ = timezone('Europe/Madrid')
 
@@ -107,6 +108,30 @@ def octet2date(txt):
 
     return datetime.strptime('{}-{}-{} {}:{}:{}'.format(year, month, day, hour, minute, second), '%Y-%m-%d %H:%M:%S')
 
+def prepare_params(payload):
+        """
+        Prepares payload to DLMS format
+        payload = {
+            powers: list [p1, p2, p3, p4, p5, p6]
+            date: datetime.date
+        }
+        returns params dict converted to DMLS
+        {
+            powers: dict {'p1': hexnumber, 'p2': hexnumber ....}
+            date: hexdate
+
+        """
+        powers = payload.get('powers', ['15000', '15000', '15000', '15000', '15000', '15000'])
+        latent_date = payload.get('date', (datetime.today() + relativedelta(days=1)).date())
+
+        params = {}
+        hex_powers = dict(zip(['p1', 'p2', 'p3', 'p4', 'p5', 'p6'], powers))
+        for period, power in hex_powers.items():
+            hexnumber = '{0:08x}'.format(int(power))
+            hex_powers[period] = ''.join([hexnumber[i:i + 2] for i in range(0, 8, 2)])
+        params.update(hex_powers)
+        params.update({'date': datetohexprime(latent_date)})
+        return params
 
 class PrimeTemplates:
 
@@ -147,6 +172,8 @@ class DLMSTemplates(PrimeTemplates):
         elements = self.get_template(template_name)['data']
         if params is None:
             params = {}
+        else:
+            params = prepare_params(params)
 
         xml = '<cycles>\n<cycle name="Ciclo_{}_raw" period="1" immediate="true" repeat="1" priority="1">\n'.format(
             template_name)
