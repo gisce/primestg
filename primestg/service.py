@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 from zeep import Client
+from zeep.transports import Transport
 from datetime import datetime
 import primestg
 from primestg.order.orders import Order
@@ -111,8 +112,9 @@ class Service(object):
         return self.send_order('B12', order)
 
     def create_service(self):
+        transport = Transport(timeout=60)
         binding = '{http://www.asais.fr/ns/Saturne/DC/ws}WS_DCSoap'
-        client = Client(wsdl=primestg.get_data('WS_DC.wsdl'))
+        client = Client(wsdl=primestg.get_data('WS_DC.wsdl'), transport=transport)
         client.set_ns_prefix(None, 'http://www.asais.fr/ns/Saturne/DC/ws')
         return client.create_service(binding, self.cnc_url)
 
