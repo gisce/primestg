@@ -112,7 +112,7 @@ class Service(object):
         return self.send_order('B12', order)
 
     def create_service(self):
-        transport = Transport(timeout=60)
+        transport = Transport(timeout=20, operation_timeout=60)
         binding = '{http://www.asais.fr/ns/Saturne/DC/ws}WS_DCSoap'
         client = Client(wsdl=primestg.get_data('WS_DC.wsdl'), transport=transport)
         client.set_ns_prefix(None, 'http://www.asais.fr/ns/Saturne/DC/ws')
