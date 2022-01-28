@@ -44,18 +44,18 @@ class Service(object):
             self.source = source
         self.DC_service = self.create_service()
 
-    def send(self, report_id, meters, date_from='', date_to=''):
+    def send(self, report_id, meters, date_from='', date_to='', priority=2):
 
         if self.sync:
             results = self.DC_service.Request(self.fact_id, report_id,
-                                              date_from, date_to, meters, 2)
+                                              date_from, date_to, meters, priority)
         else:
             results = self.DC_service.AsynchRequest(self.fact_id, report_id,
                                                     date_from, date_to,
-                                                    meters, 2, self.source)
+                                                    meters, priority, self.source)
         return results
 
-    def send_order(self, report_id, order):
+    def send_order(self, report_id, order, priority=1):
         """
         Sends order
         :param report_id: B11,B09,etc.
@@ -63,7 +63,7 @@ class Service(object):
         :return: true or false
         """
         print(order)
-        results = self.DC_service.Order(self.fact_id, 0, order, 1)
+        results = self.DC_service.Order(self.fact_id, 0, order, priority)
         return results
 
     def get_cutoff_reconnection(self, generic_values, payload):
