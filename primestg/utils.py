@@ -13,7 +13,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 TZ = timezone('Europe/Madrid')
-PRIORITY_HIGHEST = 1
+PRIORITY_VERYHIGH = 1
 PRIORITY_HIGH = 2
 PRIORITY_NORMAL = 3
 
