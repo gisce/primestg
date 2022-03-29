@@ -61,4 +61,16 @@ DLMS_TEMPLATES = {
             {'obis': "0.0.13.0.1.255", 'class': "20", 'element': "10", 'data': "raw{{090C07D10101FF000000000800FF}}"},
         ],
     },
+    'TRAFO_RATIO': {
+        'description': 'Gets trafo ratio from meter using OBIS',
+        'origin': 'library',
+        'category': 'info',
+        'params': [],
+        'data': [
+            {'obis': "1.0.0.4.2.255", 'class': "1", 'element': "2"},  # primary current
+            {'obis': "1.0.0.4.3.255", 'class': "1", 'element': "2"},  # secondary current
+            {'obis': "1.0.0.4.5.255", 'class': "1", 'element': "2"},  # primary voltage
+            {'obis': "1.0.0.4.6.255", 'class': "1", 'element': "2"},  # secondary voltage
+        ],
+    }
 }
