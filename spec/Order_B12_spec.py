@@ -148,3 +148,36 @@ with description('Order B12 Generation'):
         order = Order('B12')
         order = order.create(generic_values, payload)
         assertXMLEqual(order, expected_result)
+
+    with it('generates expected B12 read trafo ratio'):
+        expected_result = (
+            """<Order IdPet="1234" IdReq="B12" Version="3.1.c">
+                  <Cnc Id="CIR4621544074">
+                    <Cnt Id="CNT000000000">
+                      <B12 Ffin="" Fini="">
+                        <get class="1" element="2" obis="1.0.0.4.2.255"/>
+                        <get class="1" element="2" obis="1.0.0.4.3.255"/>
+                        <get class="1" element="2" obis="1.0.0.4.5.255"/>
+                        <get class="1" element="2" obis="1.0.0.4.6.255"/>
+                      </B12>
+                    </Cnt>
+                  </Cnc>
+                </Order>""")
+
+        generic_values = {
+            'id_pet': str(1234),
+            'id_req': 'B12',
+            'cnc': 'CIR4621544074',
+            'cnt': 'CNT000000000',
+        }
+        payload = {
+            'template': 'TRAFO_RATIO',
+            'date': date(2021, 11, 25),
+            'date_from': '',
+            'date_to': '',
+
+        }
+
+        order = Order('B12')
+        order = order.create(generic_values, payload)
+        assertXMLEqual(order, expected_result)
