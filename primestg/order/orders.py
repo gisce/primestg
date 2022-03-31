@@ -385,7 +385,7 @@ class B12:
 
 class Set(XmlModel):
     """
-    The class to instance B12 RAW
+    The class to instance B12 RAW Set (write)
     Parameters:
         obis: obis code string
         class: class number
@@ -403,6 +403,26 @@ class Set(XmlModel):
             }
         )
         super(Set, self).__init__('Set', 'set')
+
+
+class Get(XmlModel):
+    """
+    The class to instance B12 RAW Get (read)
+    Parameters:
+        obis: obis code string
+        class: class number
+        element: element number
+    """
+
+    def __init__(self, payload, drop_empty=False):
+        self.get = XmlField(
+            'get', attributes={
+                'obis': format(payload.get('obis')),
+                'class': str(payload.get('class')),
+                'element': str(payload.get('element')),
+            }
+        )
+        super(Get, self).__init__('Get', 'get')
 
 
 class B12Payload(XmlModel):
@@ -433,8 +453,13 @@ class B12Payload(XmlModel):
         sets = []
         for set_line in data:
             new_set = set_line.copy()
-            new_set['data'] = set_line['data'].format(**params)
-            sets.append(Set(new_set))
+            if set_line.get('data', False):
+                # set (contains data)
+                new_set['data'] = set_line['data'].format(**params)
+                sets.append(Set(new_set))
+            else:
+                # get (without data)
+                sets.append(Get(new_set))
         self.sets = sets
 
         super(B12Payload, self).__init__('b12Payload', 'payload', drop_empty=drop_empty)
