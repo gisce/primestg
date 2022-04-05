@@ -6,6 +6,7 @@ from expects import expect, equal
 with description('Order B07 IP FTP Generation'):
 
     with it('generates expected B07 xml'):
+        import pdb; pdb.set_trace()
         expected_result = '<Order IdPet="1234" IdReq="B07" Version="3.1.c">\n  ' \
                           '<Cnc Id="CIR000000000">\n    ' \
                           '<B07 IPftp="10.1.5.206"/>\n  ' \

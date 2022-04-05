@@ -1,6 +1,6 @@
 from ast import literal_eval
 
-from expects import expect, equal
+from expects import expect, equal, be_empty, be_none
 from primestg.report import Report
 
 
@@ -21,175 +21,257 @@ with description('Report S23 examples'):
     with it('generates expected results for the values of the first pcact of the first concentrator'):
 
         expected_first_meter_values = \
-            [{
-                'date': '2019-04-24 22:52:21',
-                'latent_calendars': {
-                    'c1': {
-                        'calendar_type': '01',
-                        'calendar_name': '322E30444841',
-                        'act_date': '1900-01-01 00:00:00',
-                        'seasons': {
-                            'season1': {
-                                'week': '01',
-                                'start': 'FFFFFEFFFFFFFF0000800080',
-                                'name': '01'
+            [
+                {
+                    "date": "2019-04-24 22:52:21",
+                    "latent_calendars": {
+                        "contracts": [
+                            {
+                                "is_active_calendar": False,
+                                "c": "1",
+                                "days": [
+                                    {
+                                        "day_id": "01",
+                                        "changes": [
+                                            {
+                                                "tariffrate": "0001",
+                                                "hour": 13
+                                            },
+                                            {
+                                                "tariffrate": "0002",
+                                                "hour": 23
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "day_id": "02",
+                                        "changes": [
+                                            {
+                                                "tariffrate": "0001",
+                                                "hour": 12
+                                            },
+                                            {
+                                                "tariffrate": "0002",
+                                                "hour": 22
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "seasons": [
+                                    {
+                                        "week": "01",
+                                        "start": "FFFFFEFFFFFFFF0000800080",
+                                        "name": "01"
+                                    },
+                                    {
+                                        "week": "02",
+                                        "start": "FFFFFDFFFFFFFF0000800000",
+                                        "name": "02"
+                                    }
+                                ],
+                                "weeks": [
+                                    {
+                                        "week": "01010101010101",
+                                        "index": 0,
+                                        "name": "01",
+                                        "day6": "01",
+                                        "day4": "01",
+                                        "day5": "01",
+                                        "day2": "01",
+                                        "day3": "01",
+                                        "day0": "01",
+                                        "day1": "01"
+                                    },
+                                    {
+                                        "week": "02020202020202",
+                                        "index": 1,
+                                        "name": "02",
+                                        "day6": "02",
+                                        "day4": "02",
+                                        "day5": "02",
+                                        "day2": "02",
+                                        "day3": "02",
+                                        "day0": "02",
+                                        "day1": "02"
+                                    }
+                                ],
+                                "calendar_type": "01",
+                                "calendar_name": "2.0DHA",
+                                "act_date": "1901-01-01 00:00:00"
                             },
-                            'season2': {
-                                'week': '02',
-                                'start': 'FFFFFDFFFFFFFF0000800000',
-                                'name': '02'
-                            }
-                        },
-                        'weeks': {
-                            'week1': {
-                                'week': '01010101010101',
-                                'name': '01'
+                            {
+                                "is_active_calendar": False,
+                                "c": "2",
+                                "calendar_type": "01",
+                                "calendar_name": "      ",
+                                "act_date": "1901-01-01 00:00:00"
                             },
-                            'week2': {
-                                'week': '02020202020202',
-                                'name': '02'
+                            {
+                                "is_active_calendar": False,
+                                "c": "3",
+                                "calendar_type": "01",
+                                "calendar_name": "      ",
+                                "act_date": "1901-01-01 00:00:00"
                             }
-                        },
-                        'days': {
-                            'day1': {
-                                'change1': {
-                                    'hour': '0D000000',
-                                    'tariffrate': '0001'
-                                },
-                                'change2': {
-                                    'hour': '17000000',
-                                    'tariffrate': '0002'
-                                }
-                            },
-                            'day2': {
-                                'change1': {
-                                    'hour': '0C000000',
-                                    'tariffrate': '0001'
-                                },
-                                'change2': {
-                                    'hour': '16000000',
-                                    'tariffrate': '0002'
-                                }
-                            }
-                        }
+                        ]
                     },
-                    'c2': {
-                        'calendar_type': '01',
-                        'calendar_name': '202020202020',
-                        'act_date': '1900-01-01 00:00:00'
-                    },
-                    'c3': {
-                        'calendar_type': '01',
-                        'calendar_name': '202020202020',
-                        'act_date': '1900-01-01 00:00:00'
-                    }
-                },
-                'pc_act': {
-                    'act_date': '2018-03-06 15:26:21',
-                    'contrato1': {
-                        'tr1': 55000,
-                        'tr3': 55000,
-                        'tr2': 55000,
-                        'tr5': 55000,
-                        'tr4': 55000,
-                        'tr6': 55000
-                    }
-                },
-                'pc_latent': {
-                    'act_date': '1900-01-01 00:00:00',
-                    'contrato1': {
-                        'tr1': 55000,
-                        'tr3': 55000,
-                        'tr2': 55000,
-                        'tr5': 55000,
-                        'tr4': 55000,
-                        'tr6': 55000
-                    }
-                },
-                'active_calendars': {
-                    'c1': {
-                        'calendar_type': '01',
-                        'calendar_name': '322E30444841',
-                        'act_date': '2018-03-06 15:26:21',
-                        'seasons': {
-                            'season1': {
-                                'name': '01',
-                                'start': 'FFFFFEFFFFFFFF0000800080',
-                                'week': '01'
-                            },
-                            'season2': {
-                                'name': '02',
-                                'start': 'FFFFFDFFFFFFFF0000800000',
-                                'week': '02'
-                            }
+                    "pc_act": {
+                        "contrato1": {
+                            "tr1": 55000,
+                            "tr3": 55000,
+                            "tr2": 55000,
+                            "tr5": 55000,
+                            "tr4": 55000,
+                            "tr6": 55000
                         },
-                        'weeks': {
-                            'week1': {
-                                'name': '01',
-                                'week': '01010101010101'
-                            },
-                            'week2': {
-                                'name': '02',
-                                'week': '02020202020202'
-                            }
-                        },
-                        'special_days': {
-                            'special_day1': {
-                                'day_id': '01',
-                                'dt': '2011-12-25 00:00:00',
-                                'dt_card': 'N'
-                            },
-                            'special_day2': {
-                                'day_id': '01',
-                                'dt': '2011-08-15 00:00:00',
-                                'dt_card': 'N'
-                            },
-                            'special_day3': {
-                                'day_id': '01',
-                                'dt': '2011-07-14 00:00:00',
-                                'dt_card': 'N'
-                            },
-                            'special_day4': {
-                                'day_id': '01',
-                                'dt': '2011-05-01 00:00:00',
-                                'dt_card': 'N'
-                            }
-                        },
-                        'days': {
-                            'day1': {
-                                'change1': {
-                                    'hour': '0D000000',
-                                    'tariffrate': '0001'
-                                },
-                                'change2': {
-                                    'hour': '17000000',
-                                    'tariffrate': '0002'
-                                }
-                            },
-                            'day2': {
-                                'change1': {
-                                    'hour': '0C000000',
-                                    'tariffrate': '0001'
-                                },
-                                'change2': {
-                                    'hour': '16000000',
-                                    'tariffrate': '0002'
-                                }
-                            }
-                        }
+                        "act_date": "2018-03-06 15:26:21"
                     },
-                    'c2': {
-                        'calendar_type': '01',
-                        'calendar_name': '202020202020',
-                        'act_date': '1900-01-01 00:00:00'
+                    "pc_latent": {
+                        "contrato1": {
+                            "tr1": 55000,
+                            "tr3": 55000,
+                            "tr2": 55000,
+                            "tr5": 55000,
+                            "tr4": 55000,
+                            "tr6": 55000
+                        },
+                        "act_date": "1901-01-01 00:00:00"
                     },
-                    'c3': {
-                        'calendar_type': '01',
-                        'calendar_name': '202020202020',
-                        'act_date': '1900-01-01 00:00:00'
+                    "active_calendars": {
+                        "contracts": [
+                            {
+                                "is_active_calendar": True,
+                                "c": "1",
+                                "days": [
+                                    {
+                                        "day_id": "01",
+                                        "changes": [
+                                            {
+                                                "tariffrate": "0001",
+                                                "hour": 13
+                                            },
+                                            {
+                                                "tariffrate": "0002",
+                                                "hour": 23
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "day_id": "02",
+                                        "changes": [
+                                            {
+                                                "tariffrate": "0001",
+                                                "hour": 12
+                                            },
+                                            {
+                                                "tariffrate": "0002",
+                                                "hour": 22
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "special_days": [
+                                    {
+                                        "day_id": "01",
+                                        "dt": {
+                                            "timestamp": "2011-12-25 00:00:00",
+                                            "month": 12,
+                                            "day": 25,
+                                            "year": 2011
+                                        },
+                                        "dt_card": False
+                                    },
+                                    {
+                                        "day_id": "01",
+                                        "dt": {
+                                            "timestamp": "2011-08-15 00:00:00",
+                                            "month": 8,
+                                            "day": 15,
+                                            "year": 2011
+                                        },
+                                        "dt_card": False
+                                    },
+                                    {
+                                        "day_id": "01",
+                                        "dt": {
+                                            "timestamp": "2011-07-14 00:00:00",
+                                            "month": 7,
+                                            "day": 14,
+                                            "year": 2011
+                                        },
+                                        "dt_card": False
+                                    },
+                                    {
+                                        "day_id": "01",
+                                        "dt": {
+                                            "timestamp": "2011-05-01 00:00:00",
+                                            "month": 5,
+                                            "day": 1,
+                                            "year": 2011
+                                        },
+                                        "dt_card": False
+                                    }
+                                ],
+                                "seasons": [
+                                    {
+                                        "week": "01",
+                                        "start": "FFFFFEFFFFFFFF0000800080",
+                                        "name": "01"
+                                    },
+                                    {
+                                        "week": "02",
+                                        "start": "FFFFFDFFFFFFFF0000800000",
+                                        "name": "02"
+                                    }
+                                ],
+                                "weeks": [
+                                    {
+                                        "week": "01010101010101",
+                                        "index": 0,
+                                        "name": "01",
+                                        "day6": "01",
+                                        "day4": "01",
+                                        "day5": "01",
+                                        "day2": "01",
+                                        "day3": "01",
+                                        "day0": "01",
+                                        "day1": "01"
+                                    },
+                                    {
+                                        "week": "02020202020202",
+                                        "index": 1,
+                                        "name": "02",
+                                        "day6": "02",
+                                        "day4": "02",
+                                        "day5": "02",
+                                        "day2": "02",
+                                        "day3": "02",
+                                        "day0": "02",
+                                        "day1": "02"
+                                    }
+                                ],
+                                "calendar_type": "01",
+                                "calendar_name": "2.0DHA",
+                                "act_date": "2018-03-06 15:26:21"
+                            },
+                            {
+                                "is_active_calendar": True,
+                                "c": "2",
+                                "calendar_type": "01",
+                                "calendar_name": "      ",
+                                "act_date": "1901-01-01 00:00:00"
+                            },
+                            {
+                                "is_active_calendar": True,
+                                "c": "3",
+                                "calendar_type": "01",
+                                "calendar_name": "      ",
+                                "act_date": "1901-01-01 00:00:00"
+                            }
+                        ]
                     }
                 }
-            }]
+            ]
 
         #EXPECT1 CONCENTRATOR 0
         concentrator_name = list(self.report[0].concentrators)[0].name
@@ -235,3 +317,40 @@ with description('Report S23 examples'):
                             warnings.append(meter.warnings)
 
             expect(result).to(equal(expected_result))
+
+    with it('With hexadecimal datetime report'):
+        with open('spec/data/ZIV0004389874_7_S23_0_20210226020937') as data_file:
+            report = Report(data_file)
+            expect('2021-04-01 04:00:00').to(
+                equal([x for x in report.concentrators][0].meters[0].values[0].get('latent_calendars').get(
+                    'contracts')[0].get('act_date'))
+            )
+
+    with it('PC latent for every meter except supervisor'):
+        for filename in ['spec/data/CIR4621424127_188DE4_S23_0_20210504202212']:
+            with open(filename) as data_file:
+                report = Report(data_file)
+                for cnc in report.concentrators:
+                    for meter in cnc.meters:
+                        expect(meter.values[0].get('pc_act')).not_to(be_empty)
+                        if meter.values[0].get('pc_act') != 'supervisor':
+                            expect(meter.values[0].get('pc_latent')).to_not(be_none)
+
+    with it('PC act when act_date is 21110021000032000W'):
+        for filename in ['spec/data/S23_bad_date.xml']:
+            with open(filename) as data_file:
+                report = Report(data_file)
+                for cnc in report.concentrators:
+                    for meter in cnc.meters:
+                        expect(meter.values[0].get('pc_act')).not_to(be_empty)
+                        if meter.values[0].get('pc_act') != 'supervisor':
+                            expect(meter.values[0].get('pc_latent')).to_not(be_none)
+
+    with it('Latent contract when empty day'):
+        for filename in ['spec/data/S23_empty_day.xml']:
+            with open(filename) as data_file:
+                report = Report(data_file)
+                for cnc in report.concentrators:
+                    for meter in cnc.meters:
+                        expect(meter.values[0].get('active_calendars')).not_to(be_empty)
+                        expect(meter.values[0].get('latent_calendars')).not_to(be_empty)

@@ -52,3 +52,12 @@ class Cnt(XmlModel):
         })
         self.payload = None
         super(Cnt, self).__init__('Cnt', 'cnt', drop_empty=drop_empty)
+
+
+class LVSLine(XmlModel):
+    def __init__(self, line, drop_empty=False):
+        self.cnt = XmlField('LVSLine', attributes={
+                 'Id': line
+        })
+        self.payload = None
+        super(LVSLine, self).__init__('LVSLine', 'line', drop_empty=drop_empty)

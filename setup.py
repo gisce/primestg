@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='primestg',
-    version='1.22.0',
+    version='1.34.1',
     packages=find_packages(),
     url='https://github.com/gisce/primestg',
     license='GNU Affero General Public License v3',
@@ -11,9 +11,10 @@ setup(
     author_email='devel@gisce.net',
     install_requires=[
         'lxml',
-        'zeep',
+        'zeep<4.0',
         'libcomxml',
-        'click'
+        'click',
+        'python-dateutil'
     ],
     description='Prime STG-DC Interface Specification',
     classifiers=[

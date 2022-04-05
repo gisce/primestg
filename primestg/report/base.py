@@ -1,5 +1,7 @@
 from datetime import datetime
 import binascii
+import re
+from primestg.utils import octet2date
 
 
 MAGNITUDE_W = 1
@@ -19,7 +21,6 @@ SAGE_BAD_TIMESTAMP = [
 
 S23_BAD_TIMESTAMP = [
     '00000000000000W',
-    '00000101000000W',
     '000000000000000',
     'FFFFFFFFFFFFFF9',
     'FFFFFFFFFFFFFF0',
@@ -27,6 +28,11 @@ S23_BAD_TIMESTAMP = [
 ]
 
 BAD_TIMESTAMP = SAGE_BAD_TIMESTAMP + S23_BAD_TIMESTAMP
+
+
+DAYSAVING_START_TS = 'FFFFFDFFFFFFFF0000800000'   # Winter to summer
+DAYSAVING_END_TS = 'FFFFFEFFFFFFFF0000800080'     # Summer to winter
+NOW_ACTIVATION_DATE = 'FFFFFFFFFFFFFFFFFF800009'  # Instantly activate latent contract
 
 
 class ValueWithTime(object):
@@ -44,31 +50,56 @@ class ValueWithTime(object):
         :return: a formatted string representing a timestamp \
             ('%Y-%m-%d %H:%M:%S')
         """
-        if element is None:
-            e = self.objectified
-        else:
-            e = element
-        value = e.get(name)
-        if len(value) > 15:
-            date_value = value[0:14] + value[-1]
-        else:
-            date_value = value
+        e = self.objectified if element is None else element
 
-        # Fix for SAGECOM which puts this timestamp when the period doesn't
-        # affect the contracted tariff
+        return self._to_timestamp(e.get(name), name)
+
+    @staticmethod
+    def _to_timestamp(value, name):
+        date_value = value[0:14] + value[-1] if len(value) > 15 else value
+
+        # Fix for SAGECOM which puts this timestamp when the period doesn't affect the contracted tariff
         if date_value.upper() in BAD_TIMESTAMP or not date_value:
-            date_value = '19000101000000W'
-
-        if date_value.startswith('ffff'):
-            date_value = date_value.replace(date_value[:4], '9999')
+            date_value = '19010101000000W'
 
         try:
-            time = datetime.strptime(date_value[:-1],
-                                     '%Y%m%d%H%M%S')
+            time = octet2date(date_value)
         except ValueError as e:
             raise ValueError("Date out of range: {} ({}) {}".format(
                 date_value, name, e))
+
         return time.strftime('%Y-%m-%d %H:%M:%S')
+
+    def _get_special_days(self, name, element=None):
+        """
+        Formats a timestamp from the name of the value.
+
+        :param name: a string with the name
+        :param element: an lxml.objectify.StringElement, by default self.objectified
+        :return: {
+            timestamp: a formatted string representing a timestamp ('%Y-%m-%d %H:%M:%S')
+            year: number|False,
+            month: number,
+            day: number
+        }
+        """
+        e = self.objectified if element is None else element
+        value = e.get(name)
+
+        if not value:
+            return None
+
+        year = value[0:4]
+
+        if e.get('DTCard') == 'Y':
+            value = '9999' + value[4:]
+
+        return {
+            'year': int(year) if year.isdigit() else False,
+            'month': int(value[4:6]),
+            'day': int(value[6:8]),
+            'timestamp': self._to_timestamp(value, name)
+        }
 
 
 class Measure(ValueWithTime):
@@ -603,3 +634,233 @@ class ConcentratorWithMetersWithConcentratorName(ConcentratorWithMeters):
             for meter in meters:
                 self._warnings.append(meter.warnings)
         return meters
+
+
+class BaseElement(object):
+    """
+    Base class
+    """
+
+    def __init__(self, objectified):
+        """
+        Create object.
+
+        :param objectified: an lxml.objectify.StringElement
+        :return: object
+        """
+        self.objectified = objectified
+        self._warnings = []
+
+    @property
+    def objectified(self):
+        """
+        A lxml.objectify.StringElement.
+
+        :return: an lxml.objectify.StringElement
+        """
+        return self._objectified
+
+    @objectified.setter
+    def objectified(self, value):
+        """
+        Stores an lxml.objectify.StringElement.
+
+        :param value: an lxml.objectify.StringElement
+        """
+        self._objectified = value
+
+    @property
+    def name(self):
+        """
+        The name
+
+        :return: a string with the name
+        """
+        return self.objectified.get('Id')
+
+    @property
+    def warnings(self):
+        """
+        Warnings
+
+        :return: a list with the errors found while reading
+        """
+        return self._warnings
+    
+
+class Line(BaseElement):
+    """
+    Base class for a line.
+    """
+
+    @property
+    def errors(self):
+        """
+        The line errors.
+
+        :return: a dict with the line errors
+        """
+        self._errors = {}
+        if self.objectified.get('ErrCat'):
+            self._errors = {
+                'errcat': self.objectified.get('ErrCat'),
+                'errcode': self.objectified.get('ErrCode')
+            }
+        return self._errors
+
+    @property
+    def report_type(self):
+        """
+        The type of report. To implement in child classes.
+        """
+        raise NotImplementedError('This method is not implemented!')
+
+    @property
+    def measure_class(self):
+        """
+        The class to instance measures sets.
+
+        :return: a class to instance measure sets
+        """
+        return Measure
+
+    @property
+    def measures(self):
+        """
+        Measure set objects of this line.
+
+        :return: a list of measure set objects
+        """
+        measures = []
+        if hasattr(self.objectified, self.report_type):
+            objectified = getattr(self.objectified, self.report_type)
+            measures = map(self.measure_class, objectified)
+        return measures
+
+    @property
+    def values(self):
+        """
+        Values of measure sets of this line.
+
+        :return: a list with the values of the measure sets
+        """
+        values = []
+        for measure in self.measures:
+            values.append(measure.value())
+        return values
+
+
+class LineDetails(Line):
+    """
+    Base class for a lines of report that need the name of the remote terminal unit in the values, like S52.
+    """
+
+    def __init__(self, objectified_line, rt_unit_name):
+        """
+        Create a Line object using Line constructor and adding the remote terminal unit name.
+
+        :param objectified_line: an lxml.objectify.StringElement representing a line
+        :param rt_unit_name: a string with the name of the remote terminal unit
+        :return: a Line object
+        """
+        super(LineDetails, self).__init__(objectified_line)
+        self.rt_unit_name = rt_unit_name
+
+    @property
+    def rt_unit_name(self):
+        """
+        A string with the remote terminal unit name.
+
+        :return: a string with the remote terminal unit name
+        """
+        return self._rt_unit_name
+
+    @rt_unit_name.setter
+    def rt_unit_name(self, value):
+        """
+        Stores a string with the remote terminal unit name.
+
+        :param value: a string with the remote terminal unit name
+        """
+        self._rt_unit_name = value
+
+    @property
+    def values(self):
+        """
+        Values of measure sets of this line of report that need the name of the remote terminal unit and the line
+
+        :return: a list with the values of the measure sets
+        """
+        values = []
+        for measure in self.measures:
+            for subvalue in measure.values:
+                v = subvalue.copy()
+                v['name'] = self.name
+                v['rt_unit_name'] = self.rt_unit_name
+                values.append(v)
+            if measure.warnings:
+                if self._warnings.get(self.name, False):
+                    self._warnings[self.name].extend(measure.warnings)
+                else:
+                    self._warnings.update({self.name: measure.warnings})
+        return values
+
+    @property
+    def magnitude(self):
+        """
+        The magnitude of the line measures.
+
+        :return: a int with the magnitude of the line measures
+        """
+        return int(self.objectified.get('Magn'))
+
+    @property
+    def position(self):
+        """
+        The position of the line measures.
+
+        :return: a int with the position of the line measures
+        """
+        return int(self.objectified.get('Pos'))
+
+
+class RemoteTerminalUnitDetails(BaseElement):
+    """
+    Base class for a remote terminal unit of report that need the name in the values, like S52.
+    """
+
+    @property
+    def line_class(self):
+        """
+        The class to instance lines.
+
+        :return: a class to instance lines
+        """
+        return Line
+
+    @property
+    def values(self):
+        """
+        Values of the lines of this remote terminal unit.
+
+        :return: a list with the values of the lines
+        """
+        values = []
+        for line in self.lines:
+            values.extend(line.values)
+        return values
+
+    @property
+    def lines(self):
+        """
+        Line objects of this remote terminal unit. The name of remote terminal unit is passed to the line.
+
+        :return: a list of line objects
+        """
+        lines = []
+        if getattr(self.objectified, 'LVSLine', None) is not None:
+            for line in self.objectified.LVSLine:
+                lines.append(self.line_class(line, self.name))
+            for line in lines:
+                self._warnings.append(line.warnings)
+        return lines

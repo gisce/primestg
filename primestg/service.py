@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 from zeep import Client
+from zeep.transports import Transport
 from datetime import datetime
 import primestg
 from primestg.order.orders import Order
@@ -43,18 +44,18 @@ class Service(object):
             self.source = source
         self.DC_service = self.create_service()
 
-    def send(self, report_id, meters, date_from='', date_to=''):
+    def send(self, report_id, meters, date_from='', date_to='', priority=2):
 
         if self.sync:
             results = self.DC_service.Request(self.fact_id, report_id,
-                                              date_from, date_to, meters, 2)
+                                              date_from, date_to, meters, priority)
         else:
             results = self.DC_service.AsynchRequest(self.fact_id, report_id,
                                                     date_from, date_to,
-                                                    meters, 2, self.source)
+                                                    meters, priority, self.source)
         return results
 
-    def send_order(self, report_id, order):
+    def send_order(self, report_id, order, priority=1):
         """
         Sends order
         :param report_id: B11,B09,etc.
@@ -62,7 +63,7 @@ class Service(object):
         :return: true or false
         """
         print(order)
-        results = self.DC_service.Order(self.fact_id, 0, order, 1)
+        results = self.DC_service.Order(self.fact_id, 0, order, priority)
         return results
 
     def get_cutoff_reconnection(self, generic_values, payload):
@@ -73,6 +74,15 @@ class Service(object):
         order = Order('B03')
         order = order.create(generic_values, payload)
         return self.send_order('B03', order)
+
+    def get_contract(self, generic_values, payload):
+        """
+        Sends B03 order to meter
+        :return: Success or fail
+        """
+        order = Order('B04')
+        order = order.create(generic_values, payload)
+        return self.send_order('B04', order)
 
     def get_concentrator_modification(self, generic_values, payload):
         """
@@ -106,9 +116,19 @@ class Service(object):
         order = order.create(generic_values, payload)
         return self.send_order('B11', order)
 
+    def order_raw_dlms(self, generic_values, payload):
+        """
+        Sends B12 order to concentrator
+        :return: Success or fail
+        """
+        order = Order('B12')
+        order = order.create(generic_values, payload)
+        return self.send_order('B12', order)
+
     def create_service(self):
+        transport = Transport(timeout=20, operation_timeout=60)
         binding = '{http://www.asais.fr/ns/Saturne/DC/ws}WS_DCSoap'
-        client = Client(wsdl=primestg.get_data('WS_DC.wsdl'))
+        client = Client(wsdl=primestg.get_data('WS_DC.wsdl'), transport=transport)
         client.set_ns_prefix(None, 'http://www.asais.fr/ns/Saturne/DC/ws')
         return client.create_service(binding, self.cnc_url)
 
