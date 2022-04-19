@@ -26,7 +26,7 @@ class B03:
             generic_values.get('id_req'),
             generic_values.get('cnc'),
             generic_values.get('cnt'),
-            generic_values.get('version'),
+            generic_values.get('version', '3.1.c'),
         )
         self.order.cnc.cnt.feed({'payload': B03Payload(payload)})
         # Load generic order with values
@@ -192,7 +192,7 @@ class B04:
             generic_values.get('id_req'),
             generic_values.get('cnc'),
             generic_values.get('cnt'),
-            generic_values.get('version'),
+            generic_values.get('version', '3.1.c'),
         )
         self.order.cnc.cnt.feed({'payload': B04Payload(payload)})
         # Load generic order with values
@@ -280,7 +280,7 @@ class B07IpFtp:
             generic_values.get('id_pet'),
             generic_values.get('id_req'),
             generic_values.get('cnc'),
-            generic_values.get('version'),
+            generic_values.get('version', '3.1.c'),
         )
         self.order.cnc.feed({'payload': B07IpFtpPayload(payload)})
 
@@ -305,7 +305,7 @@ class B07:
             generic_values.get('id_pet'),
             generic_values.get('id_req'),
             generic_values.get('cnc'),
-            generic_values.get('version'),
+            generic_values.get('version', '3.1.c'),
         )
         b07 = B07Payload(payload)
         tasks = payload.get("tasks")
@@ -359,7 +359,7 @@ class B09:
             generic_values.get('id_req'),
             generic_values.get('cnc'),
             generic_values.get('cnt'),
-            generic_values.get('version'),
+            generic_values.get('version', '3.1.c'),
         )
         self.order.cnc.cnt.feed({'payload': B09Payload(payload)})
         # Load generic order with values
@@ -411,7 +411,7 @@ class B11:
             generic_values.get('id_pet'),
             generic_values.get('id_req'),
             generic_values.get('cnc'),
-            generic_values.get('version'),
+            generic_values.get('version', '3.1.c'),
         )
         self.order.cnc.feed({'payload': B11Payload(payload)})
         # Load generic order with values
@@ -459,7 +459,7 @@ class B12:
             generic_values.get('id_req'),
             generic_values.get('cnc'),
             generic_values.get('cnt'),
-            generic_values.get('version'),
+            generic_values.get('version', '3.1.c'),
         )
         self.order.cnc.cnt.feed({'payload': B12Payload(payload)})
         # Load generic order with values
