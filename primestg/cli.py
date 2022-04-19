@@ -1,9 +1,10 @@
-## -*- encoding: utf-8 -*-                                                       
+## -*- encoding: utf-8 -*-
+from __future__ import absolute_import
 import sys                                                                      
 import click
 from datetime import datetime, timedelta
 from pytz import timezone
-from ziv_service import ZivService
+from primestg.ziv_service import ZivService
 import base64
 
 TZ = timezone('Europe/Madrid')
@@ -28,6 +29,8 @@ ORDERS = {
     # CONTRACT
     'contract': {'order': 'B04', 'func': 'get_contract'},
     'dlms': {'order': 'B12', 'func': 'order_raw_dlms'},
+    # CNC config
+    'cnc_ftpip': {'order': 'B07', 'func': 'set_concentrator_ipftp'}
 }
 
 
@@ -99,6 +102,7 @@ def get_sync_sxx(**kwargs):
 @click.argument("cnc_url", required=True,
                 default="http://cct.gisce.lan:8080/WS_DC/WS_DC.asmx"
 )   
+@click.option("--version", "-v", default="3.1.c")
 @click.option("--meter", "-m", default="ZIV0040318130")
 @click.option("--contract", "-c", default="1")
 @click.option("--tariff", "-t", default="2.0_ST", help="One of available templates (see primestg templates or dlms_cycles)")
@@ -106,6 +110,7 @@ def get_sync_sxx(**kwargs):
 @click.option("--powers", "-p", default="15000,15000,15000,15000,15000,15000",
               help='comma separated orders list of 6 powers'
 )
+@click.option("--ip", "-i", default="10.26.0.4", help='IP i.e CNC FTPIp')
 def sends_order(**kwargs):
    """Sends on of available Orders to Meter or CNC"""
    id_pet = get_id_pet()
@@ -113,11 +118,13 @@ def sends_order(**kwargs):
    order_name = kwargs['order']
    order_code = ORDERS[order_name]['order']
    meter_name, cnc_name = get_meter_cnc_name(kwargs['meter'])
+   version = kwargs['version']
    generic_values = {
        'id_pet': id_pet,
        'id_req': order_code,
        'cnc': cnc_name,
        'cnt': meter_name,
+       'version': version,
    }
    vals = {}
    if order_name == 'cutoff':
@@ -153,6 +160,11 @@ def sends_order(**kwargs):
            'powers': kwargs['powers'].split(','),
            'date': activation_date,
        }
+   elif order_name == 'cnc_ftpip':
+       vals = {
+           'IPftp': kwargs['ip']
+       }
+
    vals.update({
        'date_to': format_timestamp(datetime.now()+timedelta(hours=1)),
        'date_from': format_timestamp(datetime.now()),
