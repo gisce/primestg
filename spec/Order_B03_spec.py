@@ -7,7 +7,7 @@ from primestg.utils import assertXMLEqual
 with description('Order B03 Generation'):
 
     with it('generates expected B03 xml'):
-        expected_result = '<Order IdPet="1234" IdReq="B03" Version="3.1.c">\n  ' \
+        expected_result = '<Order IdPet="1234" IdReq="B03" Version="3.4">\n  ' \
                           '<Cnc Id="CIR000000000">\n    <Cnt Id="CNT000000000">\n      ' \
                           '<B03 Ffin="" Fini="" Order="5"/>\n    </Cnt>\n  </Cnc>\n</Order>\n'
 
@@ -15,7 +15,8 @@ with description('Order B03 Generation'):
             'id_pet': str(1234),
             'id_req': 'B03',
             'cnc': 'CIR000000000',
-            'cnt': 'CNT000000000'
+            'cnt': 'CNT000000000',
+            'version': '3.4',
         }
         payload = {
             'order_param': '5',

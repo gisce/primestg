@@ -6,7 +6,7 @@ from pytz import timezone
 
 TZ = timezone('Europe/Madrid')
 
-SUPPORTED_ORDERS = ['B03', 'B04', 'B09', 'B11']
+SUPPORTED_ORDERS = ['B03', 'B04', 'B07', 'B09', 'B11']
 
 
 def is_supported(order_code):
@@ -25,7 +25,8 @@ class B03:
             generic_values.get('id_pet'),
             generic_values.get('id_req'),
             generic_values.get('cnc'),
-            generic_values.get('cnt')
+            generic_values.get('cnt'),
+            generic_values.get('version', '3.1.c'),
         )
         self.order.cnc.cnt.feed({'payload': B03Payload(payload)})
         # Load generic order with values
@@ -190,7 +191,8 @@ class B04:
             generic_values.get('id_pet'),
             generic_values.get('id_req'),
             generic_values.get('cnc'),
-            generic_values.get('cnt')
+            generic_values.get('cnt'),
+            generic_values.get('version', '3.1.c'),
         )
         self.order.cnc.cnt.feed({'payload': B04Payload(payload)})
         # Load generic order with values
@@ -267,6 +269,83 @@ class B04Payload(XmlModel):
         super(B04Payload, self).__init__('b04Payload', 'payload', drop_empty=drop_empty)
 
 
+class B07IpFtp:
+    """
+    The class used to instance B07 order. Only for IPftp parameter.
+    :return: B07 order with parameters
+    """
+    def __init__(self, generic_values, payload):
+        self.generic_values = generic_values
+        self.order = OrderHeader(
+            generic_values.get('id_pet'),
+            generic_values.get('id_req'),
+            generic_values.get('cnc'),
+            generic_values.get('version', '3.1.c'),
+        )
+        self.order.cnc.feed({'payload': B07IpFtpPayload(payload)})
+
+
+class B07IpFtpPayload(XmlModel):
+    def __init__(self, payload, drop_empty=False):
+        self.payload = XmlField(
+            'B07', attributes={
+                'IPftp': payload.get('IPftp'),
+            })
+        super(B07IpFtpPayload, self).__init__('b07Payload', 'payload', drop_empty=drop_empty)
+
+
+class B07:
+    """
+    The class used to instance B07 order
+    :return: B07 order with parameters
+    """
+    def __init__(self, generic_values, payload):
+        self.generic_values = generic_values
+        self.order = OrderHeader(
+            generic_values.get('id_pet'),
+            generic_values.get('id_req'),
+            generic_values.get('cnc'),
+            generic_values.get('version', '3.1.c'),
+        )
+        b07 = B07Payload(payload)
+        tasks = payload.get("tasks")
+        for task in tasks:
+            task_xml = B07Task(task)
+            tppros = task.get("task_data")
+            for tppro in tppros:
+                tppro_xml = B07TpPro(tppro)
+                task_xml.tppro.append(tppro_xml)
+            b07.tasks.append(task_xml)
+        self.order.cnc.feed({'payload': b07})
+
+
+class B07Payload(XmlModel):
+    """
+    The class used to instance B07 parameters.
+    """
+    def __init__(self, payload, drop_empty=False):
+        # Discard empty strings and values and compose field
+        attributes = {k: v for k, v in payload.items() if v is not None and v != "" and k != "tasks"}
+        self.payload = XmlField('B07', attributes=attributes)
+        self.tasks = []
+        super(B07Payload, self).__init__('b07Payload', 'payload', drop_empty=drop_empty)
+
+
+class B07Task(XmlModel):
+    def __init__(self, task, drop_empty=False):
+        attributes = {k: v for k, v in task.items() if v is not None and v != "" and k != "task_data"}
+        self.task = XmlField('TP', attributes=attributes)
+        self.tppro = []
+        super(B07Task, self).__init__('TP', 'task', drop_empty=drop_empty)
+
+
+class B07TpPro(XmlModel):
+    def __init__(self, task, drop_empty=False):
+        attributes = {k: v for k, v in task.items() if v is not None and v != ""}
+        self.tppro = XmlField('TpPro', attributes=attributes)
+        self.tpattr = XmlField('TpAttr')
+        super(B07TpPro, self).__init__('TpPro', 'tppro', drop_empty=drop_empty)
+
 class B09:
     """
     The class used to instance B09 order.
@@ -279,7 +358,8 @@ class B09:
             generic_values.get('id_pet'),
             generic_values.get('id_req'),
             generic_values.get('cnc'),
-            generic_values.get('cnt')
+            generic_values.get('cnt'),
+            generic_values.get('version', '3.1.c'),
         )
         self.order.cnc.cnt.feed({'payload': B09Payload(payload)})
         # Load generic order with values
@@ -331,7 +411,7 @@ class B11:
             generic_values.get('id_pet'),
             generic_values.get('id_req'),
             generic_values.get('cnc'),
-
+            generic_values.get('version', '3.1.c'),
         )
         self.order.cnc.feed({'payload': B11Payload(payload)})
         # Load generic order with values
@@ -378,7 +458,8 @@ class B12:
             generic_values.get('id_pet'),
             generic_values.get('id_req'),
             generic_values.get('cnc'),
-            generic_values.get('cnt')
+            generic_values.get('cnt'),
+            generic_values.get('version', '3.1.c'),
         )
         self.order.cnc.cnt.feed({'payload': B12Payload(payload)})
         # Load generic order with values
@@ -495,6 +576,14 @@ class Order(object):
             },
             'B09': {
                 'class': B09,
+                'args': [generic_values, payload]
+            },
+            'B07': {
+                'class': B07,
+                'args': [generic_values, payload]
+            },
+            'B07_ipftp': {
+                'class': B07IpFtp,
                 'args': [generic_values, payload]
             },
             'B11': {

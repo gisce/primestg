@@ -4,11 +4,11 @@ from libcomxml.core import XmlModel, XmlField
 class OrderHeader(XmlModel):
     _sort_order = ('order', 'cnc')
 
-    def __init__(self, id_pet, b_order, cnc):
+    def __init__(self, id_pet, b_order, cnc, version='3.1.c'):
         self.order = XmlField('Order', attributes={
                 'IdPet': str(id_pet),
                 'IdReq': b_order,
-                'Version': '3.1.c'
+                'Version': version
         })
         self.cnc = Cnc(cnc)
         super(OrderHeader, self).__init__('Order', 'order')
@@ -26,11 +26,11 @@ class Cnc(XmlModel):
 class CntOrderHeader(XmlModel):
     _sort_order = ('order', 'cnc')
 
-    def __init__(self, id_pet, b_order, cnc, cnt):
+    def __init__(self, id_pet, b_order, cnc, cnt, version='3.1.c'):
         self.order = XmlField('Order', attributes={
                 'IdPet': str(id_pet),
                 'IdReq': b_order,
-                'Version': '3.1.c'
+                'Version': version
         })
         self.cnc = CncWithCnt(cnc, cnt)
         super(CntOrderHeader, self).__init__('Order', 'order')
