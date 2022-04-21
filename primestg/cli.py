@@ -180,15 +180,20 @@ def sends_order(**kwargs):
 @click.argument('order',required=True)
 @click.argument("cnc_url", required=True,
                 default="http://cct.gisce.lan:8080/WS_DC/WS_DC.asmx"
-)   
+)
+@click.option("--version", "-v", default="3.1.c")
+@click.option("--meter", "-m", default="@ZIV0004394488")
 def cnc_control(**kwargs):
    """Sends a TXX order to CNC"""
    id_pet = get_id_pet()
    s = Service(id_pet, kwargs['cnc_url'], sync=True)
+   meter_name, cnc_name = get_meter_cnc_name(kwargs['meter'])
+   version = kwargs['version']
    generic_values = {
        'id_pet': id_pet,
        'id_req': 'B11',
-       'cnc': 'ZIV0004394488',
+       'cnc': cnc_name,
+       'version': version
    }
    vals = {
        'txx': kwargs['order'],
