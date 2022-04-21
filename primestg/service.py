@@ -5,6 +5,7 @@ from datetime import datetime
 import primestg
 from primestg.order.orders import Order
 import calendar
+from .utils import PRIORITY_HIGH
 
 
 def last_sunday(year, month):
@@ -34,17 +35,25 @@ def format_timestamp(dt):
 
 
 class Service(object):
-    def __init__(self, fact_id, cnc_url, sync=True, source=None):
+    def __init__(self, fact_id, cnc_url, sync=True, source=None, priority=None):
         self.cnc_url = cnc_url
         self.fact_id = fact_id
         self.sync = sync
+        if not priority:
+            self.priority = PRIORITY_HIGH
+        else:
+            self.priority = priority
+
         if not source:
             self.source = 'DCF'  # By default it doesn't look to the meter for data
         else:
             self.source = source
+
         self.DC_service = self.create_service()
 
-    def send(self, report_id, meters, date_from='', date_to='', priority=2):
+    def send(self, report_id, meters, date_from='', date_to='', priority=None):
+        if priority is None:
+            priority = self.priority
 
         if self.sync:
             results = self.DC_service.Request(self.fact_id, report_id,
@@ -55,13 +64,16 @@ class Service(object):
                                                     meters, priority, self.source)
         return results
 
-    def send_order(self, report_id, order, priority=1):
+    def send_order(self, report_id, order, priority=None):
         """
         Sends order
         :param report_id: B11,B09,etc.
         :param order: XML containing order
+        :param priority: default PRIORITY_HIGHEST,
         :return: true or false
         """
+        if priority is None:
+            priority = self.priority
         print(order)
         results = self.DC_service.Order(self.fact_id, 0, order, priority)
         return results
