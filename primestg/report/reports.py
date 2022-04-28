@@ -1,13 +1,14 @@
 from primestg.report.base import (
     MeasureActiveReactive, MeasureActiveReactiveFloat, Parameter,
     MeterWithMagnitude, ConcentratorWithMetersWithConcentratorName,
-    Concentrator, Measure, MeterWithConcentratorName, LineDetails, RemoteTerminalUnitDetails
+    Concentrator, Measure, MeterWithConcentratorName, LineDetails, RemoteTerminalUnitDetails,
+    Operation
 )
 from primestg.message import MessageS
 from primestg.utils import octet2name, octet2number
 
 SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S15',
-                     'S17', 'S18', 'S23', 'S24', 'S27', 'S52']
+                     'S17', 'S18', 'S23', 'S24', 'S27', 'S42', 'S52']
 
 
 def is_supported(report_code):
@@ -286,6 +287,35 @@ class MeasureS52(MeasureActiveReactiveFloat):
             return []
 
         return [values]
+
+
+class OperationS42(Operation):
+    """
+    Class for a set of measures of report S52.
+    """
+
+    @property
+    def values(self):
+        """
+        Set of measures of report S42.
+        :return: a dict with a set of measures of report S42
+        """
+        values = []
+        try:
+            common_values = {
+                "Fh": self._get_timestamp('Fh'),
+                "Operation": self.objectified.get('Operation'),
+                "obis": self.objectified.get('obis'),
+                "class": self.objectified.get('class'),
+                "element": self.objectified.get('Operation'),
+                "data": self.objectified.get('element'),
+                "result": self.objectified.get('result'),
+            }
+            values.append(common_values)
+        except Exception as e:
+            values.append(['ERROR: Thrown exception: {}'.format(e)])
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+        return values
 
 
 class MeasureEvents(Measure):
@@ -1403,6 +1433,29 @@ class MeterS23(MeterWithConcentratorName):
         return meters
 
 
+class MeterS42(MeterWithConcentratorName):
+    """
+    Class for a meter of report S42.
+    """
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S42.
+
+        :return: a string with 'S42'
+        """
+        return 'S42'
+
+    @property
+    def measure_class(self):
+        """
+        The class used to instance measure sets for report S42.
+        :return: a class to instance measure sets of report S42
+        """
+        return OperationS42
+
+
 class ConcentratorS01(ConcentratorWithMetersWithConcentratorName):
     """
     Class for a concentrator of report S01.
@@ -1932,6 +1985,21 @@ class ConcentratorS24(Concentrator):
         return values
 
 
+class ConcentratorS42(ConcentratorWithMetersWithConcentratorName):
+    """
+    Class for a concentrator of report S42.
+    """
+
+    @property
+    def meter_class(self):
+        """
+        The class used to instance meters for report S42.
+
+        :return: a class to instance meters of report S42
+        """
+        return MeterS42
+
+
 class RemoteTerminalUnitS52(RemoteTerminalUnitDetails):
     """
     Class for a remote terminal unit of report S52.
@@ -2100,6 +2168,10 @@ class Report(object):
             },
             'S27': {
                 'class': ConcentratorS27,
+                'args': [objectified_concentrator]
+            },
+            'S42': {
+                'class': ConcentratorS42,
                 'args': [objectified_concentrator]
             }
         }
