@@ -307,8 +307,8 @@ class OperationS42(Operation):
                 "Operation": self.objectified.get('Operation'),
                 "obis": self.objectified.get('obis'),
                 "class": self.objectified.get('class'),
-                "element": self.objectified.get('Operation'),
-                "data": self.objectified.get('element'),
+                "element": self.objectified.get('element'),
+                "data": self.objectified.get('data'),
                 "result": self.objectified.get('result'),
             }
             values.append(common_values)

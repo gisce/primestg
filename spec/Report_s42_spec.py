@@ -20,10 +20,10 @@ with description('Report S42 type get example'):
                            'Fh': '2022-04-01 08:06:08',
                            'Operation': 'get',
                            'obis': '1.0.0.4.2.255',
-                           'data': '2',
+                           'data': '',
                            'class': '1',
-                           'element': 'get'}
-        expect(first_item).to(equal(first_item))
+                           'element': '2'}
+        expect(first_item).to(equal(data_first_item))
 
 with description('Report S42 type set example'):
     with before.all:
@@ -33,7 +33,7 @@ with description('Report S42 type set example'):
         with open(self.data_filename) as data_file:
             self.report = Report(data_file)
 
-    with fit('Test integration file'):
+    with it('Test integration file'):
         expect(self.report.concentrators[0].name).to(equal(self.concentrators_name))
         expect(len(self.report.values)).to(equal(8))
         first_item = self.report.concentrators[0].meters[0].values[0]
@@ -41,10 +41,10 @@ with description('Report S42 type set example'):
         data_first_item = {'cnc_name': 'CIR4621407021',
                            'result': 'SUCCESS',
                            'name': 'ITE0131751928',
-                           'Fh': '2021-12-13 10:01:11',
+                           'Fh': '2021-12-13 10:01:09',
                            'Operation': 'set',
-                           'obis': '0.1.94.34.12.255',
-                           'data': '2',
+                           'obis': '0.1.94.34.11.255',
+                           'data': 'raw{060000157c}',
                            'class': '3',
-                           'element': 'set'}
-        expect(first_item).to(equal(first_item))
+                           'element': '2'}
+        expect(first_item).to(equal(data_first_item))
