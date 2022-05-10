@@ -198,6 +198,13 @@ class MeasureActiveReactiveFloat(Measure):
         }
 
 
+class Operation(Measure):
+    """
+    Base class for a meter operation.
+    """
+    pass
+
+
 class Parameter(ValueWithTime):
     """
     Base class for a set of parameters.
