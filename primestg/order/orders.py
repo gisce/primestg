@@ -532,11 +532,11 @@ class B12Payload(XmlModel):
 
         data = template['data']
         sets = []
-        for set_line in data:
-            new_set = set_line.copy()
-            if set_line.get('data', False):
+        for set_line_supervisor in data:
+            new_set = set_line_supervisor.copy()
+            if set_line_supervisor.get('data', False):
                 # set (contains data)
-                new_set['data'] = set_line['data'].format(**params)
+                new_set['data'] = set_line_supervisor['data'].format(**params)
                 sets.append(Set(new_set))
             else:
                 # get (without data)

@@ -695,17 +695,17 @@ class BaseElement(object):
         return self._warnings
     
 
-class Line(BaseElement):
+class LineSupervisor(BaseElement):
     """
-    Base class for a line.
+    Base class for a line supervisor.
     """
 
     @property
     def errors(self):
         """
-        The line errors.
+        The line supervisor errors.
 
-        :return: a dict with the line errors
+        :return: a dict with the line supervisor errors
         """
         self._errors = {}
         if self.objectified.get('ErrCat'):
@@ -734,7 +734,7 @@ class Line(BaseElement):
     @property
     def measures(self):
         """
-        Measure set objects of this line.
+        Measure set objects of this line supervisor.
 
         :return: a list of measure set objects
         """
@@ -747,7 +747,7 @@ class Line(BaseElement):
     @property
     def values(self):
         """
-        Values of measure sets of this line.
+        Values of measure sets of this line supervisor.
 
         :return: a list with the values of the measure sets
         """
@@ -757,20 +757,20 @@ class Line(BaseElement):
         return values
 
 
-class LineDetails(Line):
+class LineSupervisorDetails(LineSupervisor):
     """
-    Base class for a lines of report that need the name of the remote terminal unit in the values, like S52.
+    Base class for a line supervisors of report that need the name of the remote terminal unit in the values, like S52.
     """
 
-    def __init__(self, objectified_line, rt_unit_name):
+    def __init__(self, objectified_line_supervisor, rt_unit_name):
         """
-        Create a Line object using Line constructor and adding the remote terminal unit name.
+        Create a line supervisor object using line supervisor constructor and adding the remote terminal unit name.
 
-        :param objectified_line: an lxml.objectify.StringElement representing a line
+        :param objectified_line_supervisor: an lxml.objectify.StringElement representing a line supervisor
         :param rt_unit_name: a string with the name of the remote terminal unit
-        :return: a Line object
+        :return: a line supervisor object
         """
-        super(LineDetails, self).__init__(objectified_line)
+        super(LineSupervisorDetails, self).__init__(objectified_line_supervisor)
         self.rt_unit_name = rt_unit_name
 
     @property
@@ -794,7 +794,7 @@ class LineDetails(Line):
     @property
     def values(self):
         """
-        Values of measure sets of this line of report that need the name of the remote terminal unit and the line
+        Values of measure sets of this line supervisor of report that need the name of the remote terminal unit and the line supervisor
 
         :return: a list with the values of the measure sets
         """
@@ -815,18 +815,18 @@ class LineDetails(Line):
     @property
     def magnitude(self):
         """
-        The magnitude of the line measures.
+        The magnitude of the line supervisor measures.
 
-        :return: a int with the magnitude of the line measures
+        :return: a int with the magnitude of the line supervisor measures
         """
         return int(self.objectified.get('Magn'))
 
     @property
     def position(self):
         """
-        The position of the line measures.
+        The position of the line supervisor measures.
 
-        :return: a int with the position of the line measures
+        :return: a int with the position of the line supervisor measures
         """
         return int(self.objectified.get('Pos'))
 
@@ -837,37 +837,37 @@ class RemoteTerminalUnitDetails(BaseElement):
     """
 
     @property
-    def line_class(self):
+    def line_supervisor_class(self):
         """
-        The class to instance lines.
+        The class to instance line supervisors.
 
-        :return: a class to instance lines
+        :return: a class to instance line supervisors
         """
-        return Line
+        return LineSupervisor
 
     @property
     def values(self):
         """
-        Values of the lines of this remote terminal unit.
+        Values of the line supervisors of this remote terminal unit.
 
-        :return: a list with the values of the lines
+        :return: a list with the values of the line supervisors
         """
         values = []
-        for line in self.lines:
-            values.extend(line.values)
+        for line_supervisor in self.line_supervisors:
+            values.extend(line_supervisor.values)
         return values
 
     @property
-    def lines(self):
+    def line_supervisors(self):
         """
-        Line objects of this remote terminal unit. The name of remote terminal unit is passed to the line.
+        Line supervisor objects of this remote terminal unit. The name of remote terminal unit is passed to the line supervisor.
 
-        :return: a list of line objects
+        :return: a list of line supervisor objects
         """
-        lines = []
+        line_supervisors = []
         if getattr(self.objectified, 'LVSLine', None) is not None:
-            for line in self.objectified.LVSLine:
-                lines.append(self.line_class(line, self.name))
-            for line in lines:
-                self._warnings.append(line.warnings)
-        return lines
+            for line_supervisor in self.objectified.LVSLine:
+                line_supervisors.append(self.line_supervisor_class(line_supervisor, self.name))
+            for line_supervisor in line_supervisors:
+                self._warnings.append(line_supervisor.warnings)
+        return line_supervisors
