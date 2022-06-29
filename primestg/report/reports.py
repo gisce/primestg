@@ -1,7 +1,7 @@
 from primestg.report.base import (
     MeasureActiveReactive, MeasureActiveReactiveFloat, Parameter,
     MeterWithMagnitude, ConcentratorWithMetersWithConcentratorName,
-    Concentrator, Measure, MeterWithConcentratorName, LineDetails, RemoteTerminalUnitDetails,
+    Concentrator, Measure, MeterWithConcentratorName, LineSupervisorDetails, RemoteTerminalUnitDetails,
     Operation
 )
 from primestg.message import MessageS
@@ -956,9 +956,9 @@ class ParameterConcentratorEvents(Parameter):
         return values
 
 
-class LineS52(LineDetails):
+class LineSupervisorS52(LineSupervisorDetails):
     """
-    Class for a line of report S52.
+    Class for a line supervisor of report S52.
     """
 
     @property
@@ -982,11 +982,12 @@ class LineS52(LineDetails):
     @property
     def values(self):
         """
-        Values of measure sets of this line of report that need the name of the remote terminal unit and the line
+        Values of measure sets of this line supervisor of report that need the name of the remote terminal unit
+        and the line supervisor
 
         :return: a list with the values of the measure sets
         """
-        values = super(LineS52, self).values
+        values = super(LineSupervisorS52, self).values
         for value in values:
             value['magn'] = self.magnitude
         return values
@@ -2006,13 +2007,13 @@ class RemoteTerminalUnitS52(RemoteTerminalUnitDetails):
     """
 
     @property
-    def line_class(self):
+    def line_supervisor_class(self):
         """
-        The class used to instance lines for report S52.
+        The class used to instance line supervisors for report S52.
 
-        :return: a class to instance lines of report S52
+        :return: a class to instance line supervisors of report S52
         """
-        return LineS52
+        return LineSupervisorS52
 
 
 class Report(object):
