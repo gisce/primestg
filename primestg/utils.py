@@ -170,14 +170,21 @@ class DLMSTemplates(PrimeTemplates):
     def __init__(self):
         self.templates = DLMS_TEMPLATES
 
-    def generate_cycle_file(self, template_name, meters_name, params=None):
+    def generate_cycle_file(self, template_name, meters_name, params=None, root=True):
+        cycles_xml =self.generate_cycles(template_name, meters_name, params=params)
+        if root:
+            return "<cycles>\n{}\n</cycles>".format(cycles_xml)
+        else:
+            return cycles_xml
+
+    def generate_cycles(self, template_name, meters_name, params=None):
         elements = self.get_template(template_name)['data']
         if params is None:
             params = {}
         else:
             params = prepare_params(params)
 
-        xml = '<cycles>\n<cycle name="Ciclo_{}_raw" period="1" immediate="true" repeat="1" priority="1">\n'.format(
+        xml = '<cycle name="Ciclo_{}_raw" period="1" immediate="true" repeat="1" priority="1">\n'.format(
             template_name)
 
         for meter_name in meters_name:
@@ -187,6 +194,6 @@ class DLMSTemplates(PrimeTemplates):
             xml += '<set obis="{}" class="{}" element="{}">{}</set>\n'.format(
                 element['obis'], element['class'], element['element'], element['data'].format(**params))
 
-        xml += '</cycle>\n</cycles>'
+        xml += '</cycle>'
 
         return xml
