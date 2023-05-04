@@ -264,6 +264,21 @@ class Service(object):
         """
         return self.send('S17', dc, date_from, date_to)
 
+    def get_cutoffs_status(self, meters, date_from, date_to):
+        """
+        Asks for a S18 report to the specified meter.
+        :param meters: a meter_id
+        :return: an S18 report for the corresponding meter
+        """
+        return self.send('S18', meters, date_from, date_to)
+
+    def get_all_cutoffs_status(self, date_from, date_to):
+        """
+        Asks for a S18 report to all meters.
+        :return: an S18 report from every meter
+        """
+        return self.send('S18', '', date_from, date_to)
+
     def get_all_contract_definition(self, date_from, date_to):
         """
         Asks for a S23 report to all meters.
