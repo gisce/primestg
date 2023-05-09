@@ -257,6 +257,21 @@ class Service(object):
         """
         return self.send('S12', dc, date_from, date_to)
 
+    def get_daily_average_voltage_and_current(self, meters, date_from, date_to):
+        """
+        Asks for a S14 report to the specified meter.
+        :param meters: a meter_id
+        :return: an S14 report for the corresponding meter
+        """
+        return self.send('S14', meters, date_from, date_to)
+
+    def get_all_daily_average_voltage_and_current(self, date_from, date_to):
+        """
+        Asks for a S14 report to all meters.
+        :return: an S14 report from every meter
+        """
+        return self.send('S14', '', date_from, date_to)
+
     def get_concentrator_events(self, dc, date_from, date_to):
         """
         Asks for a S17 report to the concentrator.

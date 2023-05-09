@@ -198,6 +198,30 @@ class MeasureActiveReactiveFloat(Measure):
         }
 
 
+class MeasureAverageVoltageAndCurrent(Measure):
+    """
+    Base class for a set of measures with average voltage and current.
+    """
+
+    def average_voltage_and_current(self, measure):
+        """
+        Get the average voltage and current measures.
+
+        :param measure: an lxml.objectify.StringElement representing a set of \
+            measures
+        :return: a dict with the active and reactive measures
+        """
+        return {
+            'v1': int(measure.get('V1')),
+            'v2': int(measure.get('V2')),
+            'v3': int(measure.get('V3')),
+            'i1': int(measure.get('I1')),
+            'i2': int(measure.get('I2')),
+            'i3': int(measure.get('I3')),
+            'in': int(measure.get('In')),
+        }
+
+
 class Operation(Measure):
     """
     Base class for a meter operation.

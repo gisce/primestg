@@ -2,12 +2,12 @@ from primestg.report.base import (
     MeasureActiveReactive, MeasureActiveReactiveFloat, Parameter,
     MeterWithMagnitude, ConcentratorWithMetersWithConcentratorName,
     Concentrator, Measure, MeterWithConcentratorName, LineSupervisorDetails, RemoteTerminalUnitDetails,
-    Operation
+    Operation, MeasureAverageVoltageAndCurrent
 )
 from primestg.message import MessageS
 from primestg.utils import octet2name, octet2number
 
-SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S15',
+SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S14', 'S15',
                      'S17', 'S18', 'S23', 'S24', 'S27', 'S42', 'S52']
 
 
@@ -225,6 +225,34 @@ class MeasureS05(MeasureActiveReactive):
 
         return values
 
+
+class MeasureS14(MeasureAverageVoltageAndCurrent):
+    """
+    Class for a set of measures of report S14.
+    """
+
+    @property
+    def values(self):
+        """
+        Set of measures of report S14.
+
+        :return: a dict with a set of measures of report S14
+        """
+        try:
+            values = self.average_voltage_and_current(self.objectified)
+            values.update(
+                {
+                    'timestamp': self._get_timestamp('Fh'),
+                    'season': self.objectified.get('Fh')[-1:],
+                    'bc': self.objectified.get('Bc'),
+                    'simp': float(self.objectified.get('Simp')),
+                    'sexp': float(self.objectified.get('Sexp'))
+                }
+            )
+            return [values]
+
+        except Exception as e:
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
 
 class MeasureS27(MeasureActiveReactive):
     """
@@ -1103,6 +1131,32 @@ class MeterS05(MeterWithMagnitude):
         return MeasureS05
 
 
+class MeterS14(MeterWithConcentratorName):
+    """
+    Class for a meter of report S14.
+    """
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S14.
+
+        :return: a string with 'S14'
+        """
+
+        return 'S14'
+
+    @property
+    def measure_class(self):
+        """
+        The class used to instance measure sets for report S14.
+
+        :return: a class to instance measure sets of report S14
+        """
+        return MeasureS14
+
+
+
 class MeterS27(MeterWithMagnitude):
     """
     Class for a meter of report S27.
@@ -1700,6 +1754,21 @@ class ConcentratorS13(ConcentratorWithMetersWithConcentratorName):
         return MeterS13
 
 
+class ConcentratorS14(ConcentratorWithMetersWithConcentratorName):
+    """
+    Class for a concentrator of report S14.
+    """
+    @property
+    def meter_class(self):
+        """
+        The class used to instance meters for report S14.
+
+        :return: a class to instance meters of report S14
+        """
+        return MeterS14
+
+
+
 class ConcentratorEvents(Concentrator):
     """
     Class for a concentrator of report S17.
@@ -2120,16 +2189,20 @@ class Report(object):
                 'class': ConcentratorS09,
                 'args': [objectified_concentrator]
             },
-            'S13': {
-                'class': ConcentratorS13,
-                'args': [objectified_concentrator]
-            },
             'S12': {
                 'class': ConcentratorS12,
                 'args': [objectified_concentrator, self.report_version]
             },
-            'S17': {
-                'class': ConcentratorS17,
+            'S13': {
+                'class': ConcentratorS13,
+                'args': [objectified_concentrator]
+            },
+            'S14': {
+                'class': ConcentratorS14,
+                'args': [objectified_concentrator]
+            },
+            'S15': {
+                'class': ConcentratorS15,
                 'args': [
                     objectified_concentrator,
                     self.report_version,
@@ -2137,8 +2210,8 @@ class Report(object):
                     self.report_type
                 ]
             },
-            'S15': {
-                'class': ConcentratorS15,
+            'S17': {
+                'class': ConcentratorS17,
                 'args': [
                     objectified_concentrator,
                     self.report_version,
