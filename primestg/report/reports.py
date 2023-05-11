@@ -245,8 +245,8 @@ class MeasureS14(MeasureAverageVoltageAndCurrent):
                     'timestamp': self._get_timestamp('Fh'),
                     'season': self.objectified.get('Fh')[-1:],
                     'bc': self.objectified.get('Bc'),
-                    'simp': float(self.objectified.get('Simp')),
-                    'sexp': float(self.objectified.get('Sexp'))
+                    'simp': int(self.objectified.get('Simp')),
+                    'sexp': int(self.objectified.get('Sexp'))
                 }
             )
             return [values]

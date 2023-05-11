@@ -212,13 +212,13 @@ class MeasureAverageVoltageAndCurrent(Measure):
         :return: a dict with the active and reactive measures
         """
         return {
-            'v1': int(measure.get('V1')),
-            'v2': int(measure.get('V2')),
-            'v3': int(measure.get('V3')),
-            'i1': int(measure.get('I1')),
-            'i2': int(measure.get('I2')),
-            'i3': int(measure.get('I3')),
-            'in': int(measure.get('In')),
+            'v1': float(measure.get('V1')),
+            'v2': float(measure.get('V2')),
+            'v3': float(measure.get('V3')),
+            'i1': float(measure.get('I1')),
+            'i2': float(measure.get('I2')),
+            'i3': float(measure.get('I3')),
+            'in': float(measure.get('In')),
         }
 
 
