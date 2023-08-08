@@ -254,6 +254,7 @@ class MeasureS14(MeasureAverageVoltageAndCurrent):
         except Exception as e:
             self._warnings.append('ERROR: Thrown exception: {}'.format(e))
 
+
 class MeasureS27(MeasureActiveReactive):
     """
     Class for a set of measures of report S27.
@@ -2075,6 +2076,19 @@ class RemoteTerminalUnitS52(RemoteTerminalUnitDetails):
     Class for a remote terminal unit of report S52.
     """
 
+    def __init__(self, objectified_rt_unit, report_version, request_id):
+        """
+        Create a RemoteTerminalUnit object for the report S62.
+
+        :param objectified_rt_unit: an lxml.objectify.StringElement \
+            representing a line supervisor
+        :param report_version: a string with the version of report
+        :return: a LineSupervisor object
+        """
+        super(RemoteTerminalUnitS52, self).__init__(objectified_rt_unit)
+        self.report_version = report_version
+        self.request_id = request_id
+
     @property
     def line_supervisor_class(self):
         """
@@ -2268,7 +2282,11 @@ class Report(object):
         report_type_class = {
             'S52': {
                 'class': RemoteTerminalUnitS52,
-                'args': [objectified_rt_unit]
+                'args': [
+                    objectified_rt_unit,
+                    self.report_version,
+                    self.request_id
+                ],
             }
         }
 
