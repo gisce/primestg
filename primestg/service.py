@@ -307,3 +307,10 @@ class Service(object):
         :return: an S24 report from the concentrator.
         """
         return self.send('S24', dc, date_from, date_to)
+
+    def get_current_billing(self, meter, date_from, date_to):
+        """
+        Asks for a S27 report to the meter.
+        :return: an S27 report from the meter.
+        """
+        return self.send('S27', meter, date_from, date_to)
