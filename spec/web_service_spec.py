@@ -1,9 +1,13 @@
 import responses
+import primestg
 from primestg.service import Service
 from zeep.exceptions import TransportError
 
 with description('Web services run'):
     with before.all:
+        # Only if NDA wsdl available
+        if not primestg.get_data('WS_DC.wsdl'):
+            exit(0)
         self.s = Service(1, 'http://cct.gisce.lan:8080/')
 
     with it('asking for S02 report with mocked connection'):
