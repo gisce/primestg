@@ -1,0 +1,7 @@
+<Report IdRpt="S06" IdPet="0" Version="3.2">
+<Cnc Id="ZIV0004342071">
+	<Cnt Id="ZIV0036394976">
+		<S06 Fh="20231229130822000W" NS="0036394976" Fab=" Z" Mod="NA" Af="14" Te="ÿÿÿÿÿÿÿÿÿÿ" Vf="VK016" VPrime="V2101" Pro="ÿÿÿÿÿÿÿ7" Idm="                        " Mac="40:40:22:2B:57:E0" Tp="" Ts="" Ip="" Is="" Usag="180" Uswell="180" Per="3600" Dctcp="95.00" Vr="230" Ut="180" UsubT="7.00" UsobT="7.00" UcorteT="50.00" AutMothBill="Y" ScrollDispMode="A" ScrollDispTime="3" />
+	</Cnt>
+</Cnc>
+</Report>
