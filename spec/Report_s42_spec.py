@@ -10,9 +10,10 @@ with description('Report S42 type get example'):
             self.report = Report(data_file)
 
     with it('Test integration file'):
-        expect(self.report.concentrators[0].name).to(equal(self.concentrators_name))
+        concentrators = list(self.report.concentrators)
+        expect(concentrators[0].name).to(equal(self.concentrators_name))
         expect(len(self.report.values)).to(equal(4))
-        first_item = self.report.concentrators[0].meters[0].values[0]
+        first_item = concentrators[0].meters[0].values[0]
         expect(len(first_item)).to(equal(9))
         data_first_item = {'cnc_name': 'CIR4621739284',
                            'result': 'long_unsigned{6000}',
@@ -34,9 +35,10 @@ with description('Report S42 type set example'):
             self.report = Report(data_file)
 
     with it('Test integration file'):
-        expect(self.report.concentrators[0].name).to(equal(self.concentrators_name))
+        concentrators = list(self.report.concentrators)
+        expect(concentrators[0].name).to(equal(self.concentrators_name))
         expect(len(self.report.values)).to(equal(8))
-        first_item = self.report.concentrators[0].meters[0].values[0]
+        first_item = concentrators[0].meters[0].values[0]
         expect(len(first_item)).to(equal(9))
         data_first_item = {'cnc_name': 'CIR4621407021',
                            'result': 'SUCCESS',
