@@ -50,7 +50,10 @@ class BaseMessage(object):
             value = value.read()
         if is_gziped(value):
             value = zlib.decompress(value, zlib.MAX_WBITS | 32)
-        self._xml = value
+        try:
+            self._xml = value.decode('iso-8859-15')
+        except:
+            self._xml = value
         self._objectified = fromstring(self._xml)
 
 
