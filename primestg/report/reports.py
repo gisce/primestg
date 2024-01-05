@@ -255,6 +255,70 @@ class MeasureS07(Measure):
         return [values]
 
 
+class MeasureS08(Measure):
+    """
+    Class for a set of measures of report S08.
+    """
+
+    @property
+    def values(self):
+        """
+        Set of measures of report S08.
+
+        :return: a dict with a set of measures of report S08
+        """
+        values = {}
+        sub = self.objectified.Sub.get
+        sob = self.objectified.Sob.get
+        corte = self.objectified.Corte.get
+        try:
+            values = {
+                'timestamp': self._get_timestamp('Fh'),
+                'season': self.objectified.get('Fh')[-1:],
+                'nsubtt': get_integer_value(sub('NsubTt')),
+                'tsubtt': get_integer_value(sub('TsubTt')),
+                'tsubta': get_integer_value(sub('TsubTa')),
+                'nsubtf1': get_integer_value(sub('NsubTf1')),
+                'tsubtf1': get_integer_value(sub('TsubTf1')),
+                'tsubtf1a': get_integer_value(sub('TsubTf1a')),
+                'nsubtf2': get_integer_value(sub('NsubTf2')),
+                'tsubtf2': get_integer_value(sub('TsubTf2')),
+                'tsubtf2a': get_integer_value(sub('TsubTf2a')),
+                'nsubtf3': get_integer_value(sub('NsubTf3')),
+                'tsubtf3': get_integer_value(sub('TsubTf3')),
+                'tsubtf3a': get_integer_value(sub('TsubTf3a')),
+                'nsobtt': get_integer_value(sob('NsobTt')),
+                'tsobtt': get_integer_value(sob('TsobTt')),
+                'tsobta': get_integer_value(sob('TsobTa')),
+                'nsobtf1': get_integer_value(sob('NsobTf1')),
+                'tsobtf1': get_integer_value(sob('TsobTf1')),
+                'tsobtf1a': get_integer_value(sob('TsobTf1a')),
+                'nsobtf2': get_integer_value(sob('NsobTf2')),
+                'tsobtf2': get_integer_value(sob('TsobTf2')),
+                'tsobtf2a': get_integer_value(sob('TsobTf2a')),
+                'nsobtf3': get_integer_value(sob('NsobTf3')),
+                'tsobtf3': get_integer_value(sob('TsobTf3')),
+                'tsobtf3a': get_integer_value(sob('TsobTf3a')),
+                'ncortett': get_integer_value(corte('NcorteTt')),
+                'tcortett': get_integer_value(corte('TcorteTt')),
+                'tcorteta': get_integer_value(corte('TcorteTa')),
+                'ncortetf1': get_integer_value(corte('NcorteTf1')),
+                'tcortetf1': get_integer_value(corte('TcorteTf1')),
+                'tcortetf1a': get_integer_value(corte('TcorteTf1a')),
+                'ncortetf2': get_integer_value(corte('NcorteTf2')),
+                'tcortetf2': get_integer_value(corte('TcorteTf2')),
+                'tcortetf2a': get_integer_value(corte('TcorteTf2a')),
+                'ncortetf3': get_integer_value(corte('NcorteTf3')),
+                'tcortetf3': get_integer_value(corte('TcorteTf3')),
+                'tcortetf3a': get_integer_value(corte('TcorteTf3a')),
+            }
+        except Exception as e:
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+            return []
+
+        return [values]
+
+
 class MeasureS14(MeasureAverageVoltageAndCurrent):
     """
     Class for a set of measures of report S14.
@@ -1195,6 +1259,40 @@ class MeterS07(MeterWithMagnitude):
         return super(MeterS07, self).values
 
 
+class MeterS08(MeterWithMagnitude):
+    """
+    Class for a meter of report S08.
+    """
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S08.
+
+        :return: a string with 'S08'
+        """
+        return 'S08'
+
+    @property
+    def measure_class(self):
+        """
+        The class used to instance measure sets for report S07.
+
+        :return: a class to instance measure sets of report S07
+        """
+        return MeasureS08
+
+    @property
+    def values(self):
+        """
+        Values of measure sets of this meter of report that need the name of \
+            the concentrator and the meter,
+
+        :return: a list with the values of the measure sets
+        """
+        return super(MeterS08, self).values
+
+
 class MeterS14(MeterWithConcentratorName):
     """
     Class for a meter of report S14.
@@ -1648,6 +1746,21 @@ class ConcentratorS07(ConcentratorWithMetersWithConcentratorName):
         :return: a class to instance meters of report S07
         """
         return MeterS07
+
+
+class ConcentratorS08(ConcentratorWithMetersWithConcentratorName):
+    """
+    Class for a concentrator of report S08.
+    """
+
+    @property
+    def meter_class(self):
+        """
+        The class used to instance meters for report S08.
+
+        :return: a class to instance meters of report S08
+        """
+        return MeterS08
 
 
 class ConcentratorS27(ConcentratorWithMetersWithConcentratorName):
@@ -2279,6 +2392,10 @@ class Report(object):
             },
             'S07': {
                 'class': ConcentratorS07,
+                'args': [objectified_concentrator]
+            },
+            'S08': {
+                'class': ConcentratorS08,
                 'args': [objectified_concentrator]
             },
             'S09': {

@@ -1,0 +1,13 @@
+<Report IdRpt="S08" IdPet="0" Version="3.1.c">
+	<Cnc Id="CIR4622119033">
+		<Cnt Id="SAG0155354713">
+			<S08 Fh="20240102183658000W">
+				<Sub NsubTt="1142" TsubTt="27944" TsubTa="14" NsubTf1="1142" TsubTf1="96672" TsubTf1a="" NsubTf2="" TsubTf2="" TsubTf2a="" NsubTf3="" TsubTf3="" TsubTf3a=""/>
+				<Sob NsobTt="5149" TsobTt="64095" TsobTa="4" NsobTf1="5149" TsobTf1="64095" TsobTf1a="" NsobTf2="" TsobTf2="" TsobTf2a="" NsobTf3="" TsobTf3="" TsobTf3a=""/>
+				<Corte NcorteTt="52" TcorteTt="178" TcorteTa="" NcorteTf1="" TcorteTf1="" TcorteTf1a="" NcorteTf2="" TcorteTf2="" TcorteTf2a="" NcorteTf3="" TcorteTf3="" TcorteTf3a=""/>
+			</S08>
+		</Cnt>
+		<Cnt Id="SAG0176451808" ErrCat="2" ErrCode="1"/>
+		<Cnt Id="SAG0186252560" ErrCat="2" ErrCode="1"/>
+	</Cnc>
+</Report>
