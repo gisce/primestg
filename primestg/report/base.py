@@ -786,7 +786,6 @@ class LineSupervisorDetails(LineSupervisor):
     """
     Base class for a line supervisors of report that need the name of the remote terminal unit in the values, like S52.
     """
-
     def __init__(self, objectified_line_supervisor, rt_unit_name):
         """
         Create a line supervisor object using line supervisor constructor and adding the remote terminal unit name.
@@ -797,6 +796,10 @@ class LineSupervisorDetails(LineSupervisor):
         """
         super(LineSupervisorDetails, self).__init__(objectified_line_supervisor)
         self.rt_unit_name = rt_unit_name
+        
+    @property
+    def report_type(self):
+        return self.__class__.__name__[-3:]
 
     @property
     def rt_unit_name(self):
