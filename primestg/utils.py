@@ -197,3 +197,13 @@ class DLMSTemplates(PrimeTemplates):
         xml += '</cycle>'
 
         return xml
+
+
+event_groups = [
+    (1, 'Grupo 1 - Estándar'),
+    (2, 'Grupo 2 - Acceso'),
+    (3, 'Grupo 3 - Gestión de la demanada'),
+    (4, 'Grupo 4 - Alta ocurrencia'),
+    (5, 'Grupo 5 - Altas y bajas'),
+    (6, 'Grupo 6 - Otros')
+]
