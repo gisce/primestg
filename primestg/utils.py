@@ -200,10 +200,10 @@ class DLMSTemplates(PrimeTemplates):
 
 
 event_groups = [
-    (1, 'Group 1 - Estándar'),
-    (2, 'Group 2 - Acceso'),
-    (3, 'Group 3 - Gestión de la demanada'),
-    (4, 'Group 4 - Alta ocurrencia'),
-    (5, 'Group 5 - Altas y bajas'),
-    (6, 'Group 6 - Otros')
+    (1, 'Grupo 1 - Estándar'),
+    (2, 'Grupo 2 - Acceso'),
+    (3, 'Grupo 3 - Gestión de la demanada'),
+    (4, 'Grupo 4 - Alta ocurrencia'),
+    (5, 'Grupo 5 - Altas y bajas'),
+    (6, 'Grupo 6 - Otros')
 ]
