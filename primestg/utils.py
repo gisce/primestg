@@ -205,5 +205,7 @@ event_groups = [
     (3, 'Grupo 3 - Gestión de la demanada'),
     (4, 'Grupo 4 - Alta ocurrencia'),
     (5, 'Grupo 5 - Altas y bajas'),
-    (6, 'Grupo 6 - Otros')
+    (6, 'Grupo 6 - Otros'),
+    (8, 'Placeholder'),
+    (9, 'Placeholder')
 ]
