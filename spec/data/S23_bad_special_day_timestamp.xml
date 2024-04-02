@@ -1,0 +1,144 @@
+<Report IdRpt="S23" IdPet="5645242" Version="3.1.c">
+        <Cnc Id="CIR4621920042">
+                <Cnt Id="SAG0206450369">
+                        <S23 Fh="20240328120216000W">
+                                <PCact ActDate="20220127133450000W">
+                                        <Contrato1 TR1="0" TR2="0" TR3="0" TR4="0" TR5="0" TR6="0"/>
+                                </PCact>
+                                <PCLatent ActDate="FFFFFFFFFFFFFFFFFF800009">
+                                        <Contrato1 TR1="0" TR2="0" TR3="0" TR4="0" TR5="0" TR6="0"/>
+                                </PCLatent>
+                                <ActiveCalendars>
+                                        <Contract c="1" CalendarType="01" CalendarName="36545F544441" ActDate="20220127133450000W">
+                                                <Season Name="01" Start="FFFF0101FF00000000800000" Week="01"/>
+                                                <Season Name="02" Start="FFFF0301FF00000000800000" Week="02"/>
+                                                <Season Name="03" Start="FFFF0401FF00000000800080" Week="04"/>
+                                                <Season Name="04" Start="FFFF0601FF00000000800080" Week="03"/>
+                                                <Season Name="05" Start="FFFF0701FF00000000800080" Week="01"/>
+                                                <Season Name="06" Start="FFFF0801FF00000000800080" Week="03"/>
+                                                <Season Name="07" Start="FFFF0A01FF00000000800000" Week="04"/>
+                                                <Season Name="08" Start="FFFF0B01FF00000000800000" Week="02"/>
+                                                <Season Name="09" Start="FFFF0C01FF00000000800000" Week="01"/>
+                                                <Week Name="01" Week="01010101010505"/>
+                                                <Week Name="02" Week="02020202020505"/>
+                                                <Week Name="03" Week="03030303030505"/>
+                                                <Week Name="04" Week="04040404040505"/>
+                                                <Day id="01">
+                                                        <Change Hour="00000000" TariffRate="FF06"/>
+                                                        <Change Hour="08000000" TariffRate="FF02"/>
+                                                        <Change Hour="09000000" TariffRate="FF01"/>
+                                                        <Change Hour="0E000000" TariffRate="FF02"/>
+                                                        <Change Hour="12000000" TariffRate="FF01"/>
+                                                        <Change Hour="16000000" TariffRate="FF02"/>
+                                                </Day>
+                                                <Day id="02">
+                                                        <Change Hour="00000000" TariffRate="FF06"/>
+                                                        <Change Hour="08000000" TariffRate="FF03"/>
+                                                        <Change Hour="09000000" TariffRate="FF02"/>
+                                                        <Change Hour="0E000000" TariffRate="FF03"/>
+                                                        <Change Hour="12000000" TariffRate="FF02"/>
+                                                        <Change Hour="16000000" TariffRate="FF03"/>
+                                                </Day>
+                                                <Day id="03">
+                                                        <Change Hour="00000000" TariffRate="FF06"/>
+                                                        <Change Hour="08000000" TariffRate="FF04"/>
+                                                        <Change Hour="09000000" TariffRate="FF03"/>
+                                                        <Change Hour="0E000000" TariffRate="FF04"/>
+                                                        <Change Hour="12000000" TariffRate="FF03"/>
+                                                        <Change Hour="16000000" TariffRate="FF04"/>
+                                                </Day>
+                                                <Day id="04">
+                                                        <Change Hour="00000000" TariffRate="FF06"/>
+                                                        <Change Hour="08000000" TariffRate="FF05"/>
+                                                        <Change Hour="09000000" TariffRate="FF04"/>
+                                                        <Change Hour="0E000000" TariffRate="FF05"/>
+                                                        <Change Hour="12000000" TariffRate="FF04"/>
+                                                        <Change Hour="16000000" TariffRate="FF05"/>
+                                                </Day>
+                                                <Day id="05">
+                                                        <Change Hour="00000000" TariffRate="FF06"/>
+                                                </Day>
+                                                <SpecialDays DT="00150000000000000W" DTCard="N" DayID="05"/>
+                                                <SpecialDays DT="00150000000000000W" DTCard="N" DayID="05"/>
+                                                <SpecialDays DT="18070000000000000W" DTCard="N" DayID="05"/>
+                                                <SpecialDays DT="20220815000000000W" DTCard="N" DayID="05"/>
+                                                <SpecialDays DT="20221012000000000W" DTCard="N" DayID="05"/>
+                                                <SpecialDays DT="20221101000000000W" DTCard="N" DayID="05"/>
+                                                <SpecialDays DT="20221206000000000W" DTCard="N" DayID="05"/>
+                                                <SpecialDays DT="20221208000000000W" DTCard="N" DayID="05"/>
+                                                <SpecialDays DT="20221225000000000W" DTCard="N" DayID="05"/>
+                                        </Contract>
+                                        <Contract c="2" CalendarType="01" CalendarName="000000000000" ActDate="20220127132308000W">
+                                        </Contract>
+                                        <Contract c="3" CalendarType="01" CalendarName="000000000000" ActDate="20220127132310000W">
+                                        </Contract>
+                                </ActiveCalendars>
+                                <LatentCalendars>
+                                        <Contract c="1" CalendarType="01" CalendarName="36545F544441" ActDate="FFFFFFFFFFFFFFFFFF800009">
+                                                <Season Name="01" Start="FFFF0101FF00000000800000" Week="01"/>
+                                                <Season Name="02" Start="FFFF0301FF00000000800000" Week="02"/>
+                                                <Season Name="03" Start="FFFF0401FF00000000800080" Week="04"/>
+                                                <Season Name="04" Start="FFFF0601FF00000000800080" Week="03"/>
+                                                <Season Name="05" Start="FFFF0701FF00000000800080" Week="01"/>
+                                                <Season Name="06" Start="FFFF0801FF00000000800080" Week="03"/>
+                                                <Season Name="07" Start="FFFF0A01FF00000000800000" Week="04"/>
+                                                <Season Name="08" Start="FFFF0B01FF00000000800000" Week="02"/>
+                                                <Season Name="09" Start="FFFF0C01FF00000000800000" Week="01"/>
+                                                <Week Name="01" Week="01010101010505"/>
+                                                <Week Name="02" Week="02020202020505"/>
+                                                <Week Name="03" Week="03030303030505"/>
+                                                <Week Name="04" Week="04040404040505"/>
+                                                <Day id="01">
+                                                        <Change Hour="00000000" TariffRate="FF06"/>
+                                                        <Change Hour="08000000" TariffRate="FF02"/>
+                                                        <Change Hour="09000000" TariffRate="FF01"/>
+                                                        <Change Hour="0E000000" TariffRate="FF02"/>
+                                                        <Change Hour="12000000" TariffRate="FF01"/>
+                                                        <Change Hour="16000000" TariffRate="FF02"/>
+                                                </Day>
+                                                <Day id="02">
+                                                        <Change Hour="00000000" TariffRate="FF06"/>
+                                                        <Change Hour="08000000" TariffRate="FF03"/>
+                                                        <Change Hour="09000000" TariffRate="FF02"/>
+                                                        <Change Hour="0E000000" TariffRate="FF03"/>
+                                                        <Change Hour="12000000" TariffRate="FF02"/>
+                                                        <Change Hour="16000000" TariffRate="FF03"/>
+                                                </Day>
+                                                <Day id="03">
+                                                        <Change Hour="00000000" TariffRate="FF06"/>
+                                                        <Change Hour="08000000" TariffRate="FF04"/>
+                                                        <Change Hour="09000000" TariffRate="FF03"/>
+                                                        <Change Hour="0E000000" TariffRate="FF04"/>
+                                                        <Change Hour="12000000" TariffRate="FF03"/>
+                                                        <Change Hour="16000000" TariffRate="FF04"/>
+                                                </Day>
+                                                <Day id="04">
+                                                        <Change Hour="00000000" TariffRate="FF06"/>
+                                                        <Change Hour="08000000" TariffRate="FF05"/>
+                                                        <Change Hour="09000000" TariffRate="FF04"/>
+                                                        <Change Hour="0E000000" TariffRate="FF05"/>
+                                                        <Change Hour="12000000" TariffRate="FF04"/>
+                                                        <Change Hour="16000000" TariffRate="FF05"/>
+                                                </Day>
+                                                <Day id="05">
+                                                        <Change Hour="00000000" TariffRate="FF06"/>
+                                                </Day>
+                                                <SpecialDays DT="00150000000000000W" DTCard="N" DayID="05"/>
+                                                <SpecialDays DT="00150000000000000W" DTCard="N" DayID="05"/>
+                                                <SpecialDays DT="18070000000000000W" DTCard="N" DayID="05"/>
+                                                <SpecialDays DT="20220815000000000W" DTCard="N" DayID="05"/>
+                                                <SpecialDays DT="20221012000000000W" DTCard="N" DayID="05"/>
+                                                <SpecialDays DT="20221101000000000W" DTCard="N" DayID="05"/>
+                                                <SpecialDays DT="20221206000000000W" DTCard="N" DayID="05"/>
+                                                <SpecialDays DT="20221208000000000W" DTCard="N" DayID="05"/>
+                                                <SpecialDays DT="20221225000000000W" DTCard="N" DayID="05"/>
+                                        </Contract>
+                                        <Contract c="2" CalendarType="01" CalendarName="000000000000" ActDate="FFFFFFFFFFFFFFFFFF800009">
+                                        </Contract>
+                                        <Contract c="3" CalendarType="01" CalendarName="000000000000" ActDate="FFFFFFFFFFFFFFFFFF800009">
+                                        </Contract>
+                                </LatentCalendars>
+                        </S23>
+                </Cnt>
+        </Cnc>
+</Report>
