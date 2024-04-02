@@ -354,3 +354,12 @@ with description('Report S23 examples'):
                     for meter in cnc.meters:
                         expect(meter.values[0].get('active_calendars')).not_to(be_empty)
                         expect(meter.values[0].get('latent_calendars')).not_to(be_empty)
+
+    with it('Latent contract when bad SpecialDay timestamp'):
+        for filename in ['spec/data/S23_bad_special_day_timestamp.xml']:
+            with open(filename) as data_file:
+                report = Report(data_file)
+                for cnc in report.concentrators:
+                    for meter in cnc.meters:
+                        expect(meter.values[0].get('active_calendars')).not_to(be_empty)
+                        expect(meter.values[0].get('latent_calendars')).not_to(be_empty)
