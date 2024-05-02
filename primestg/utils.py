@@ -205,5 +205,8 @@ event_groups = [
     (3, 'Grupo 3 - Gestión de la demanada'),
     (4, 'Grupo 4 - Alta ocurrencia'),
     (5, 'Grupo 5 - Altas y bajas'),
-    (6, 'Grupo 6 - Otros')
+    (6, 'Grupo 6 - Otros'),
+    (7, 'Grupo 7 - Otros'),
+    (8, 'Grupo 8 - Fugas a tierra'),
+    (9, 'Grupo 9 - Calidad de suministro')
 ]
