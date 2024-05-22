@@ -1,5 +1,7 @@
 from setuptools import setup, find_packages
 
+with open('README.rst') as f:
+    readme = f.read()
 
 setup(
     name='primestg',
@@ -17,6 +19,7 @@ setup(
         'python-dateutil'
     ],
     description='Prime STG-DC Interface Specification',
+    long_description=readme,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
