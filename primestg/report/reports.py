@@ -2098,6 +2098,14 @@ class RemoteTerminalUnitS52(RemoteTerminalUnitDetails):
         """
         return LineSupervisorS52
 
+    @property
+    def report_type(self):
+        """
+        The type of report for report S64.
+        :return: a string with 'S52'
+        """
+        return 'S52'
+
 
 class Report(object):
     """
