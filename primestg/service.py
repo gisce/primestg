@@ -152,6 +152,22 @@ class Service(object):
         """
         return self.send('S01', meters)
 
+    def get_voltage_failure(self, meters):
+        """
+        Asks for a S07 report to the specified meter.
+        :param meters: a meter_id
+        :return: an S07 report for the corresponding meter
+        """
+        return self.send('S07', meters)
+
+    def get_quality_power(self, meters):
+        """
+        Asks for a S08 report to the specified meter.
+        :param meters: a meter_id
+        :return: an S08 report for the corresponding meter
+        """
+        return self.send('S08', meters)
+
     def get_advanced_instant_data(self, meters):
         """
         Asks for a S21 report to the specified meter.
