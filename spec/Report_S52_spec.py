@@ -11,7 +11,7 @@ with description('Report S52 example'):
         with open(self.data_filename) as data_file:
             self.report = Report(data_file)
 
-    with it('generates expected results for a value of the first line of '
+    with it('generates expected results for a value of the first line supervisor of '
             'first remote terminal unit'):
 
         expected_first_value = dict(
@@ -29,13 +29,13 @@ with description('Report S52 example'):
         )
 
         rt_unit = list(self.report.rt_units)[0]
-        line = list(rt_unit.lines)[0]
-        values = line.values
+        line_supervisor = list(rt_unit.line_supervisors)[0]
+        values = line_supervisor.values
 
-        first_value_first_line = {}
+        first_value_first_line_supervisor = {}
         for x in values:
             if x['timestamp'] == expected_first_value['timestamp']:
-                first_value_first_line = x
+                first_value_first_line_supervisor = x
 
-        expect(first_value_first_line)\
+        expect(first_value_first_line_supervisor)\
             .to(equal(expected_first_value))

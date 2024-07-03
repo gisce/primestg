@@ -1,12 +1,12 @@
 from libcomxml.core import XmlModel, XmlField
 from primestg.order.base import (OrderHeader, CntOrderHeader)
-from primestg.utils import ContractTemplates, datetimetoprime
+from primestg.utils import ContractTemplates, DLMSTemplates, datetimetoprime, name2octet, prepare_params
 from pytz import timezone
 
 
 TZ = timezone('Europe/Madrid')
 
-SUPPORTED_ORDERS = ['B02', 'B03', 'B04', 'B09', 'B11']
+SUPPORTED_ORDERS = ['B02', 'B03', 'B04', 'B07', 'B09', 'B11']
 
 
 def is_supported(order_code):
@@ -95,7 +95,8 @@ class B03:
             generic_values.get('id_pet'),
             generic_values.get('id_req'),
             generic_values.get('cnc'),
-            generic_values.get('cnt')
+            generic_values.get('cnt'),
+            generic_values.get('version', '3.1.c'),
         )
         self.order.cnc.cnt.feed({'payload': B03Payload(payload)})
         # Load generic order with values
@@ -143,7 +144,7 @@ class Contract(XmlModel):
             'Contract', attributes={
                 'c': str(payload.get('contract')),
                 'CalendarType': payload.get('calendar_type', '01'),
-                'CalendarName': self.name2octet(payload.get('name')),
+                'CalendarName': name2octet(payload.get('name')),
                 'ActDate': payload.get('activation_date'),
             }
         )
@@ -154,20 +155,6 @@ class Contract(XmlModel):
         super(Contract, self).__init__(
             'Contract', 'contract', drop_empty=drop_empty
         )
-
-    @staticmethod
-    def name2octet(txt):
-        octet_str = ''
-        for caracter in '{: >6}'.format(txt):
-            octet_str += '{0:2x}'.format(ord(caracter)).upper()
-        return octet_str
-
-    @staticmethod
-    def octet2name(txt):
-        name = ''
-        for index in range(0, len(txt), 2):
-            name += chr(int(txt[index] + txt[index + 1], 16))
-        return name
 
 
 class Season(XmlModel):
@@ -274,7 +261,8 @@ class B04:
             generic_values.get('id_pet'),
             generic_values.get('id_req'),
             generic_values.get('cnc'),
-            generic_values.get('cnt')
+            generic_values.get('cnt'),
+            generic_values.get('version', '3.1.c'),
         )
         self.order.cnc.cnt.feed({'payload': B04Payload(payload)})
         # Load generic order with values
@@ -351,6 +339,83 @@ class B04Payload(XmlModel):
         super(B04Payload, self).__init__('b04Payload', 'payload', drop_empty=drop_empty)
 
 
+class B07IpFtp:
+    """
+    The class used to instance B07 order. Only for IPftp parameter.
+    :return: B07 order with parameters
+    """
+    def __init__(self, generic_values, payload):
+        self.generic_values = generic_values
+        self.order = OrderHeader(
+            generic_values.get('id_pet'),
+            generic_values.get('id_req'),
+            generic_values.get('cnc'),
+            generic_values.get('version', '3.1.c'),
+        )
+        self.order.cnc.feed({'payload': B07IpFtpPayload(payload)})
+
+
+class B07IpFtpPayload(XmlModel):
+    def __init__(self, payload, drop_empty=False):
+        self.payload = XmlField(
+            'B07', attributes={
+                'IPftp': payload.get('IPftp'),
+            })
+        super(B07IpFtpPayload, self).__init__('b07Payload', 'payload', drop_empty=drop_empty)
+
+
+class B07:
+    """
+    The class used to instance B07 order
+    :return: B07 order with parameters
+    """
+    def __init__(self, generic_values, payload):
+        self.generic_values = generic_values
+        self.order = OrderHeader(
+            generic_values.get('id_pet'),
+            generic_values.get('id_req'),
+            generic_values.get('cnc'),
+            generic_values.get('version', '3.1.c'),
+        )
+        b07 = B07Payload(payload)
+        tasks = payload.get("tasks")
+        for task in tasks:
+            task_xml = B07Task(task)
+            tppros = task.get("task_data")
+            for tppro in tppros:
+                tppro_xml = B07TpPro(tppro)
+                task_xml.tppro.append(tppro_xml)
+            b07.tasks.append(task_xml)
+        self.order.cnc.feed({'payload': b07})
+
+
+class B07Payload(XmlModel):
+    """
+    The class used to instance B07 parameters.
+    """
+    def __init__(self, payload, drop_empty=False):
+        # Discard empty strings and values and compose field
+        attributes = {k: v for k, v in payload.items() if v is not None and v != "" and k != "tasks"}
+        self.payload = XmlField('B07', attributes=attributes)
+        self.tasks = []
+        super(B07Payload, self).__init__('b07Payload', 'payload', drop_empty=drop_empty)
+
+
+class B07Task(XmlModel):
+    def __init__(self, task, drop_empty=False):
+        attributes = {k: v for k, v in task.items() if v is not None and v != "" and k != "task_data"}
+        self.task = XmlField('TP', attributes=attributes)
+        self.tppro = []
+        super(B07Task, self).__init__('TP', 'task', drop_empty=drop_empty)
+
+
+class B07TpPro(XmlModel):
+    def __init__(self, task, drop_empty=False):
+        attributes = {k: v for k, v in task.items() if v is not None and v != ""}
+        self.tppro = XmlField('TpPro', attributes=attributes)
+        self.tpattr = XmlField('TpAttr')
+        super(B07TpPro, self).__init__('TpPro', 'tppro', drop_empty=drop_empty)
+
 class B09:
     """
     The class used to instance B09 order.
@@ -363,7 +428,8 @@ class B09:
             generic_values.get('id_pet'),
             generic_values.get('id_req'),
             generic_values.get('cnc'),
-            generic_values.get('cnt')
+            generic_values.get('cnt'),
+            generic_values.get('version', '3.1.c'),
         )
         self.order.cnc.cnt.feed({'payload': B09Payload(payload)})
         # Load generic order with values
@@ -415,7 +481,7 @@ class B11:
             generic_values.get('id_pet'),
             generic_values.get('id_req'),
             generic_values.get('cnc'),
-
+            generic_values.get('version', '3.1.c'),
         )
         self.order.cnc.feed({'payload': B11Payload(payload)})
         # Load generic order with values
@@ -447,6 +513,107 @@ class B11Payload(XmlModel):
                 'Ffin': payload.get('date_to'),
             })
         super(B11Payload, self).__init__('b11Payload', 'payload', drop_empty=drop_empty)
+
+# Not documented
+
+class B12:
+    """
+    The class used to instance B12 order.
+
+    :return: B12 order with parameters
+    """
+    def __init__(self, generic_values, payload):
+        self.generic_values = generic_values
+        self.order = CntOrderHeader(
+            generic_values.get('id_pet'),
+            generic_values.get('id_req'),
+            generic_values.get('cnc'),
+            generic_values.get('cnt'),
+            generic_values.get('version', '3.1.c'),
+        )
+        self.order.cnc.cnt.feed({'payload': B12Payload(payload)})
+        # Load generic order with values
+
+class Set(XmlModel):
+    """
+    The class to instance B12 RAW Set (write)
+    Parameters:
+        obis: obis code string
+        class: class number
+        element: element number
+        data: raw str
+    """
+
+    def __init__(self, payload, drop_empty=False):
+        self.set = XmlField(
+            'set', attributes={
+                'obis': format(payload.get('obis')),
+                'class': str(payload.get('class')),
+                'element': str(payload.get('element')),
+                'data': str(payload.get('data')),
+            }
+        )
+        super(Set, self).__init__('Set', 'set')
+
+
+class Get(XmlModel):
+    """
+    The class to instance B12 RAW Get (read)
+    Parameters:
+        obis: obis code string
+        class: class number
+        element: element number
+    """
+
+    def __init__(self, payload, drop_empty=False):
+        self.get = XmlField(
+            'get', attributes={
+                'obis': format(payload.get('obis')),
+                'class': str(payload.get('class')),
+                'element': str(payload.get('element')),
+            }
+        )
+        super(Get, self).__init__('Get', 'get')
+
+
+class B12Payload(XmlModel):
+    """
+    The class used to instance 12 parameters.
+    Supported parameters:
+        Fini: Execution date
+        Ffin: Maximum Execution Date
+        Template:
+            DLMS Template name
+    :return: B12 parameters
+
+    """
+    def __init__(self, payload, drop_empty=False):
+        self.payload = XmlField(
+            'B12', attributes={
+                'Fini': payload.get('date_from'),
+                'Ffin': payload.get('date_to'),
+            })
+        tmpl_name = payload.get('template', 'TAR_20TD')
+
+        params = prepare_params(payload)
+
+        dt = DLMSTemplates()
+        template = dt.get_template(tmpl_name)
+
+        data = template['data']
+        sets = []
+        for set_line_supervisor in data:
+            new_set = set_line_supervisor.copy()
+            if set_line_supervisor.get('data', False):
+                # set (contains data)
+                new_set['data'] = set_line_supervisor['data'].format(**params)
+                sets.append(Set(new_set))
+            else:
+                # get (without data)
+                sets.append(Get(new_set))
+        self.sets = sets
+
+        super(B12Payload, self).__init__('b12Payload', 'payload', drop_empty=drop_empty)
 
 
 class Order(object):
@@ -481,12 +648,24 @@ class Order(object):
                 'class': B04,
                 'args': [generic_values, payload]
             },
+            'B07': {
+                'class': B07,
+                'args': [generic_values, payload]
+            },
+            'B07_ipftp': {
+                'class': B07IpFtp,
+                'args': [generic_values, payload]
+            },
             'B09': {
                 'class': B09,
                 'args': [generic_values, payload]
             },
             'B11': {
                 'class': B11,
+                'args': [generic_values, payload]
+            },
+            'B12': {
+                'class': B12,
                 'args': [generic_values, payload]
             }
         }

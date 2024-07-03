@@ -1,12 +1,14 @@
 from primestg.report.base import (
     MeasureActiveReactive, MeasureActiveReactiveFloat, Parameter,
     MeterWithMagnitude, ConcentratorWithMetersWithConcentratorName,
-    Concentrator, Measure, MeterWithConcentratorName, LineDetails, RemoteTerminalUnitDetails
+    Concentrator, Measure, MeterWithConcentratorName, LineSupervisorDetails, RemoteTerminalUnitDetails,
+    Operation, MeasureAverageVoltageAndCurrent
 )
 from primestg.message import MessageS
+from primestg.utils import octet2name, octet2number
 
-SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S15',
-                     'S17', 'S18', 'S23', 'S24', 'S27', 'S52']
+SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S14', 'S15',
+                     'S17', 'S18', 'S23', 'S24', 'S27', 'S42', 'S52']
 
 
 def is_supported(report_code):
@@ -224,6 +226,35 @@ class MeasureS05(MeasureActiveReactive):
         return values
 
 
+class MeasureS14(MeasureAverageVoltageAndCurrent):
+    """
+    Class for a set of measures of report S14.
+    """
+
+    @property
+    def values(self):
+        """
+        Set of measures of report S14.
+
+        :return: a dict with a set of measures of report S14
+        """
+        try:
+            values = self.average_voltage_and_current(self.objectified)
+            values.update(
+                {
+                    'timestamp': self._get_timestamp('Fh'),
+                    'season': self.objectified.get('Fh')[-1:],
+                    'bc': self.objectified.get('Bc'),
+                    'simp': int(self.objectified.get('Simp')),
+                    'sexp': int(self.objectified.get('Sexp'))
+                }
+            )
+            return [values]
+
+        except Exception as e:
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+
+
 class MeasureS27(MeasureActiveReactive):
     """
     Class for a set of measures of report S27.
@@ -285,6 +316,35 @@ class MeasureS52(MeasureActiveReactiveFloat):
             return []
 
         return [values]
+
+
+class OperationS42(Operation):
+    """
+    Class for a set of measures of report S52.
+    """
+
+    @property
+    def values(self):
+        """
+        Set of measures of report S42.
+        :return: a dict with a set of measures of report S42
+        """
+        values = []
+        try:
+            common_values = {
+                "Fh": self._get_timestamp('Fh'),
+                "Operation": self.objectified.get('Operation'),
+                "obis": self.objectified.get('obis'),
+                "class": self.objectified.get('class'),
+                "element": self.objectified.get('element'),
+                "data": self.objectified.get('data'),
+                "result": self.objectified.get('result'),
+            }
+            values.append(common_values)
+        except Exception as e:
+            values.append(['ERROR: Thrown exception: {}'.format(e)])
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+        return values
 
 
 class MeasureEvents(Measure):
@@ -632,71 +692,75 @@ class ParameterS23(Parameter):
         return obj_values
 
     """
-    Static method to retrieve values with common structure for S233.
+    Static method to retrieve values with common structure for S23.
 
     :return: formated values for ActiveCalendar and LatentCalendar sections
     """
     @staticmethod
-    def get_calendars(obj):
+    def get_calendars(obj, is_active_calendar=False):
         obj_values = {}
         if getattr(obj, 'Contract', None) is not None:
+            contracts = []
             for i, contract_obj in enumerate(obj.Contract):
-                contract = {}
-                contract_num = 'c' + str(i + 1)
-                contract_values = {
+                contract = {
+                    'c': contract_obj.get('c'),
                     'calendar_type': contract_obj.get('CalendarType'),
-                    'calendar_name': contract_obj.get('CalendarName'),
+                    'calendar_name': octet2name(contract_obj.get('CalendarName')),
                     'act_date': Measure(contract_obj)._get_timestamp('ActDate'),
+                    'is_active_calendar': is_active_calendar
                 }
                 if getattr(contract_obj, 'Season', None) is not None:
-                    seasons = {}
+                    seasons = []
                     for x, season_obj in enumerate(contract_obj.Season):
-                        season = 'season' + str(x + 1)
-                        season_value = {
+                        season = {
                             'name': season_obj.get('Name'),
                             'start': season_obj.get('Start'),
                             'week': season_obj.get('Week'),
                         }
-                        seasons.update({season: season_value})
+                        seasons.append(season)
                     contract.update({'seasons': seasons})
                 if getattr(contract_obj, 'Week', None) is not None:
-                    weeks = {}
+                    weeks = []
                     for x, week_obj in enumerate(contract_obj.Week):
-                        week = 'week' + str(x + 1)
-                        week_value = {
+                        week_days = week_obj.get('Week')
+                        week = {
                             'name': week_obj.get('Name'),
                             'week': week_obj.get('Week'),
+                            'index': x,
                         }
-                        weeks.update({week: week_value})
+                        for index in range(0, len(week_days), 2):
+                            day = 'day{}'.format(int(index/2))
+                            week.update({day: week_days[index:index+2]})
+                        weeks.append(week)
                     contract.update({'weeks': weeks})
                 if getattr(contract_obj, 'SpecialDays', None) is not None:
-                    special_days = {}
+                    special_days = []
                     for x, special_day_obj in enumerate(contract_obj.SpecialDays):
-                        special_day = 'special_day' + str(x + 1)
-                        special_day_value = {
-                            'dt': Measure(special_day_obj)._get_timestamp('DT'),
-                            'dt_card': special_day_obj.get('DTCard'),
+                        special_day = {
+                            'dt': Measure(special_day_obj)._get_special_days('DT'),
+                            'dt_card': False if special_day_obj.get('DTCard', 'N') == 'N' else True,
                             'day_id': special_day_obj.get('DayID'),
                         }
-                        special_days.update({special_day: special_day_value})
+                        special_days.append(special_day)
                     contract.update({'special_days': special_days})
                 if getattr(contract_obj, 'Day', None) is not None:
-                    days = {}
+                    days = []
                     for x, day_obj in enumerate(contract_obj.Day):
-                        day = 'day' + str(x + 1)
-                        changes = {}
-                        for y, change_obj in enumerate(contract_obj.Day[x].Change):
-                            change = 'change' + str(y + 1)
-                            if getattr(day_obj, 'Change', None) is not None:
-                                change_value = {
-                                    'hour': change_obj.get('Hour'),
-                                    'tariffrate': change_obj.get('TariffRate'),
-                                }
-                            changes.update({change: change_value})
-                        days.update({day: changes})
+                        day = {'day_id': day_obj.get('id', None)}
+                        changes = []
+                        if contract_obj.Day[x].getchildren():
+                            for y, change_obj in enumerate(contract_obj.Day[x].Change):
+                                if getattr(day_obj, 'Change', None) is not None:
+                                    change = {
+                                        'hour': octet2number(change_obj.get('Hour', '00')[0:2]),
+                                        'tariffrate': change_obj.get('TariffRate'),
+                                    }
+                                    changes.append(change)
+                            day.update({'changes': changes})
+                        days.append(day)
                     contract.update({'days': days})
-                contract.update(contract_values)
-                obj_values.update({contract_num: contract})
+                contracts.append(contract)
+            obj_values.update({'contracts': contracts})
         return obj_values
 
     @property
@@ -723,13 +787,13 @@ class ParameterS23(Parameter):
                 values['pc_act'] = 'supervisor'
             if hasattr(self.objectified, 'ActiveCalendars'):
                 active_calendars = self.objectified.ActiveCalendars
-                obj_values = self.get_calendars(active_calendars)
+                obj_values = self.get_calendars(active_calendars, True)
                 values['active_calendars'] = obj_values
             else:
                 values['active_calendars'] = []
             if hasattr(self.objectified, 'LatentCalendars'):
                 latent_calendars = self.objectified.LatentCalendars
-                obj_values = self.get_calendars(latent_calendars)
+                obj_values = self.get_calendars(latent_calendars, False)
                 values['latent_calendars'] = obj_values
             else:
                 values['latent_calendars'] = []
@@ -921,9 +985,9 @@ class ParameterConcentratorEvents(Parameter):
         return values
 
 
-class LineS52(LineDetails):
+class LineSupervisorS52(LineSupervisorDetails):
     """
-    Class for a line of report S52.
+    Class for a line supervisor of report S52.
     """
 
     @property
@@ -947,11 +1011,12 @@ class LineS52(LineDetails):
     @property
     def values(self):
         """
-        Values of measure sets of this line of report that need the name of the remote terminal unit and the line
+        Values of measure sets of this line supervisor of report that need the name of the remote terminal unit
+        and the line supervisor
 
         :return: a list with the values of the measure sets
         """
-        values = super(LineS52, self).values
+        values = super(LineSupervisorS52, self).values
         for value in values:
             value['magn'] = self.magnitude
         return values
@@ -1065,6 +1130,32 @@ class MeterS05(MeterWithMagnitude):
         :return: a class to instance measure sets of report S05
         """
         return MeasureS05
+
+
+class MeterS14(MeterWithConcentratorName):
+    """
+    Class for a meter of report S14.
+    """
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S14.
+
+        :return: a string with 'S14'
+        """
+
+        return 'S14'
+
+    @property
+    def measure_class(self):
+        """
+        The class used to instance measure sets for report S14.
+
+        :return: a class to instance measure sets of report S14
+        """
+        return MeasureS14
+
 
 
 class MeterS27(MeterWithMagnitude):
@@ -1398,6 +1489,29 @@ class MeterS23(MeterWithConcentratorName):
         return meters
 
 
+class MeterS42(MeterWithConcentratorName):
+    """
+    Class for a meter of report S42.
+    """
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S42.
+
+        :return: a string with 'S42'
+        """
+        return 'S42'
+
+    @property
+    def measure_class(self):
+        """
+        The class used to instance measure sets for report S42.
+        :return: a class to instance measure sets of report S42
+        """
+        return OperationS42
+
+
 class ConcentratorS01(ConcentratorWithMetersWithConcentratorName):
     """
     Class for a concentrator of report S01.
@@ -1639,6 +1753,21 @@ class ConcentratorS13(ConcentratorWithMetersWithConcentratorName):
         :return: a class to instance meters of report S09
         """
         return MeterS13
+
+
+class ConcentratorS14(ConcentratorWithMetersWithConcentratorName):
+    """
+    Class for a concentrator of report S14.
+    """
+    @property
+    def meter_class(self):
+        """
+        The class used to instance meters for report S14.
+
+        :return: a class to instance meters of report S14
+        """
+        return MeterS14
+
 
 
 class ConcentratorEvents(Concentrator):
@@ -1927,19 +2056,55 @@ class ConcentratorS24(Concentrator):
         return values
 
 
+class ConcentratorS42(ConcentratorWithMetersWithConcentratorName):
+    """
+    Class for a concentrator of report S42.
+    """
+
+    @property
+    def meter_class(self):
+        """
+        The class used to instance meters for report S42.
+
+        :return: a class to instance meters of report S42
+        """
+        return MeterS42
+
+
 class RemoteTerminalUnitS52(RemoteTerminalUnitDetails):
     """
     Class for a remote terminal unit of report S52.
     """
 
-    @property
-    def line_class(self):
+    def __init__(self, objectified_rt_unit, report_version, request_id):
         """
-        The class used to instance lines for report S52.
+        Create a RemoteTerminalUnit object for the report S62.
 
-        :return: a class to instance lines of report S52
+        :param objectified_rt_unit: an lxml.objectify.StringElement \
+            representing a line supervisor
+        :param report_version: a string with the version of report
+        :return: a LineSupervisor object
         """
-        return LineS52
+        super(RemoteTerminalUnitS52, self).__init__(objectified_rt_unit)
+        self.report_version = report_version
+        self.request_id = request_id
+
+    @property
+    def line_supervisor_class(self):
+        """
+        The class used to instance line supervisors for report S52.
+
+        :return: a class to instance line supervisors of report S52
+        """
+        return LineSupervisorS52
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S64.
+        :return: a string with 'S52'
+        """
+        return 'S52'
 
 
 class Report(object):
@@ -2046,16 +2211,20 @@ class Report(object):
                 'class': ConcentratorS09,
                 'args': [objectified_concentrator]
             },
-            'S13': {
-                'class': ConcentratorS13,
-                'args': [objectified_concentrator]
-            },
             'S12': {
                 'class': ConcentratorS12,
                 'args': [objectified_concentrator, self.report_version]
             },
-            'S17': {
-                'class': ConcentratorS17,
+            'S13': {
+                'class': ConcentratorS13,
+                'args': [objectified_concentrator]
+            },
+            'S14': {
+                'class': ConcentratorS14,
+                'args': [objectified_concentrator]
+            },
+            'S15': {
+                'class': ConcentratorS15,
                 'args': [
                     objectified_concentrator,
                     self.report_version,
@@ -2063,8 +2232,8 @@ class Report(object):
                     self.report_type
                 ]
             },
-            'S15': {
-                'class': ConcentratorS15,
+            'S17': {
+                'class': ConcentratorS17,
                 'args': [
                     objectified_concentrator,
                     self.report_version,
@@ -2096,6 +2265,10 @@ class Report(object):
             'S27': {
                 'class': ConcentratorS27,
                 'args': [objectified_concentrator]
+            },
+            'S42': {
+                'class': ConcentratorS42,
+                'args': [objectified_concentrator]
             }
         }
 
@@ -2117,7 +2290,11 @@ class Report(object):
         report_type_class = {
             'S52': {
                 'class': RemoteTerminalUnitS52,
-                'args': [objectified_rt_unit]
+                'args': [
+                    objectified_rt_unit,
+                    self.report_version,
+                    self.request_id
+                ],
             }
         }
 

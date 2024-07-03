@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from primestg.order.orders import Order, Contract
-from primestg.utils import ContractTemplates, CONTRACT_TEMPLATES, datetimetoprime
+from primestg.order.orders import Order
+from primestg.utils import ContractTemplates, CONTRACT_TEMPLATES, datetimetoprime, octet2name, name2octet
 from expects import expect, equal, contain, be_a, raise_error
 from primestg.utils import assertXMLEqual
 from datetime import datetime
@@ -31,8 +31,8 @@ with description('Order B04 Generation'):
 
             with it('Contract.name2code converts string to octet string'):
                 name = '6.1_TDA'
-                octet = Contract.name2octet(name)
-                new_name = Contract.octet2name(octet)
+                octet = name2octet(name)
+                new_name = octet2name(octet)
                 expect(new_name).to(equal(name))
 
         with context('ContractTemplates class'):

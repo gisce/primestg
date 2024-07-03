@@ -1,0 +1,10 @@
+<Report IdRpt="S42" IdPet="29165" Version="3.1.c">
+	<Cnc Id="CIR4621739284">
+		<Cnt Id="CIR0502023221">
+			<S42 Fh="20220401080608000S" Operation="get" obis="1.0.0.4.2.255" class="1" element="2" data="" result="long_unsigned{6000}"/>
+			<S42 Fh="20220401080609000S" Operation="get" obis="1.0.0.4.3.255" class="1" element="2" data="" result="long_unsigned{4000}"/>
+			<S42 Fh="20220401080609000S" Operation="get" obis="1.0.0.4.5.255" class="1" element="2" data="" result="long_unsigned{50}"/>
+			<S42 Fh="20220401080610000S" Operation="get" obis="1.0.0.4.6.255" class="1" element="2" data="" result="long_unsigned{4000}"/>
+		</Cnt>
+	</Cnc>
+</Report>
