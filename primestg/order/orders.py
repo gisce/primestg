@@ -14,7 +14,7 @@ def is_supported(order_code):
 
 
 # B02 Node classes
-class Contract1(XmlModel):
+class Contrato1(XmlModel):
     """
     The class to instance B04 Contract
     Parameters:
@@ -22,8 +22,8 @@ class Contract1(XmlModel):
     """
     def __init__(self, payload):
         powers = payload.get('powers')
-        self.contract1 = XmlField(
-            'Contract1', attributes={
+        self.contrato1 = XmlField(
+            'Contrato1', attributes={
                 'TR1': powers[0],
                 'TR2': powers[1],
                 'TR3': powers[2],
@@ -32,7 +32,7 @@ class Contract1(XmlModel):
                 'TR6': powers[5],
             }
         )
-        super(Contract1, self).__init__('Contract1', 'contract1')
+        super(Contrato1, self).__init__('Contrato1', 'contrato1')
 
 
 class B02:
@@ -64,7 +64,7 @@ class B02Payload(XmlModel):
 
     """
 
-    _sort_order = ('payload', 'contract1')
+    _sort_order = ('payload', 'contrato1')
 
     def __init__(self, payload, drop_empty=False):
         powers = payload.get('powers')
@@ -77,8 +77,8 @@ class B02Payload(XmlModel):
                 'ActDate': activation_date,
             })
 
-        self.contract1 = Contract1({'powers': powers})
-        self.contract1.feed({'powers': powers})
+        self.contrato1 = Contrato1({'powers': powers})
+        self.contrato1.feed({'powers': powers})
 
         super(B02Payload, self).__init__('b02Payload', 'payload', drop_empty=drop_empty)
 

@@ -12,7 +12,7 @@ with fdescription('Order B02 Generation'):
                 <Cnc Id="CIR000000000">
                     <Cnt Id="CNT000000000">
                         <B02 ActDate="{0}">
-                            <Contract1 TR1="1000" TR2="2000" TR3="3000" TR4="4000" TR5="5000" TR6="6000"/>
+                            <Contrato1 TR1="1000" TR2="2000" TR3="3000" TR4="4000" TR5="5000" TR6="6000"/>
                         </B02>
                     </Cnt>
                 </Cnc>
