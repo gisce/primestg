@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from libcomxml.core import XmlModel, XmlField
 from primestg.order.base import (OrderHeader, CntOrderHeader)
 from primestg.utils import ContractTemplates, DLMSTemplates, datetimetoprime, name2octet, prepare_params
@@ -6,11 +8,82 @@ from pytz import timezone
 
 TZ = timezone('Europe/Madrid')
 
-SUPPORTED_ORDERS = ['B03', 'B04', 'B07', 'B09', 'B11']
+SUPPORTED_ORDERS = ['B02', 'B03', 'B04', 'B07', 'B09', 'B11']
 
 
 def is_supported(order_code):
     return order_code in SUPPORTED_ORDERS
+
+
+# B02 Node classes
+class Contrato1(XmlModel):
+    """
+    The class to instance B04 Contract
+    Parameters:
+        powers: powers (in W) for every 6 periods
+    """
+    def __init__(self, payload):
+        powers = payload.get('powers')
+        self.contrato1 = XmlField(
+            'Contrato1', attributes={
+                'TR1': powers[0],
+                'TR2': powers[1],
+                'TR3': powers[2],
+                'TR4': powers[3],
+                'TR5': powers[4],
+                'TR6': powers[5],
+            }
+        )
+        super(Contrato1, self).__init__('Contrato1', 'contrato1')
+
+
+class B02:
+    """
+    The class used to instance B02 order.
+
+    :return: B02 order with parameters
+    """
+    def __init__(self, generic_values, payload):
+        self.generic_values = generic_values
+        self.order = CntOrderHeader(
+            generic_values.get('id_pet'),
+            generic_values.get('id_req'),
+            generic_values.get('cnc'),
+            generic_values.get('cnt')
+        )
+        self.order.cnc.cnt.feed({'payload': B02Payload(payload)})
+        # Load generic order with values
+
+
+class B02Payload(XmlModel):
+    """
+    The class used to instance B02 parameters.
+    Supported parameters:
+        actvation_date: Datetime of activation localized or not. It gets always CE(S)T timezone
+        powers: P1 to P6 ordered list of 6 powers in W
+
+    :return: B02 parameters
+
+    """
+
+    _sort_order = ('payload', 'contrato1')
+
+    def __init__(self, payload, drop_empty=False):
+        powers = payload.get('powers')
+        act_date_param = payload.get('activation_date')
+        act_date_param = datetime.strptime(act_date_param, '%Y-%m-%d %H:%M:%S')
+
+        activation_date = datetimetoprime(act_date_param)
+
+        self.payload = XmlField(
+            'B02', attributes={
+                'ActDate': activation_date,
+            })
+
+        self.contrato1 = Contrato1({'powers': powers})
+        self.contrato1.feed({'powers': powers})
+
+        super(B02Payload, self).__init__('b02Payload', 'payload', drop_empty=drop_empty)
 
 
 class B03:
@@ -566,6 +639,10 @@ class Order(object):
         :return: Order formatted in XML
         """
         order_type_class = {
+            'B02': {
+                'class': B02,
+                'args': [generic_values, payload]
+            },
             'B03': {
                 'class': B03,
                 'args': [generic_values, payload]
@@ -574,16 +651,16 @@ class Order(object):
                 'class': B04,
                 'args': [generic_values, payload]
             },
-            'B09': {
-                'class': B09,
-                'args': [generic_values, payload]
-            },
             'B07': {
                 'class': B07,
                 'args': [generic_values, payload]
             },
             'B07_ipftp': {
                 'class': B07IpFtp,
+                'args': [generic_values, payload]
+            },
+            'B09': {
+                'class': B09,
                 'args': [generic_values, payload]
             },
             'B11': {

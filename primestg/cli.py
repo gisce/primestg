@@ -28,6 +28,7 @@ ORDERS = {
     'connect': {'order': 'B03', 'func': 'get_cutoff_reconnection'},
     # CONTRACT
     'contract': {'order': 'B04', 'func': 'get_contract'},
+    'powers': {'order': 'B02', 'func': 'get_powers'},
     'dlms': {'order': 'B12', 'func': 'order_raw_dlms'},
     # CNC config
     'cnc_ftpip': {'order': 'B07', 'func': 'set_concentrator_ipftp'}
@@ -143,6 +144,13 @@ def sends_order(**kwargs):
        vals = {
            'contract': kwargs['contract'],
            'name': kwargs['tariff'],
+           'activation_date': TZ.localize(
+               datetime.strptime(kwargs['activation_date'], '%Y-%m-%d %H:%M:%S')
+           )
+       }
+   elif order_name == 'powers':
+       vals = {
+           'powers': kwargs['powers'].split(','),
            'activation_date': TZ.localize(
                datetime.strptime(kwargs['activation_date'], '%Y-%m-%d %H:%M:%S')
            )
