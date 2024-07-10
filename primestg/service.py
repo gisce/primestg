@@ -80,7 +80,7 @@ class Service(object):
 
     def get_powers(self, generic_values, payload):
         """
-        Sends B03 order to meter
+        Sends B02 order to meter
         :return: Success or fail
         """
         order = Order('B02')
