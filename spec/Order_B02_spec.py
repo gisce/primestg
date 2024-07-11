@@ -4,7 +4,7 @@ from expects import expect, equal
 from primestg.utils import assertXMLEqual
 from datetime import datetime
 
-with fdescription('Order B02 Generation'):
+with description('Order B02 Generation'):
     with before.all:
         self.expected_result = (
             """

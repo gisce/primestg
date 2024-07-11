@@ -71,7 +71,6 @@ class B02Payload(XmlModel):
     def __init__(self, payload, drop_empty=False):
         powers = payload.get('powers')
         act_date_param = payload.get('activation_date')
-        act_date_param = datetime.strptime(act_date_param, '%Y-%m-%d %H:%M:%S')
 
         activation_date = datetimetoprime(act_date_param)
 
