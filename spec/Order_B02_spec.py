@@ -27,7 +27,7 @@ with description('Order B02 Generation'):
             'cnt': 'CNT000000000'
         }
         payload = {
-            'activation_date': datetime(2021, 4, 1).strftime('%Y-%m-%d'),
+            'activation_date': datetime(2021, 4, 1),
             'powers': ['1000', '2000', '3000', '4000', '5000', '6000']
         }
         order = Order('B02')
