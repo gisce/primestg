@@ -362,15 +362,15 @@ class MeasureS53(MeasureActiveReactiveFloat):
         :return: a dict with a set of measures of report S53
         """
         try:
-            values = None
+            values = {}
             for phase in range(1, 4):  # Phase 1..3
-                values = self.active_reactive_with_phase(self.objectified, phase)
-                values.update(
-                    {
-                        'timestamp': self._get_timestamp('Fh'),
-                        'bc': self.objectified.get('Bc')
-                    }
-                )
+                values.update(self.active_reactive_with_phase(self.objectified, phase))
+            values.update(
+                {
+                    'timestamp': self._get_timestamp('Fh'),
+                    'bc': self.objectified.get('Bc')
+                }
+            )
         except Exception as e:
             self._warnings.append('ERROR: Thrown exception: {}'.format(e))
             return []
