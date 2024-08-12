@@ -7,8 +7,10 @@ from primestg.report.base import (
 from primestg.message import MessageS
 from primestg.utils import octet2name, octet2number
 
-SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S14', 'S15',
-                     'S17', 'S18', 'S23', 'S24', 'S27', 'S42', 'S52']
+CNC_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S14', 'S15',
+               'S17', 'S18', 'S23', 'S24', 'S27', 'S42']
+RTU_REPORTS = ['S52', 'S53']
+SUPPORTED_REPORTS = CNC_REPORTS + RTU_REPORTS
 
 
 def is_supported(report_code):
@@ -291,6 +293,35 @@ class MeasureS27(MeasureActiveReactive):
         return values
 
 
+class OperationS42(Operation):
+    """
+    Class for a set of measures of report S42.
+    """
+
+    @property
+    def values(self):
+        """
+        Set of measures of report S42.
+        :return: a dict with a set of measures of report S42
+        """
+        values = []
+        try:
+            common_values = {
+                "Fh": self._get_timestamp('Fh'),
+                "Operation": self.objectified.get('Operation'),
+                "obis": self.objectified.get('obis'),
+                "class": self.objectified.get('class'),
+                "element": self.objectified.get('element'),
+                "data": self.objectified.get('data'),
+                "result": self.objectified.get('result'),
+            }
+            values.append(common_values)
+        except Exception as e:
+            values.append(['ERROR: Thrown exception: {}'.format(e)])
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+        return values
+
+
 class MeasureS52(MeasureActiveReactiveFloat):
     """
     Class for a set of measures of report S52.
@@ -318,33 +349,33 @@ class MeasureS52(MeasureActiveReactiveFloat):
         return [values]
 
 
-class OperationS42(Operation):
+class MeasureS53(MeasureActiveReactiveFloat):
     """
-    Class for a set of measures of report S52.
+    Class for a set of measures of report S53.
     """
 
     @property
     def values(self):
         """
-        Set of measures of report S42.
-        :return: a dict with a set of measures of report S42
+        Set of measures of report S53.
+
+        :return: a dict with a set of measures of report S53
         """
-        values = []
         try:
-            common_values = {
-                "Fh": self._get_timestamp('Fh'),
-                "Operation": self.objectified.get('Operation'),
-                "obis": self.objectified.get('obis'),
-                "class": self.objectified.get('class'),
-                "element": self.objectified.get('element'),
-                "data": self.objectified.get('data'),
-                "result": self.objectified.get('result'),
-            }
-            values.append(common_values)
+            values = None
+            for phase in range(1, 4):  # Phase 1..3
+                values = self.active_reactive_with_phase(self.objectified, phase)
+                values.update(
+                    {
+                        'timestamp': self._get_timestamp('Fh'),
+                        'bc': self.objectified.get('Bc')
+                    }
+                )
         except Exception as e:
-            values.append(['ERROR: Thrown exception: {}'.format(e)])
             self._warnings.append('ERROR: Thrown exception: {}'.format(e))
-        return values
+            return []
+
+        return [values]
 
 
 class MeasureEvents(Measure):
@@ -1017,6 +1048,43 @@ class LineSupervisorS52(LineSupervisorDetails):
         :return: a list with the values of the measure sets
         """
         values = super(LineSupervisorS52, self).values
+        for value in values:
+            value['magn'] = self.magnitude
+        return values
+
+
+class LineSupervisorS53(LineSupervisorDetails):
+    """
+    Class for a line supervisor of report S53.
+    """
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S53.
+
+        :return: a string with 'S53'
+        """
+        return 'S53'
+
+    @property
+    def measure_class(self):
+        """
+        The class used to instance measure sets for report S53.
+
+        :return: a class to instance measure sets of report S53
+        """
+        return MeasureS53
+
+    @property
+    def values(self):
+        """
+        Values of measure sets of this line supervisor of report that need the name of the remote terminal unit
+        and the line supervisor
+
+        :return: a list with the values of the measure sets
+        """
+        values = super(LineSupervisorS53, self).values
         for value in values:
             value['magn'] = self.magnitude
         return values
@@ -2078,7 +2146,7 @@ class RemoteTerminalUnitS52(RemoteTerminalUnitDetails):
 
     def __init__(self, objectified_rt_unit, report_version, request_id):
         """
-        Create a RemoteTerminalUnit object for the report S62.
+        Create a RemoteTerminalUnit object for the report S52.
 
         :param objectified_rt_unit: an lxml.objectify.StringElement \
             representing a line supervisor
@@ -2101,10 +2169,46 @@ class RemoteTerminalUnitS52(RemoteTerminalUnitDetails):
     @property
     def report_type(self):
         """
-        The type of report for report S64.
+        The type of report for report S52.
         :return: a string with 'S52'
         """
         return 'S52'
+
+
+class RemoteTerminalUnitS53(RemoteTerminalUnitDetails):
+    """
+    Class for a remote terminal unit of report S53.
+    """
+
+    def __init__(self, objectified_rt_unit, report_version, request_id):
+        """
+        Create a RemoteTerminalUnit object for the report S53.
+
+        :param objectified_rt_unit: an lxml.objectify.StringElement \
+            representing a line supervisor
+        :param report_version: a string with the version of report
+        :return: a LineSupervisor object
+        """
+        super(RemoteTerminalUnitS53, self).__init__(objectified_rt_unit)
+        self.report_version = report_version
+        self.request_id = request_id
+
+    @property
+    def line_supervisor_class(self):
+        """
+        The class used to instance line supervisors for report S53.
+
+        :return: a class to instance line supervisors of report S53
+        """
+        return LineSupervisorS53
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S53.
+        :return: a string with 'S53'
+        """
+        return 'S53'
 
 
 class Report(object):
@@ -2295,7 +2399,15 @@ class Report(object):
                     self.report_version,
                     self.request_id
                 ],
-            }
+            },
+            'S53': {
+                'class': RemoteTerminalUnitS53,
+                'args': [
+                    objectified_rt_unit,
+                    self.report_version,
+                    self.request_id
+                ],
+            },
         }
 
         if self.report_type not in report_type_class:
@@ -2337,7 +2449,7 @@ class Report(object):
         :return: a list with the values of the whole report
         """
         values = []
-        if self.report_type == 'S52':
+        if self.report_type == RTU_REPORTS:
             for rt_unit in self.rt_units:
                 values.extend(rt_unit.values)
         else:
