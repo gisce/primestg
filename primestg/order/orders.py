@@ -383,10 +383,15 @@ class B07:
         b07 = B07Payload(payload)
         tasks = payload.get("tasks")
         for task in tasks:
+            tppros = task.pop("TpPro")
             task_xml = B07Task(task)
-            tppros = task.get("task_data")
             for tppro in tppros:
+                attrs = tppro.pop('TpAttr')
                 tppro_xml = B07TpPro(tppro)
+                for k, v in attrs.items():
+                    tpattr_xml = B07TpAttr(k, v)
+                    tppro_xml.tpattr.append(tpattr_xml)
+
                 task_xml.tppro.append(tppro_xml)
             b07.tasks.append(task_xml)
         self.order.cnc.feed({'payload': b07})
@@ -416,8 +421,14 @@ class B07TpPro(XmlModel):
     def __init__(self, task, drop_empty=False):
         attributes = {k: v for k, v in task.items() if v is not None and v != ""}
         self.tppro = XmlField('TpPro', attributes=attributes)
-        self.tpattr = XmlField('TpAttr')
+        self.tpattr = []
         super(B07TpPro, self).__init__('TpPro', 'tppro', drop_empty=drop_empty)
+
+
+class B07TpAttr(XmlModel):
+    def __init__(self, key, value, drop_empty=False):
+        self.tpattr = XmlField(key, value=value)
+        super(B07TpAttr, self).__init__('TpAttr', 'tpattr', drop_empty=drop_empty)
 
 class B09:
     """
