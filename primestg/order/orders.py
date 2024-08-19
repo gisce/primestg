@@ -403,7 +403,7 @@ class B07Payload(XmlModel):
     """
     def __init__(self, payload, drop_empty=False):
         # Discard empty strings and values and compose field
-        attributes = {k: v for k, v in payload.items() if v is not None and v != "" and k != "tasks"}
+        attributes = {k: v for k, v in payload.items() if v is not None and k != "tasks"}
         self.payload = XmlField('B07', attributes=attributes)
         self.tasks = []
         super(B07Payload, self).__init__('b07Payload', 'payload', drop_empty=drop_empty)
@@ -411,7 +411,7 @@ class B07Payload(XmlModel):
 
 class B07Task(XmlModel):
     def __init__(self, task, drop_empty=False):
-        attributes = {k: v for k, v in task.items() if v is not None and v != "" and k != "task_data"}
+        attributes = {k: v for k, v in task.items() if v is not None and k != "task_data"}
         self.task = XmlField('TP', attributes=attributes)
         self.tppro = []
         super(B07Task, self).__init__('TP', 'task', drop_empty=drop_empty)
@@ -419,7 +419,7 @@ class B07Task(XmlModel):
 
 class B07TpPro(XmlModel):
     def __init__(self, task, drop_empty=False):
-        attributes = {k: v for k, v in task.items() if v is not None and v != ""}
+        attributes = {k: v for k, v in task.items() if v is not None}
         self.tppro = XmlField('TpPro', attributes=attributes)
         self.tpattr = []
         super(B07TpPro, self).__init__('TpPro', 'tppro', drop_empty=drop_empty)
