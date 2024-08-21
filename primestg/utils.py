@@ -427,7 +427,7 @@ meter_events = {1: {
     23: 'Corte de larga duración en la fase 2',
     24: 'Corte de larga duración en la fase 3',
     25: 'Falta alta impedancia (Supervisor BT)',
-    26: 'Fin de falta de alta impedancia (Supervisor BT)'
+    26: 'Fin de falta de alta impedancia (Supervisor BT)',
 
     201: 'Caída tensión L1 - LV',
     202: 'Caída tensión L2 - LV',
@@ -528,7 +528,7 @@ meter_events = {1: {
     10: 'Error en el establecimiento de la asociación con clave dedicada',
     11: 'Error en el cifrado y autenticación de los mensajes',
     12: 'Error en el password LLS',
-    13: 'Error en el cambio de Security policy'
+    13: 'Error en el cambio de Security policy',
 }}
 
 dc_events = {1: {
