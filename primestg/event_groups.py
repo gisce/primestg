@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 event_groups = [
     (1, 'Grupo 1 - Estándar'),
     (2, 'Grupo 2 - ICP'),
