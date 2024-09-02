@@ -342,9 +342,9 @@ class B04Payload(XmlModel):
         super(B04Payload, self).__init__('b04Payload', 'payload', drop_empty=drop_empty)
 
 
-class B07IpFtp:
+class B07Ip:
     """
-    The class used to instance B07 order. Only for IPftp parameter.
+    The class used to instance B07 order. Only for IPftp/IPNTP/IPstg parameters.
     :return: B07 order with parameters
     """
     def __init__(self, generic_values, payload):
@@ -355,16 +355,24 @@ class B07IpFtp:
             generic_values.get('cnc'),
             generic_values.get('version', '3.1.c'),
         )
-        self.order.cnc.feed({'payload': B07IpFtpPayload(payload)})
+        self.order.cnc.feed({'payload': B07IpPayload(payload)})
 
 
-class B07IpFtpPayload(XmlModel):
+class B07IpPayload(XmlModel):
     def __init__(self, payload, drop_empty=False):
+        attr_name = None
+        if 'IPftp' in payload:
+            attr_name = 'IPftp'
+        elif 'IPNTP' in payload:
+            attr_name = 'IPNTP'
+        elif 'IPstg' in payload:
+            attr_name = 'IPstg'
+
         self.payload = XmlField(
             'B07', attributes={
-                'IPftp': payload.get('IPftp'),
+                attr_name: payload.get(attr_name),
             })
-        super(B07IpFtpPayload, self).__init__('b07Payload', 'payload', drop_empty=drop_empty)
+        super(B07IpPayload, self).__init__('b07Payload', 'payload', drop_empty=drop_empty)
 
 
 class B07:
@@ -666,8 +674,8 @@ class Order(object):
                 'class': B07,
                 'args': [generic_values, payload]
             },
-            'B07_ipftp': {
-                'class': B07IpFtp,
+            'B07_ip': {
+                'class': B07Ip,
                 'args': [generic_values, payload]
             },
             'B09': {

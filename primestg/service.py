@@ -114,8 +114,8 @@ class Service(object):
         order = order.create(generic_values, payload)
         return self.send_order('B07', order)
 
-    def set_concentrator_ipftp(self, generic_values, payload):
-        order = Order('B07_ipftp')
+    def set_concentrator_ip(self, generic_values, payload):
+        order = Order('B07_ip')
         order = order.create(generic_values, payload)
         return self.send_order('B07', order)
 
