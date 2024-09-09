@@ -342,9 +342,9 @@ class B04Payload(XmlModel):
         super(B04Payload, self).__init__('b04Payload', 'payload', drop_empty=drop_empty)
 
 
-class B07IpFtp:
+class B07Ip:
     """
-    The class used to instance B07 order. Only for IPftp parameter.
+    The class used to instance B07 order. Only for IPftp/IPNTP/IPstg parameters.
     :return: B07 order with parameters
     """
     def __init__(self, generic_values, payload):
@@ -355,16 +355,24 @@ class B07IpFtp:
             generic_values.get('cnc'),
             generic_values.get('version', '3.1.c'),
         )
-        self.order.cnc.feed({'payload': B07IpFtpPayload(payload)})
+        self.order.cnc.feed({'payload': B07IpPayload(payload)})
 
 
-class B07IpFtpPayload(XmlModel):
+class B07IpPayload(XmlModel):
     def __init__(self, payload, drop_empty=False):
+        attr_name = None
+        if 'IPftp' in payload:
+            attr_name = 'IPftp'
+        elif 'IPNTP' in payload:
+            attr_name = 'IPNTP'
+        elif 'IPstg' in payload:
+            attr_name = 'IPstg'
+
         self.payload = XmlField(
             'B07', attributes={
-                'IPftp': payload.get('IPftp'),
+                attr_name: payload.get(attr_name),
             })
-        super(B07IpFtpPayload, self).__init__('b07Payload', 'payload', drop_empty=drop_empty)
+        super(B07IpPayload, self).__init__('b07Payload', 'payload', drop_empty=drop_empty)
 
 
 class B07:
@@ -383,10 +391,15 @@ class B07:
         b07 = B07Payload(payload)
         tasks = payload.get("tasks")
         for task in tasks:
+            tppros = task.pop("TpPro")
             task_xml = B07Task(task)
-            tppros = task.get("task_data")
             for tppro in tppros:
+                attrs = tppro.pop('TpAttr')
                 tppro_xml = B07TpPro(tppro)
+                for k, v in attrs.items():
+                    tpattr_xml = B07TpAttr(k, v)
+                    tppro_xml.tpattr.append(tpattr_xml)
+
                 task_xml.tppro.append(tppro_xml)
             b07.tasks.append(task_xml)
         self.order.cnc.feed({'payload': b07})
@@ -398,7 +411,7 @@ class B07Payload(XmlModel):
     """
     def __init__(self, payload, drop_empty=False):
         # Discard empty strings and values and compose field
-        attributes = {k: v for k, v in payload.items() if v is not None and v != "" and k != "tasks"}
+        attributes = {k: v for k, v in payload.items() if v is not None and k != "tasks"}
         self.payload = XmlField('B07', attributes=attributes)
         self.tasks = []
         super(B07Payload, self).__init__('b07Payload', 'payload', drop_empty=drop_empty)
@@ -406,7 +419,7 @@ class B07Payload(XmlModel):
 
 class B07Task(XmlModel):
     def __init__(self, task, drop_empty=False):
-        attributes = {k: v for k, v in task.items() if v is not None and v != "" and k != "task_data"}
+        attributes = {k: v for k, v in task.items() if v is not None and k != "task_data"}
         self.task = XmlField('TP', attributes=attributes)
         self.tppro = []
         super(B07Task, self).__init__('TP', 'task', drop_empty=drop_empty)
@@ -414,10 +427,16 @@ class B07Task(XmlModel):
 
 class B07TpPro(XmlModel):
     def __init__(self, task, drop_empty=False):
-        attributes = {k: v for k, v in task.items() if v is not None and v != ""}
+        attributes = {k: v for k, v in task.items() if v is not None}
         self.tppro = XmlField('TpPro', attributes=attributes)
-        self.tpattr = XmlField('TpAttr')
+        self.tpattr = []
         super(B07TpPro, self).__init__('TpPro', 'tppro', drop_empty=drop_empty)
+
+
+class B07TpAttr(XmlModel):
+    def __init__(self, key, value, drop_empty=False):
+        self.tpattr = XmlField(key, value=value)
+        super(B07TpAttr, self).__init__('TpAttr', 'tpattr', drop_empty=drop_empty)
 
 class B09:
     """
@@ -655,8 +674,8 @@ class Order(object):
                 'class': B07,
                 'args': [generic_values, payload]
             },
-            'B07_ipftp': {
-                'class': B07IpFtp,
+            'B07_ip': {
+                'class': B07Ip,
                 'args': [generic_values, payload]
             },
             'B09': {
