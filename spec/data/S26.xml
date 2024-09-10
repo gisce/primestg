@@ -1,0 +1,28 @@
+<Report IdRpt="S26" IdPet="0" Version="3.1.c">
+	<Cnc Id="CIR4622127103">
+		<Cnt Id="CIR2082132118">
+			<S26 Fh="20240909115858000S">
+				<DataId>Pimp</DataId>
+				<DataValue>0</DataValue>
+				<DataId>Pexp</DataId>
+				<DataValue>1510</DataValue>
+				<DataId>L1v</DataId>
+				<DataValue>239</DataValue>
+				<DataId>I3</DataId>
+				<DataValue>23.0</DataValue>
+			</S26>
+		</Cnt>
+		<Cnt Id="SAG0186450599">
+			<S26 Fh="20240909120014000S">
+				<DataId>Pimp</DataId>
+				<DataValue>0</DataValue>
+				<DataId>Pexp</DataId>
+				<DataValue>5560</DataValue>
+				<DataId>L1v</DataId>
+				<DataValue>240</DataValue>
+				<DataId>I3</DataId>
+				<DataValue>23.1</DataValue>
+			</S26>
+		</Cnt>
+	</Cnc>
+</Report>
