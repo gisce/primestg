@@ -389,7 +389,7 @@ class B07:
             generic_values.get('version', '3.1.c'),
         )
         b07 = B07Payload(payload)
-        tasks = payload.get("tasks")
+        tasks = payload.get("tasks", [])
         for task in tasks:
             tppros = task.pop("TpPro")
             task_xml = B07Task(task)
