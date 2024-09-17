@@ -62,8 +62,8 @@ with description('Report S26 example'):
                 'r2': 0,
                 'r3': 0,
                 'r4': 0,
-                'cnc_name': 'CIR4622127103',
-                'name': 'CIR2082132118',
+                'cnc_name': 'ZIV0004366654',
+                'name': 'ZIV0044548861',
             }
         ]
 
