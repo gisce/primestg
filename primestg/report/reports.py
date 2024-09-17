@@ -1022,7 +1022,6 @@ class LineSupervisorS52(LineSupervisorDetails):
         return values
 
 
-
 class MeterS01(MeterWithMagnitude):
     """
     Class for a meter of report S01.
