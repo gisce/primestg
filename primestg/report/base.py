@@ -201,6 +201,25 @@ class MeasureActiveReactiveFloat(Measure):
             'r4': float(measure.get('R4{}'.format(measure_type))),
         }
 
+    def active_reactive_with_phase(self, measure, phase_num):
+        """
+        Get the active and reactive measures.
+
+        :param measure: an lxml.objectify.StringElement representing a set of \
+            measures
+        :param phase_num: the phase number of measure, added at the end of the \
+            name of each measure (1,2,3)
+        :return: a dict with the active and reactive phase measures
+        """
+        return {
+            'ai{}'.format(phase_num): float(measure.get('AI{}'.format(phase_num))),
+            'ae{}'.format(phase_num): float(measure.get('AE{}'.format(phase_num))),
+            'r1{}'.format(phase_num): float(measure.get('R1{}'.format(phase_num))),
+            'r2{}'.format(phase_num): float(measure.get('R2{}'.format(phase_num))),
+            'r3{}'.format(phase_num): float(measure.get('R3{}'.format(phase_num))),
+            'r4{}'.format(phase_num): float(measure.get('R4{}'.format(phase_num))),
+        }
+
 
 class MeasureAverageVoltageAndCurrent(Measure):
     """

@@ -291,6 +291,35 @@ class MeasureS27(MeasureActiveReactive):
         return values
 
 
+class OperationS42(Operation):
+    """
+    Class for a set of measures of report S42.
+    """
+
+    @property
+    def values(self):
+        """
+        Set of measures of report S42.
+        :return: a dict with a set of measures of report S42
+        """
+        values = []
+        try:
+            common_values = {
+                "Fh": self._get_timestamp('Fh'),
+                "Operation": self.objectified.get('Operation'),
+                "obis": self.objectified.get('obis'),
+                "class": self.objectified.get('class'),
+                "element": self.objectified.get('element'),
+                "data": self.objectified.get('data'),
+                "result": self.objectified.get('result'),
+            }
+            values.append(common_values)
+        except Exception as e:
+            values.append(['ERROR: Thrown exception: {}'.format(e)])
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+        return values
+
+
 class MeasureS52(MeasureActiveReactiveFloat):
     """
     Class for a set of measures of report S52.
@@ -316,35 +345,6 @@ class MeasureS52(MeasureActiveReactiveFloat):
             return []
 
         return [values]
-
-
-class OperationS42(Operation):
-    """
-    Class for a set of measures of report S52.
-    """
-
-    @property
-    def values(self):
-        """
-        Set of measures of report S42.
-        :return: a dict with a set of measures of report S42
-        """
-        values = []
-        try:
-            common_values = {
-                "Fh": self._get_timestamp('Fh'),
-                "Operation": self.objectified.get('Operation'),
-                "obis": self.objectified.get('obis'),
-                "class": self.objectified.get('class'),
-                "element": self.objectified.get('element'),
-                "data": self.objectified.get('data'),
-                "result": self.objectified.get('result'),
-            }
-            values.append(common_values)
-        except Exception as e:
-            values.append(['ERROR: Thrown exception: {}'.format(e)])
-            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
-        return values
 
 
 class MeasureEvents(Measure):
@@ -2078,7 +2078,7 @@ class RemoteTerminalUnitS52(RemoteTerminalUnitDetails):
 
     def __init__(self, objectified_rt_unit, report_version, request_id):
         """
-        Create a RemoteTerminalUnit object for the report S62.
+        Create a RemoteTerminalUnit object for the report S52.
 
         :param objectified_rt_unit: an lxml.objectify.StringElement \
             representing a line supervisor
@@ -2101,7 +2101,7 @@ class RemoteTerminalUnitS52(RemoteTerminalUnitDetails):
     @property
     def report_type(self):
         """
-        The type of report for report S64.
+        The type of report for report S52.
         :return: a string with 'S52'
         """
         return 'S52'
