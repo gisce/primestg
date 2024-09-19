@@ -48,6 +48,7 @@ class MeasureS01(MeasureActiveReactive):
             values.update(
                 {
                     'timestamp': self._get_timestamp('Fh'),
+                    'season': self.objectified.get('Fh')[-1:],
                     'voltage': get_integer_value(get('L1v')),
                     'current': get_float_value(get('L1i')),
                     'active_power_import': get_integer_value(get('Pimp')),
@@ -85,6 +86,7 @@ class MeasureS21(MeasureActiveReactive):
             values.update(
                 {
                     'timestamp': self._get_timestamp('Fh'),
+                    'season': self.objectified.get('Fh')[-1:],
                     'active_quadrant': get_integer_value(get('Ca')),
                     'current_sum_3_phases': get_float_value(get('I3')),
 
@@ -119,6 +121,72 @@ class MeasureS21(MeasureActiveReactive):
                     'meter_phase': get_integer_value(get('Fc')),
                     'current_switch_state': get_integer_value(get('Eacti')),
                     'previous_switch_state': get_integer_value(get('Eanti')),
+                }
+            )
+        except Exception as e:
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+            return []
+        return [values]
+
+class MeasureS26(MeasureActiveReactive):
+    """
+    Class for a set of measures of report S26.
+    """
+    @property
+    def values(self):
+        """
+        Set of measures of report S26.
+        :return: a dict with a set of measures of report S26.
+        """
+        values = {}
+        try:
+            xml_keys = getattr(self.objectified, 'DataId', '')
+            xml_values = getattr(self.objectified, 'DataValue', '')
+            temp_values = {}
+            for idx in range(0, len(xml_keys)):
+                temp_values.update({
+                    xml_keys[idx]: str(xml_values[idx])
+                })
+
+            values = self.active_reactive(temp_values, 'a')
+            values.update(
+                {
+                    'timestamp': self._get_timestamp('Fh'),
+                    'season': self.objectified.get('Fh')[-1:],
+                    'active_quadrant': get_integer_value(temp_values.get('Ca', 0)),
+                    'current_sum_3_phases': get_integer_value(temp_values.get('I3', 0.0)),
+
+                    'voltage1': get_integer_value(temp_values.get('L1v', 0.0)),
+                    'current1': get_integer_value(temp_values.get('L1i', 0.0)),
+                    'active_power_import1': get_integer_value(temp_values.get('Pimp', 0)),
+                    'active_power_export1': get_integer_value(temp_values.get('Pexp', 0)),
+                    'reactive_power_import1': get_integer_value(temp_values.get('Qimp', 0)),
+                    'reactive_power_export1': get_integer_value(temp_values.get('Qexp', 0)),
+                    'power_factor1': get_integer_value(temp_values.get('PF', 0.0)),
+                    'active_quadrant_phase1': 0,
+
+                    'voltage2': get_integer_value(temp_values.get('L2v', 0.0)),
+                    'current2': get_integer_value(temp_values.get('L2i', 0.0)),
+                    'active_power_import2': 0,
+                    'active_power_export2': 0,
+                    'reactive_power_import2': 0,
+                    'reactive_power_export2': 0,
+                    'power_factor2': 0.0,
+                    'active_quadrant_phase2': 0,
+
+                    'voltage3': get_integer_value(temp_values.get('L3v', 0.0)),
+                    'current3': get_integer_value(temp_values.get('L3i', 0.0)),
+                    'active_power_import3': 0,
+                    'active_power_export3': 0,
+                    'reactive_power_import3': 0,
+                    'reactive_power_export3': 0,
+                    'power_factor3': 0.0,
+                    'active_quadrant_phase3': 0.0,
+
+                    'phase_presence': [get_integer_value(i) for i in (temp_values.get('PP', '0')).split(",")],
+                    'meter_phase': get_integer_value(temp_values.get('Fc', 0)),
+                    'current_switch_state': get_integer_value(temp_values.get('Eacti', 0)),
+                    'previous_switch_state': get_integer_value(temp_values.get('Eanti', 0)),
                 }
             )
         except Exception as e:
@@ -1027,6 +1095,66 @@ class MeterS01(MeterWithMagnitude):
     Class for a meter of report S01.
     """
 
+    def __init__(
+            self,
+            objectified_meter,
+            concentrator_name,
+            report_version,
+            request_id
+    ):
+        """
+        Create a Meter object using MeterWithConcentratorName constructor and \
+            adding the report version and request identification.
+
+        Create a Meter object.
+
+        :param objectified_meter: an lxml.objectify.StringElement \
+            representing a set of parameters
+        :param concentrator_name: a string with the name of the concentrator
+        :param report_version: a string with the version of report
+        :param request_id: a string with the request identification
+        :return: a Measure object
+        """
+        super(MeterS01, self).__init__(objectified_meter, concentrator_name)
+        self.report_version = report_version
+        self.request_id = request_id
+
+    @property
+    def report_version(self):
+        """
+        The version of the report.
+
+        :return: a string with the version of the report
+        """
+        return self._report_version
+
+    @report_version.setter
+    def report_version(self, value):
+        """
+        Stores the report version.
+
+        :param value: a string with the version of the report
+        """
+        self._report_version = value
+
+    @property
+    def request_id(self):
+        """
+        The request identification.
+
+        :return: a string with the request identification
+        """
+        return self._request_id
+
+    @request_id.setter
+    def request_id(self, value):
+        """
+        Stores the request identification.
+
+        :param value: a string with the version of the report
+        """
+        self._request_id = value
+
     @property
     def report_type(self):
         """
@@ -1348,6 +1476,66 @@ class MeterS21(MeterWithMagnitude):
     Class for a meter of report S21.
     """
 
+    def __init__(
+            self,
+            objectified_meter,
+            concentrator_name,
+            report_version,
+            request_id
+    ):
+        """
+        Create a Meter object using MeterWithConcentratorName constructor and \
+            adding the report version and request identification.
+
+        Create a Meter object.
+
+        :param objectified_meter: an lxml.objectify.StringElement \
+            representing a set of parameters
+        :param concentrator_name: a string with the name of the concentrator
+        :param report_version: a string with the version of report
+        :param request_id: a string with the request identification
+        :return: a Measure object
+        """
+        super(MeterS21, self).__init__(objectified_meter, concentrator_name)
+        self.report_version = report_version
+        self.request_id = request_id
+
+    @property
+    def report_version(self):
+        """
+        The version of the report.
+
+        :return: a string with the version of the report
+        """
+        return self._report_version
+
+    @report_version.setter
+    def report_version(self, value):
+        """
+        Stores the report version.
+
+        :param value: a string with the version of the report
+        """
+        self._report_version = value
+
+    @property
+    def request_id(self):
+        """
+        The request identification.
+
+        :return: a string with the request identification
+        """
+        return self._request_id
+
+    @request_id.setter
+    def request_id(self, value):
+        """
+        Stores the request identification.
+
+        :param value: a string with the version of the report
+        """
+        self._request_id = value
+
     @property
     def report_type(self):
         """
@@ -1365,6 +1553,90 @@ class MeterS21(MeterWithMagnitude):
         :return: a class to instance measure sets of report S21
         """
         return MeasureS21
+
+
+class MeterS26(MeterWithMagnitude):
+    """
+    Class for a meter of report S26.
+    """
+
+    def __init__(
+            self,
+            objectified_meter,
+            concentrator_name,
+            report_version,
+            request_id
+    ):
+        """
+        Create a Meter object using MeterWithConcentratorName constructor and \
+            adding the report version and request identification.
+
+        Create a Meter object.
+
+        :param objectified_meter: an lxml.objectify.StringElement \
+            representing a set of parameters
+        :param concentrator_name: a string with the name of the concentrator
+        :param report_version: a string with the version of report
+        :param request_id: a string with the request identification
+        :return: a Measure object
+        """
+        super(MeterS26, self).__init__(objectified_meter, concentrator_name)
+        self.report_version = report_version
+        self.request_id = request_id
+
+    @property
+    def report_version(self):
+        """
+        The version of the report.
+
+        :return: a string with the version of the report
+        """
+        return self._report_version
+
+    @report_version.setter
+    def report_version(self, value):
+        """
+        Stores the report version.
+
+        :param value: a string with the version of the report
+        """
+        self._report_version = value
+
+    @property
+    def request_id(self):
+        """
+        The request identification.
+
+        :return: a string with the request identification
+        """
+        return self._request_id
+
+    @request_id.setter
+    def request_id(self, value):
+        """
+        Stores the request identification.
+
+        :param value: a string with the version of the report
+        """
+        self._request_id = value
+
+    @property
+    def report_type(self):
+        """
+        The type of report for report S26.
+
+        :return: a string with 'S26'
+        """
+        return 'S26'
+
+    @property
+    def measure_class(self):
+        """
+        The class used to instance measure sets for report S26.
+
+        :return: a class to instance measure sets of report S26
+        """
+        return MeasureS26
 
 
 class MeterS23(MeterWithConcentratorName):
@@ -1516,15 +1788,76 @@ class ConcentratorS01(ConcentratorWithMetersWithConcentratorName):
     """
     Class for a concentrator of report S01.
     """
+    def __init__(self, objectified_concentrator, report_version, request_id):
+        """
+        Create a Concentrator object for the report S21 using \
+            ConcentratorWithMetersWithConcentratorName constructor and adding \
+            the report version and request identification.
+
+        :param objectified_concentrator: an lxml.objectify.StringElement \
+            representing a meter
+        :param report_version: a string with the version of report
+        :param request_id: a string with the request identification
+        :return: a Meter object
+        """
+        super(ConcentratorS01, self).__init__(objectified_concentrator)
+        self.report_version = report_version
+        self.request_id = request_id
 
     @property
-    def meter_class(self):
+    def report_version(self):
         """
-        The class used to instance meters for report S01.
+        The version of the report.
 
-        :return: a class to instance meters of report S01
+        :return: a string with the version of the report
         """
-        return MeterS01
+        return self._report_version
+
+    @report_version.setter
+    def report_version(self, value):
+        """
+        Stores the report version.
+        :param value: a string with the version of the report
+        """
+        self._report_version = value
+
+    @property
+    def request_id(self):
+        """
+        The request identification.
+
+        :return: a string with the request identification
+        """
+        return self._request_id
+
+    @request_id.setter
+    def request_id(self, value):
+        """
+        Stores the request identification.
+
+        :param value: a string with the version of the report
+        """
+        self._request_id = value
+
+    @property
+    def meters(self):
+        """
+        Meter objects of this concentrator.
+
+        :return: a list of meter objects
+        """
+        meters = []
+        if getattr(self.objectified, 'Cnt', None) is not None:
+            for meter in self.objectified.Cnt:
+                meters.append(MeterS01(
+                    meter,
+                    self.name,
+                    self.report_version,
+                    self.request_id
+                ))
+            for meter in meters:
+                self._warnings.append(meter.warnings)
+        return meters
 
 
 class ConcentratorS02(ConcentratorWithMetersWithConcentratorName):
@@ -1969,17 +2302,155 @@ class ConcentratorS18(ConcentratorWithMetersWithConcentratorName):
 
 class ConcentratorS21(ConcentratorWithMetersWithConcentratorName):
     """
-    Class for a concentrator of report S01.
+    Class for a concentrator of report S21.
     """
 
-    @property
-    def meter_class(self):
+    def __init__(self, objectified_concentrator, report_version, request_id):
         """
-        The class used to instance meters for report S21.
+        Create a Concentrator object for the report S21 using \
+            ConcentratorWithMetersWithConcentratorName constructor and adding \
+            the report version and request identification.
 
-        :return: a class to instance meters of report S21
+        :param objectified_concentrator: an lxml.objectify.StringElement \
+            representing a meter
+        :param report_version: a string with the version of report
+        :param request_id: a string with the request identification
+        :return: a Meter object
         """
-        return MeterS21
+        super(ConcentratorS21, self).__init__(objectified_concentrator)
+        self.report_version = report_version
+        self.request_id = request_id
+
+    @property
+    def report_version(self):
+        """
+        The version of the report.
+
+        :return: a string with the version of the report
+        """
+        return self._report_version
+
+    @report_version.setter
+    def report_version(self, value):
+        """
+        Stores the report version.
+        :param value: a string with the version of the report
+        """
+        self._report_version = value
+
+    @property
+    def request_id(self):
+        """
+        The request identification.
+
+        :return: a string with the request identification
+        """
+        return self._request_id
+
+    @request_id.setter
+    def request_id(self, value):
+        """
+        Stores the request identification.
+
+        :param value: a string with the version of the report
+        """
+        self._request_id = value
+
+    @property
+    def meters(self):
+        """
+        Meter objects of this concentrator.
+
+        :return: a list of meter objects
+        """
+        meters = []
+        if getattr(self.objectified, 'Cnt', None) is not None:
+            for meter in self.objectified.Cnt:
+                meters.append(MeterS21(
+                    meter,
+                    self.name,
+                    self.report_version,
+                    self.request_id
+                ))
+            for meter in meters:
+                self._warnings.append(meter.warnings)
+        return meters
+
+
+class ConcentratorS26(ConcentratorWithMetersWithConcentratorName):
+    """
+    Class for a concentrator of report S26.
+    """
+    def __init__(self, objectified_concentrator, report_version, request_id):
+        """
+        Create a Concentrator object for the report S26 using \
+            ConcentratorWithMetersWithConcentratorName constructor and adding \
+            the report version and request identification.
+
+        :param objectified_concentrator: an lxml.objectify.StringElement \
+            representing a meter
+        :param report_version: a string with the version of report
+        :param request_id: a string with the request identification
+        :return: a Meter object
+        """
+        super(ConcentratorS26, self).__init__(objectified_concentrator)
+        self.report_version = report_version
+        self.request_id = request_id
+
+    @property
+    def report_version(self):
+        """
+        The version of the report.
+
+        :return: a string with the version of the report
+        """
+        return self._report_version
+
+    @report_version.setter
+    def report_version(self, value):
+        """
+        Stores the report version.
+        :param value: a string with the version of the report
+        """
+        self._report_version = value
+
+    @property
+    def request_id(self):
+        """
+        The request identification.
+
+        :return: a string with the request identification
+        """
+        return self._request_id
+
+    @request_id.setter
+    def request_id(self, value):
+        """
+        Stores the request identification.
+
+        :param value: a string with the version of the report
+        """
+        self._request_id = value
+
+    @property
+    def meters(self):
+        """
+        Meter objects of this concentrator.
+
+        :return: a list of meter objects
+        """
+        meters = []
+        if getattr(self.objectified, 'Cnt', None) is not None:
+            for meter in self.objectified.Cnt:
+                meters.append(MeterS26(
+                    meter,
+                    self.name,
+                    self.report_version,
+                    self.request_id
+                ))
+            for meter in meters:
+                self._warnings.append(meter.warnings)
+        return meters
 
 
 class ConcentratorS23(ConcentratorWithMetersWithConcentratorName):
@@ -2185,7 +2656,11 @@ class Report(object):
         report_type_class = {
             'S01': {
                 'class': ConcentratorS01,
-                'args': [objectified_concentrator]
+                'args': [
+                    objectified_concentrator,
+                    self.report_version,
+                    self.request_id,
+                ]
             },
             'S02': {
                 'class': ConcentratorS02,
@@ -2247,7 +2722,11 @@ class Report(object):
             },
             'S21': {
                 'class': ConcentratorS21,
-                'args': [objectified_concentrator]
+                'args': [
+                    objectified_concentrator,
+                    self.report_version,
+                    self.request_id,
+                ]
             },
             'S23': {
                 'class': ConcentratorS23,
@@ -2260,6 +2739,14 @@ class Report(object):
                     self.report_version,
                     self.request_id,
                     self.report_type
+                ]
+            },
+            'S26': {
+                'class': ConcentratorS26,
+                'args': [
+                    objectified_concentrator,
+                    self.report_version,
+                    self.request_id,
                 ]
             },
             'S27': {

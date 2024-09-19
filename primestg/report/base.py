@@ -168,12 +168,12 @@ class MeasureActiveReactive(Measure):
         :return: a dict with the active and reactive measures
         """
         return {
-            'ai': int(measure.get('AI{}'.format(measure_type))),
-            'ae': int(measure.get('AE{}'.format(measure_type))),
-            'r1': int(measure.get('R1{}'.format(measure_type))),
-            'r2': int(measure.get('R2{}'.format(measure_type))),
-            'r3': int(measure.get('R3{}'.format(measure_type))),
-            'r4': int(measure.get('R4{}'.format(measure_type))),
+            'ai': int(measure.get('AI{}'.format(measure_type), 0)),
+            'ae': int(measure.get('AE{}'.format(measure_type), 0)),
+            'r1': int(measure.get('R1{}'.format(measure_type), 0)),
+            'r2': int(measure.get('R2{}'.format(measure_type), 0)),
+            'r3': int(measure.get('R3{}'.format(measure_type), 0)),
+            'r4': int(measure.get('R4{}'.format(measure_type), 0)),
         }
 
 
