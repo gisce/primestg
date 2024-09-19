@@ -11,6 +11,7 @@ from string import printable
 
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from .event_groups import *
 
 TZ = timezone('Europe/Madrid')
 PRIORITY_VERYHIGH = 1
@@ -197,16 +198,3 @@ class DLMSTemplates(PrimeTemplates):
         xml += '</cycle>'
 
         return xml
-
-
-event_groups = [
-    (1, 'Grupo 1 - Estándar'),
-    (2, 'Grupo 2 - Acceso'),
-    (3, 'Grupo 3 - Gestión de la demanada'),
-    (4, 'Grupo 4 - Alta ocurrencia'),
-    (5, 'Grupo 5 - Altas y bajas'),
-    (6, 'Grupo 6 - Otros'),
-    (7, 'Grupo 7 - Otros'),
-    (8, 'Grupo 8 - Fugas a tierra'),
-    (9, 'Grupo 9 - Calidad de suministro')
-]
