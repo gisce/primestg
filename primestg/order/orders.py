@@ -396,9 +396,9 @@ class B07:
             for tppro in tppros:
                 attrs = tppro.pop('TpAttr')
                 tppro_xml = B07TpPro(tppro)
-                for k, v in attrs.items():
-                    tpattr_xml = B07TpAttr(k, v)
-                    tppro_xml.tpattr.append(tpattr_xml)
+
+                tpattr_xml = B07TpAttr(attrs)
+                tppro_xml.tpattr.append(tpattr_xml)
 
                 task_xml.tppro.append(tppro_xml)
             b07.tasks.append(task_xml)
@@ -434,8 +434,11 @@ class B07TpPro(XmlModel):
 
 
 class B07TpAttr(XmlModel):
-    def __init__(self, key, value, drop_empty=False):
-        self.tpattr = XmlField(key, value=value)
+    def __init__(self, values, drop_empty=False):
+        self.tpattr = XmlField('TpAttr')
+        for k, v in values.items():
+            setattr(self, k, XmlField(k, value=v, parent='TpAttr'))
+
         super(B07TpAttr, self).__init__('TpAttr', 'tpattr', drop_empty=drop_empty)
 
 class B09:
