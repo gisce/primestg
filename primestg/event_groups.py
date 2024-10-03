@@ -8,7 +8,8 @@ event_groups = [
     (6, 'Grupo 6 - Alta ocurrencia'),
     (7, 'Grupo 7 - Seguridad'),
     (8, 'Grupo 8 - Fugas a tierra'),
-    (9, 'Grupo 9 - Calidad de suministro')
+    (9, 'Grupo 9 - Calidad de suministro'),
+    (10, 'Grupo 10 - Estado de conexión'),
 ]
 
 # meter events
@@ -20,6 +21,7 @@ meter_event_groups = [
     (5, 'Grupo 5 - Gestión de la demanda'),
     (6, 'Grupo 6 - Alta ocurrencia'),
     (7, 'Grupo 7 - Seguridad'),
+    (10, 'Grupo 10 - Estado de conexión'),
 ]
 
 # cnc events
@@ -327,6 +329,8 @@ meter_events = {1: {
     11: 'Error en el cifrado y autenticación de los mensajes',
     12: 'Error en el password LLS',
     13: 'Error en el cambio de Security policy',
+}, 10: {
+    1: 'Cambio de estado',
 }}
 
 dc_events = {1: {
