@@ -7,8 +7,8 @@ from primestg.report.base import (
 from primestg.message import MessageS
 from primestg.utils import octet2name, octet2number
 
-SUPPORTED_REPORTS = ['S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S14', 'S15',
-                     'S17', 'S18', 'S23', 'S24', 'S27', 'S42', 'S52']
+SUPPORTED_REPORTS = ['S01', 'S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S14', 'S15',
+                     'S17', 'S18', 'S21', 'S23', 'S24', 'S26', 'S27', 'S42', 'S52']
 
 
 def is_supported(report_code):
@@ -154,19 +154,19 @@ class MeasureS26(MeasureActiveReactive):
                     'timestamp': self._get_timestamp('Fh'),
                     'season': self.objectified.get('Fh')[-1:],
                     'active_quadrant': get_integer_value(temp_values.get('Ca', 0)),
-                    'current_sum_3_phases': get_integer_value(temp_values.get('I3', 0.0)),
+                    'current_sum_3_phases': get_float_value(temp_values.get('I3', 0.0)),
 
-                    'voltage1': get_integer_value(temp_values.get('L1v', 0.0)),
-                    'current1': get_integer_value(temp_values.get('L1i', 0.0)),
+                    'voltage1': get_integer_value(temp_values.get('L1v', 0)),
+                    'current1': get_float_value(temp_values.get('L1i', 0.0)),
                     'active_power_import1': get_integer_value(temp_values.get('Pimp', 0)),
                     'active_power_export1': get_integer_value(temp_values.get('Pexp', 0)),
                     'reactive_power_import1': get_integer_value(temp_values.get('Qimp', 0)),
                     'reactive_power_export1': get_integer_value(temp_values.get('Qexp', 0)),
-                    'power_factor1': get_integer_value(temp_values.get('PF', 0.0)),
+                    'power_factor1': get_float_value(temp_values.get('PF', 0.0)),
                     'active_quadrant_phase1': 0,
 
-                    'voltage2': get_integer_value(temp_values.get('L2v', 0.0)),
-                    'current2': get_integer_value(temp_values.get('L2i', 0.0)),
+                    'voltage2': get_integer_value(temp_values.get('L2v', 0)),
+                    'current2': get_float_value(temp_values.get('L2i', 0.0)),
                     'active_power_import2': 0,
                     'active_power_export2': 0,
                     'reactive_power_import2': 0,
@@ -174,14 +174,14 @@ class MeasureS26(MeasureActiveReactive):
                     'power_factor2': 0.0,
                     'active_quadrant_phase2': 0,
 
-                    'voltage3': get_integer_value(temp_values.get('L3v', 0.0)),
-                    'current3': get_integer_value(temp_values.get('L3i', 0.0)),
+                    'voltage3': get_integer_value(temp_values.get('L3v', 0)),
+                    'current3': get_float_value(temp_values.get('L3i', 0.0)),
                     'active_power_import3': 0,
                     'active_power_export3': 0,
                     'reactive_power_import3': 0,
                     'reactive_power_export3': 0,
                     'power_factor3': 0.0,
-                    'active_quadrant_phase3': 0.0,
+                    'active_quadrant_phase3': 0,
 
                     'phase_presence': [get_integer_value(i) for i in (temp_values.get('PP', '0')).split(",")],
                     'meter_phase': get_integer_value(temp_values.get('Fc', 0)),

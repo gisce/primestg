@@ -24,7 +24,8 @@ with description('Order B02 Generation'):
             'id_pet': str(1234),
             'id_req': 'B02',
             'cnc': 'CIR000000000',
-            'cnt': 'CNT000000000'
+            'cnt': 'CNT000000000',
+            'version': '3.1.c'
         }
         payload = {
             'activation_date': datetime(2021, 4, 1),

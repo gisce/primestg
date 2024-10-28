@@ -21,6 +21,7 @@ with description('Report S26 example'):
         expected_first_value_first_meter = [
             {
                 'timestamp': '2024-09-09 11:58:58',
+                'season': 'S',
                 'active_quadrant': 0,
                 'current_sum_3_phases': 23.0,
 
@@ -33,7 +34,7 @@ with description('Report S26 example'):
                 'power_factor1': 0.0,
                 'active_quadrant_phase1': 0,
 
-                'voltage2': 0.0,
+                'voltage2': 0,
                 'current2': 0.0,
                 'active_power_import2': 0,
                 'active_power_export2': 0,
@@ -42,7 +43,7 @@ with description('Report S26 example'):
                 'power_factor2': 0.0,
                 'active_quadrant_phase2': 0,
 
-                'voltage3': 0.0,
+                'voltage3': 0,
                 'current3': 0.0,
                 'active_power_import3': 0,
                 'active_power_export3': 0,

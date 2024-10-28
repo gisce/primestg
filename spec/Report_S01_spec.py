@@ -22,6 +22,7 @@ with description('Report S01 example'):
         expected_first_value_first_meter = [
             {
                 'timestamp': '2019-10-15 15:26:17',
+                'season': 'S',
                 'voltage': 230,
                 'current': 0.0,
                 'active_power_import': 1870,
