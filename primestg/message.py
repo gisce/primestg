@@ -1,3 +1,6 @@
+import re
+
+from lxml.etree import XMLSyntaxError
 from lxml.objectify import fromstring
 import binascii
 import zlib
@@ -54,7 +57,16 @@ class BaseMessage(object):
             self._xml = value.decode('iso-8859-15')
         except:
             self._xml = value
-        self._objectified = fromstring(self._xml)
+
+        # If there is null chars on the XML string, delete it
+        try:
+            xml = fromstring(self._xml)
+        except XMLSyntaxError as e:
+            # Delete everything from the first null char until the next double quote char '"'
+            xml_string = re.sub(r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F].*?"', '"', self._xml)
+            xml = fromstring(xml_string)
+
+        self._objectified = xml
 
 
 class MessageS(BaseMessage):
