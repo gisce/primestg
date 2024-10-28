@@ -23,6 +23,7 @@ with description('Report S21 example'):
         expected_first_value_first_meter = [
             {
                 'timestamp': '2019-10-15 15:27:14',
+                'season': 'S',
                 'active_quadrant': 4,
                 'current_sum_3_phases': 8.2,
 
