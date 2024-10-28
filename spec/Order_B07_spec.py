@@ -15,10 +15,11 @@ with description('Order B07 IP FTP Generation'):
             'id_pet': '1234',
             'id_req': 'B07',
             'cnc': 'CIR000000000',
+            'version': '3.1.c'
         }
         payload = {
             'IPftp': '10.1.5.206',
         }
-        order = Order('B07_ipftp')
+        order = Order('B07_ip')
         order = order.create(generic_values, payload)
         expect(order).to(equal(expected_result))
