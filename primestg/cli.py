@@ -114,7 +114,7 @@ def get_sync_sxx(**kwargs):
 )
 @click.option("--ip", "-i", default="10.26.0.4", help='IP i.e CNC FTPIp')
 def sends_order(**kwargs):
-   """Sends on of available Orders to Meter or CNC"""
+   """Sends one of available Orders to Meter or CNC"""
    id_pet = get_id_pet()
    s = Service(id_pet, kwargs['cnc_url'], sync=True)
    order_name = kwargs['order']
