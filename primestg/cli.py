@@ -6,13 +6,14 @@ from datetime import datetime, timedelta
 from pytz import timezone
 from primestg.ziv_service import ZivService
 import base64
+from primestg.cycle.cycles import CycleFile
 
 TZ = timezone('Europe/Madrid')
 
 from primestg.service import Service, format_timestamp
 from primestg.contract_templates import CONTRACT_TEMPLATES
 from primestg.utils import DLMSTemplates
-
+import json
 
 REPORTS = [
     'get_instant_data',
@@ -244,6 +245,13 @@ def send_ziv_cycle(**kwargs):
     content = base64.b64encode(open(kwargs['filename'],'rb').read())
     result = zs.send_cycle(filename=kwargs['filename'], cycle_filedata=content)
     print(result.content)
+
+@primestg.command(name='parse_cycle')
+@click.argument('filename', required=True)
+def parse_cycle(**kwargs):
+    """Prints dict with cycle data from CNC csv"""
+    c = CycleFile(path=kwargs['filename'])
+    print(json.dumps(c.data, indent=4, default=str))
 
 if __name__ == 'main':
     primestg()
