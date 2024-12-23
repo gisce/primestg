@@ -101,6 +101,8 @@ def octet2date(txt):
         hour = 0
     else:
         hour = hexadecimal and octet2number(hour_txt) or int(hour_txt)
+        if int(hour_txt) > 23:
+            hour = 0
     minute_txt = txt[10:12]
     if minute_txt == 'FF':
         minute = 0
