@@ -1,0 +1,7 @@
+isodate;python_version>"2.7.18"
+isodate<0.7.0;python_version<="2.7.18"
+lxml
+libComXML
+pytz
+python-dateutil
+zeep

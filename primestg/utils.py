@@ -7,11 +7,16 @@ from .contract_templates import CONTRACT_TEMPLATES
 from .dlms_templates import DLMS_TEMPLATES
 from pytz import timezone
 from copy import copy
+from string import printable
 
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
+from .event_groups import *
 
 TZ = timezone('Europe/Madrid')
-
+PRIORITY_VERYHIGH = 1
+PRIORITY_HIGH = 2
+PRIORITY_NORMAL = 3
 
 def assertXMLEqual(got, want):
     checker = LXMLOutputChecker()
@@ -58,7 +63,11 @@ def name2octet(txt):
 def octet2name(txt):
     name = ''
     for index in range(0, len(txt), 2):
-        name += chr(int(txt[index] + txt[index + 1], 16))
+        c = chr(int(txt[index] + txt[index + 1], 16))
+        if c in printable:
+            name += c
+        else:
+            break
     return name
 
 
@@ -67,15 +76,65 @@ def octet2number(txt):
 
 
 def octet2date(txt):
+    hexadecimal = True
     year = octet2number(txt[0:4])
-    month = octet2number(txt[4:6])
-    day = octet2number(txt[6:8])
-    hour = octet2number(txt[8:10])
-    minute = octet2number(txt[10:12])
-    second = octet2number(txt[12:14])
+    if txt.startswith('FFFF'):
+        year = 9999
+        hexadecimal = False
+    elif year > 3000:
+        hexadecimal = False
+        year = int(txt[0:4])
+    elif year == 0:
+        hexadecimal = False
+        year = 0000
+    month = hexadecimal and octet2number(txt[4:6]) or int(txt[4:6])
+    if month < 1 or month > 12:
+        month = 1
+    day = hexadecimal and octet2number(txt[6:8]) or int(txt[6:8])
+    if day < 1 or day > 31:
+        day = 1
+    hour_txt = txt[8:10]
+    if hour_txt == 'FF':
+        hour = 0
+    else:
+        hour = hexadecimal and octet2number(hour_txt) or int(hour_txt)
+    minute_txt = txt[10:12]
+    if minute_txt == 'FF':
+        minute = 0
+    else:
+        minute = hexadecimal and octet2number(minute_txt) or int(minute_txt)
+    second_txt = txt[12:14]
+    if second_txt == 'FF':
+        second = 0
+    else:
+        second = hexadecimal and octet2number(txt[12:14]) or int(second_txt)
 
     return datetime.strptime('{}-{}-{} {}:{}:{}'.format(year, month, day, hour, minute, second), '%Y-%m-%d %H:%M:%S')
 
+def prepare_params(payload):
+        """
+        Prepares payload to DLMS format
+        payload = {
+            powers: list [p1, p2, p3, p4, p5, p6]
+            date: datetime.date
+        }
+        returns params dict converted to DMLS
+        {
+            powers: dict {'p1': hexnumber, 'p2': hexnumber ....}
+            date: hexdate
+
+        """
+        powers = payload.get('powers', ['15000', '15000', '15000', '15000', '15000', '15000'])
+        latent_date = payload.get('date', (datetime.today() + relativedelta(days=1)).date())
+
+        params = {}
+        hex_powers = dict(zip(['p1', 'p2', 'p3', 'p4', 'p5', 'p6'], powers))
+        for period, power in hex_powers.items():
+            hexnumber = '{0:08x}'.format(int(power))
+            hex_powers[period] = ''.join([hexnumber[i:i + 2] for i in range(0, 8, 2)])
+        params.update(hex_powers)
+        params.update({'date': datetohexprime(latent_date)})
+        return params
 
 class PrimeTemplates:
 
@@ -112,12 +171,21 @@ class DLMSTemplates(PrimeTemplates):
     def __init__(self):
         self.templates = DLMS_TEMPLATES
 
-    def generate_cycle_file(self, template_name, meters_name, params=None):
+    def generate_cycle_file(self, template_name, meters_name, params=None, root=True):
+        cycles_xml =self.generate_cycles(template_name, meters_name, params=params)
+        if root:
+            return "<cycles>\n{}\n</cycles>".format(cycles_xml)
+        else:
+            return cycles_xml
+
+    def generate_cycles(self, template_name, meters_name, params=None):
         elements = self.get_template(template_name)['data']
         if params is None:
             params = {}
+        else:
+            params = prepare_params(params)
 
-        xml = '<cycles>\n<cycle name="Ciclo_{}_raw" period="1" immediate="true" repeat="1" priority="1">\n'.format(
+        xml = '<cycle name="Ciclo_{}_raw" period="1" immediate="true" repeat="1" priority="1">\n'.format(
             template_name)
 
         for meter_name in meters_name:
@@ -127,6 +195,6 @@ class DLMSTemplates(PrimeTemplates):
             xml += '<set obis="{}" class="{}" element="{}">{}</set>\n'.format(
                 element['obis'], element['class'], element['element'], element['data'].format(**params))
 
-        xml += '</cycle>\n</cycles>'
+        xml += '</cycle>'
 
         return xml

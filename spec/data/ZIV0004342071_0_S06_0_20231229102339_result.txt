@@ -1,0 +1,67 @@
+[
+    {
+        # IdPet
+        'request_id': '0',
+        # Version
+        'version': '3.2',
+        # Cnc
+        'concentrator': 'ZIV0004342071',
+        # Cnt
+        'meter': 'ZIV0036394976',
+        # Fh
+        'timestamp': '2023-12-29 13:08:22',
+        'season': 'W',
+        # NS
+        'serial_number': '0036394976',
+        # Fab
+        'manufacturer': ' Z',
+        # Mod
+        'model_type': 'NA',
+        # Af
+        'manufacturing_year': 14,
+        # Te
+        'equipment_type': u'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff',
+        # Vf
+        'firmware_version': 'VK016',
+        # VPrime
+        'prime_firmware_version': 'V2101',
+        # Pro
+        'protocol': u'\xff\xff\xff\xff\xff\xff\xff7',
+        # Idm
+        'id_multicast': '                        ',
+        # Mac
+        'mac': '40:40:22:2B:57:E0',
+        # Tp
+        'primary_voltage': 0,
+        # Ts
+        'secondary_voltage': 0,
+        # Ip
+        'primary_current': 0,
+        # Is
+        'secondary_current': 0,
+        # Usag
+        'time_threshold_voltage_sags': 180,
+        # Uswell
+        'time_threshold_voltage_swells': 180,
+        # Per
+        'load_profile_period': 3600,
+        # Dctcp
+        'demand_close_contracted_power': '95.00',
+        # Vr
+        'reference_voltage': 230,
+        # Ut
+        'long_power_failure_threshold': 180,
+        # UsubT
+        'voltage_sag_threshold': '7.00',
+        # UsobT
+        'voltage_swell_threshold': '7.00',
+        # UcorteT
+        'voltage_cut-off_threshold': '50.00',
+        # AutMothBill
+        'automatic_monthly_billing': True,
+        # ScrollDispMode
+        'scroll_display_mode': 'A',
+        # ScrollDispTime
+        'time_scroll_display': 3
+    }
+]

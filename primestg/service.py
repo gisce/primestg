@@ -1,9 +1,11 @@
 # -*- coding: UTF-8 -*-
 from zeep import Client
+from zeep.transports import Transport
 from datetime import datetime
 import primestg
 from primestg.order.orders import Order
 import calendar
+from .utils import PRIORITY_HIGH
 
 
 def last_sunday(year, month):
@@ -33,37 +35,57 @@ def format_timestamp(dt):
 
 
 class Service(object):
-    def __init__(self, fact_id, cnc_url, sync=True, source=None):
+    def __init__(self, fact_id, cnc_url, sync=True, source=None, priority=None):
         self.cnc_url = cnc_url
         self.fact_id = fact_id
         self.sync = sync
+        if not priority:
+            self.priority = PRIORITY_HIGH
+        else:
+            self.priority = priority
+
         if not source:
             self.source = 'DCF'  # By default it doesn't look to the meter for data
         else:
             self.source = source
+
         self.DC_service = self.create_service()
 
-    def send(self, report_id, meters, date_from='', date_to=''):
+    def send(self, report_id, meters, date_from='', date_to='', priority=None):
+        if priority is None:
+            priority = self.priority
 
         if self.sync:
             results = self.DC_service.Request(self.fact_id, report_id,
-                                              date_from, date_to, meters, 2)
+                                              date_from, date_to, meters, priority)
         else:
             results = self.DC_service.AsynchRequest(self.fact_id, report_id,
                                                     date_from, date_to,
-                                                    meters, 2, self.source)
+                                                    meters, priority, self.source)
         return results
 
-    def send_order(self, report_id, order):
+    def send_order(self, report_id, order, priority=None):
         """
         Sends order
         :param report_id: B11,B09,etc.
         :param order: XML containing order
+        :param priority: default PRIORITY_HIGHEST,
         :return: true or false
         """
+        if priority is None:
+            priority = self.priority
         print(order)
-        results = self.DC_service.Order(self.fact_id, 0, order, 1)
+        results = self.DC_service.Order(self.fact_id, 0, order, priority)
         return results
+
+    def get_powers(self, generic_values, payload):
+        """
+        Sends B02 order to meter
+        :return: Success or fail
+        """
+        order = Order('B02')
+        order = order.create(generic_values, payload)
+        return self.send_order('B02', order)
 
     def get_cutoff_reconnection(self, generic_values, payload):
         """
@@ -82,6 +104,20 @@ class Service(object):
         order = Order('B04')
         order = order.create(generic_values, payload)
         return self.send_order('B04', order)
+
+    def get_concentrator_modification(self, generic_values, payload):
+        """
+        Sends B07 order to meter
+        :return: Success or fail
+        """
+        order = Order('B07')
+        order = order.create(generic_values, payload)
+        return self.send_order('B07', order)
+
+    def set_concentrator_ip(self, generic_values, payload):
+        order = Order('B07_ip')
+        order = order.create(generic_values, payload)
+        return self.send_order('B07', order)
 
     def get_meter_modification(self, generic_values, payload):
         """
@@ -111,8 +147,9 @@ class Service(object):
         return self.send_order('B12', order)
 
     def create_service(self):
+        transport = Transport(timeout=20, operation_timeout=60)
         binding = '{http://www.asais.fr/ns/Saturne/DC/ws}WS_DCSoap'
-        client = Client(wsdl=primestg.get_data('WS_DC.wsdl'))
+        client = Client(wsdl=primestg.get_data('WS_DC.wsdl'), transport=transport)
         client.set_ns_prefix(None, 'http://www.asais.fr/ns/Saturne/DC/ws')
         return client.create_service(binding, self.cnc_url)
 
@@ -229,12 +266,42 @@ class Service(object):
         """
         return self.send('S12', dc, date_from, date_to)
 
+    def get_daily_average_voltage_and_current(self, meters, date_from, date_to):
+        """
+        Asks for a S14 report to the specified meter.
+        :param meters: a meter_id
+        :return: an S14 report for the corresponding meter
+        """
+        return self.send('S14', meters, date_from, date_to)
+
+    def get_all_daily_average_voltage_and_current(self, date_from, date_to):
+        """
+        Asks for a S14 report to all meters.
+        :return: an S14 report from every meter
+        """
+        return self.send('S14', '', date_from, date_to)
+
     def get_concentrator_events(self, dc, date_from, date_to):
         """
         Asks for a S17 report to the concentrator.
         :return: an S17 report from the concentrator.
         """
         return self.send('S17', dc, date_from, date_to)
+
+    def get_cutoffs_status(self, meters, date_from, date_to):
+        """
+        Asks for a S18 report to the specified meter.
+        :param meters: a meter_id
+        :return: an S18 report for the corresponding meter
+        """
+        return self.send('S18', meters, date_from, date_to)
+
+    def get_all_cutoffs_status(self, date_from, date_to):
+        """
+        Asks for a S18 report to all meters.
+        :return: an S18 report from every meter
+        """
+        return self.send('S18', '', date_from, date_to)
 
     def get_all_contract_definition(self, date_from, date_to):
         """
@@ -249,3 +316,10 @@ class Service(object):
         :return: an S24 report from the concentrator.
         """
         return self.send('S24', dc, date_from, date_to)
+
+    def get_current_billing(self, meter, date_from, date_to):
+        """
+        Asks for a S27 report to the meter.
+        :return: an S27 report from the meter.
+        """
+        return self.send('S27', meter, date_from, date_to)

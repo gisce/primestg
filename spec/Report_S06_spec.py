@@ -1,6 +1,7 @@
 from expects import expect, equal
 from primestg.report import Report
 from ast import literal_eval
+from io import open
 
 
 with description('Report S06 example'):
@@ -11,11 +12,12 @@ with description('Report S06 example'):
             'spec/data/S06_with_error.xml',
             'spec/data/S06_empty.xml',
             'spec/data/S06_empty_datetime.xml',
+            'spec/data/ZIV0004342071_0_S06_0_20231229102339', # no utf8
         ]
 
         self.report = []
         for data_filename in self.data_filenames:
-            with open(data_filename) as data_file:
+            with open(data_filename, encoding='iso-8859-15') as data_file:
                 self.report.append(Report(data_file))
 
     with it('generates the expected results for the whole report'):

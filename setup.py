@@ -1,9 +1,11 @@
 from setuptools import setup, find_packages
 
+with open('README.rst') as f:
+    readme = f.read()
 
 setup(
     name='primestg',
-    version='1.31.0',
+    version='1.53.1',
     packages=find_packages(),
     url='https://github.com/gisce/primestg',
     license='GNU Affero General Public License v3',
@@ -13,10 +15,11 @@ setup(
         'lxml',
         'zeep<4.0',
         'libcomxml',
-        'click',
+        'click<8',
         'python-dateutil'
     ],
     description='Prime STG-DC Interface Specification',
+    long_description=readme,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
