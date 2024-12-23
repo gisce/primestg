@@ -8,7 +8,7 @@ from primestg.ziv_service import ZivService
 import base64
 from os import access, R_OK
 from os.path import isfile
-from report import Report
+from .report import Report
 from primestg.cycle.cycles import CycleFile
 
 TZ = timezone('Europe/Madrid')
@@ -250,7 +250,7 @@ def send_ziv_cycle(**kwargs):
     print(result.content)
 
 @primestg.command(name='parse')
-@click.argument('filename',required=True)
+@click.argument('filename', required=True)
 def parse_report(**kwargs):
     """Load and parses a PRIME file"""
     filepath = kwargs['filename']
@@ -269,6 +269,7 @@ def parse_report(**kwargs):
                 print(" * Meter: {}".format(meter.name))
                 for value in meter.values:
                     print("     - {}".format(value.keys()))
+                    print("        + {}".format(value.get('pc_act') and value.get('pc_act').get('act_date') or value.get('pc_act')))
                     #break
 
     else:
