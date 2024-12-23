@@ -125,8 +125,10 @@ with description('Utils'):
                 "FFFF1225000000000W": datetime(9999, 12, 25, 0, 0, 0),
                 #wrong month
                 "21110021000000000W": datetime(2111, 1, 21, 0, 0, 0),
+                "00021130000000000W": datetime(2002, 11, 30, 0, 0, 0),
                 # wrong year
-                "00001228230000000W": "time data '0-12-28 23:0:0' does not match format '%Y-%m-%d %H:%M:%S'"
+                "00001228230000000W": "time data '0-12-28 23:0:0' does not match format '%Y-%m-%d %H:%M:%S'",
+
             }
             for octet, dt in dates.items():
                 if isinstance(dt, six.string_types):

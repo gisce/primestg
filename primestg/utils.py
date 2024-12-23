@@ -87,6 +87,9 @@ def octet2date(txt):
     elif year == 0:
         hexadecimal = False
         year = 0000
+    elif year < 100:
+        hexadecimal = False
+        year = int(txt[0:4]) + 2000
     month = hexadecimal and octet2number(txt[4:6]) or int(txt[4:6])
     if month < 1 or month > 12:
         month = 1
