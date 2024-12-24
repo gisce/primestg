@@ -10,6 +10,7 @@ with description('Report S21 example'):
             'spec/data/S21.xml',
             'spec/data/S21_with_error.xml',
             'spec/data/S21_empty.xml',
+            'spec/data/S21_no_energy.xml',
         ]
 
         self.report = []
