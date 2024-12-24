@@ -117,7 +117,7 @@ class MeasureS21(MeasureActiveReactive):
                     'power_factor3': get_float_value(get('PF3')),
                     'active_quadrant_phase3': get_integer_value(get('Ca3')),
 
-                    'phase_presence': [get_integer_value(i) for i in (get('PP')).split(",")],
+                    'phase_presence': [get_integer_value(i) for i in (get('PP')).split(",") if i != ''],
                     'meter_phase': get_integer_value(get('Fc')),
                     'current_switch_state': get_integer_value(get('Eacti')),
                     'previous_switch_state': get_integer_value(get('Eanti')),
