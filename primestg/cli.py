@@ -35,7 +35,9 @@ ORDERS = {
     'powers': {'order': 'B02', 'func': 'get_powers'},
     'dlms': {'order': 'B12', 'func': 'order_raw_dlms'},
     # CNC config
-    'cnc_ftpip': {'order': 'B07', 'func': 'set_concentrator_ipftp'}
+    'cnc_ftpip': {'order': 'B07', 'func': 'set_concentrator_ip'},
+    'cnc_ftpntp': {'order': 'B07', 'func': 'set_concentrator_ip'},
+    'cnc_ftpstg': {'order': 'B07', 'func': 'set_concentrator_ip'},
 }
 
 
