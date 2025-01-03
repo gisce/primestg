@@ -64,6 +64,18 @@ class Service(object):
                                                     meters, priority, self.source)
         return results
 
+    def send_with_parameters(self, report_id, meters, date_from='', date_to='', parameters=None, priority=None):
+        if priority is None:
+            priority = self.priority
+        if parameters is None:
+            parameters = 'EvGroup:;EvCode:'
+
+        results = self.DC_service.ReportQuery(self.fact_id, report_id,
+                                              date_from, date_to,
+                                              meters, priority,
+                                              'Q1', parameters)
+        return results
+
     def send_order(self, report_id, order, priority=None):
         """
         Sends order
@@ -229,20 +241,20 @@ class Service(object):
         """
         return self.send('S05', '', date_from, date_to)
 
-    def get_meter_events(self, meters, date_from, date_to):
+    def get_meter_events(self, meters, date_from, date_to, parameters):
         """
         Asks for a S09 report to the specified meter.
         :param meters: a meter_id
         :return: an S09 report for the corresponding meter
         """
-        return self.send('S09', meters, date_from, date_to)
+        return self.send_with_parameters('S09', meters, date_from, date_to, parameters)
 
-    def get_all_meter_events(self, date_from, date_to):
+    def get_all_meter_events(self, date_from, date_to, parameters):
         """
         Asks for a S09 report to all meters.
         :return: an S09 report from every meter
         """
-        return self.send('S09', '', date_from, date_to)
+        return self.send_with_parameters('S09', '', date_from, date_to, parameters)
 
     def get_meter_parameters(self, meters, date_from, date_to):
         """
@@ -281,12 +293,12 @@ class Service(object):
         """
         return self.send('S14', '', date_from, date_to)
 
-    def get_concentrator_events(self, dc, date_from, date_to):
+    def get_concentrator_events(self, dc, date_from, date_to, parameters):
         """
         Asks for a S17 report to the concentrator.
         :return: an S17 report from the concentrator.
         """
-        return self.send('S17', dc, date_from, date_to)
+        return self.send_with_parameters('S17', dc, date_from, date_to, parameters)
 
     def get_cutoffs_status(self, meters, date_from, date_to):
         """
