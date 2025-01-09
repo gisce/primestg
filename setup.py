@@ -15,7 +15,6 @@ setup(
         'lxml',
         'zeep<4.0',
         'libcomxml',
-        'click<8',
         'python-dateutil'
     ],
     description='Prime STG-DC Interface Specification',
