@@ -329,6 +329,14 @@ class Service(object):
         """
         return self.send('S24', dc, date_from, date_to)
 
+    def get_instant_data_demand(self, meters):
+        """
+        Asks for a S26 report to the specified meter.
+        :param meters: a meter_id
+        :return: an S26 report for the corresponding meter
+        """
+        return self.send('S26', meters)
+
     def get_current_billing(self, meter, date_from, date_to):
         """
         Asks for a S27 report to the meter.
