@@ -33,8 +33,8 @@ ORDERS = {
     'dlms': {'order': 'B12', 'func': 'order_raw_dlms'},
     # CNC config
     'cnc_ftpip': {'order': 'B07', 'func': 'set_concentrator_ip'},
-    'cnc_ftpntp': {'order': 'B07', 'func': 'set_concentrator_ip'},
-    'cnc_ftpstg': {'order': 'B07', 'func': 'set_concentrator_ip'},
+    'cnc_ntpip': {'order': 'B07', 'func': 'set_concentrator_ip'},
+    'cnc_stgip': {'order': 'B07', 'func': 'set_concentrator_ip'},
 }
 
 
@@ -174,6 +174,14 @@ def sends_order(**kwargs):
    elif order_name == 'cnc_ftpip':
        vals = {
            'IPftp': kwargs['ip']
+       }
+   elif order_name == 'cnc_ntpip':
+       vals = {
+           'IPNTP': kwargs['ip']
+       }
+   elif order_name == 'cnc_stgip':
+       vals = {
+           'IPstg': kwargs['ip']
        }
 
    vals.update({
