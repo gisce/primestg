@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   upload-to-pypi:
-    runs-on: [self-hosted, Keroberos]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -31,6 +31,8 @@ jobs:
           strip_v: false
 
       - name: Creating a realease/pre-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUB_MASTER_PUSH_TOKEN }}
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
