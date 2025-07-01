@@ -5,7 +5,7 @@ with open('README.rst') as f:
 
 setup(
     name='primestg',
-    version='1.56.2',
+    version='1.56.3',
     packages=find_packages(),
     url='https://github.com/gisce/primestg',
     license='GNU Affero General Public License v3',
