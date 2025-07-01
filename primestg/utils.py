@@ -183,14 +183,14 @@ class DLMSTemplates(PrimeTemplates):
         else:
             return cycles_xml
 
-    def generate_cycles(self, template_name, meters_name, period='1', immediate=True, repeat='1', params=None):
+    def generate_cycles(self, template_name, meters_name, period='1', immediate="true", repeat='1', params=None):
         elements = self.get_template(template_name)['data']
         if params is None:
             params = {}
         else:
             params = prepare_params(params)
 
-        xml = '<cycle name="Cicle_{}_raw" period="{}" immediate={} repeat="{}" priority="1">\n'.format(
+        xml = '<cycle name="Cicle_{}_raw" period="{}" immediate="{}" repeat="{}" priority="1">\n'.format(
             template_name, period, immediate, repeat)
 
         for meter_name in meters_name:

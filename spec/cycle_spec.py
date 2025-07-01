@@ -134,11 +134,11 @@ with description("Function generate_cycles with GET_INSTANT"):
             template_name='GET_INSTANT',
             meters_name=meters,
             period='15',
-            immediate=False,
+            immediate='false',
             repeat='96'
         )
 
-        expect(xml).to(contain('<cycle name="Cicle_GET_INSTANT_raw" period="15" immediate=False repeat="96" priority="1">'))
+        expect(xml).to(contain('<cycle name="Cicle_GET_INSTANT_raw" period="15" immediate="false" repeat="96" priority="1">'))
         expect(xml).to(contain('<device sn="123456789"/>'))
         expect(xml).to(contain('<get obis="0.0.21.0.5.255" class="7" element="2"/>'))
         expect(xml).to(contain('</cycle>'))
