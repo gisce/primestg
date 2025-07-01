@@ -1,5 +1,6 @@
 from primestg.cycle.cycles import CycleFile
-from expects import expect, equal
+from primestg.utils import DLMSTemplates
+from expects import expect, equal, contain
 import io
 from datetime import datetime
 
@@ -122,6 +123,26 @@ with description('Parse CNC cycles'):
                 expect(len(expected['data'])).to(equal(len(cycle_data['data'])))
                 for i in range(0, len(cycle_data['data'])):
                     expect(expected['data'][i]).to(equal(cycle_data['data'][i]))
+
+with description("Function generate_cycles with GET_INSTANT"):
+
+    with it("Generar correctament un cicle DLMS"):
+
+        generator = DLMSTemplates()
+        meters = ['123456789']
+        xml = generator.generate_cycles(
+            template_name='GET_INSTANT',
+            meters_name=meters,
+            period='15',
+            immediate=False,
+            repeat='96'
+        )
+
+        expect(xml).to(contain('<cycle name="Cicle_GET_INSTANT_raw" period="15" immediate=False repeat="96" priority="1">'))
+        expect(xml).to(contain('<device sn="123456789"/>'))
+        expect(xml).to(contain('<get obis="0.0.21.0.5.255" class="7" element="2"/>'))
+        expect(xml).to(contain('</cycle>'))
+
 
 
 
