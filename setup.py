@@ -19,6 +19,7 @@ setup(
     ],
     description='Prime STG-DC Interface Specification',
     long_description=readme,
+    long_description_content_type='text/x-rst',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
