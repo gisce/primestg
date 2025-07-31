@@ -176,8 +176,12 @@ class DLMSTemplates(PrimeTemplates):
     def __init__(self):
         self.templates = DLMS_TEMPLATES
 
-    def generate_cycle_file(self, template_name, meters_name, params=None, root=True):
-        cycles_xml =self.generate_cycles(template_name, meters_name, params=params)
+    def generate_cycle_file(self, template_name, meters_name, params=None, root=True, **kwargs):
+        period = kwargs.get('period', 1)
+        immediate = kwargs.get('immediate', True)
+        repeat = kwargs.get('repeat', 1)
+        cycle_file_name = kwargs.get('cycle_file_name', None)
+        cycles_xml = self.generate_cycles(template_name, meters_name, period=period, immediate=immediate, repeat=repeat, cycle_file_name=cycle_file_name, params=params)
         if root:
             return "<cycles>\n{}\n</cycles>".format(cycles_xml)
         else:
