@@ -176,22 +176,29 @@ class DLMSTemplates(PrimeTemplates):
     def __init__(self):
         self.templates = DLMS_TEMPLATES
 
-    def generate_cycle_file(self, template_name, meters_name, params=None, root=True):
-        cycles_xml =self.generate_cycles(template_name, meters_name, params=params)
+    def generate_cycle_file(self, template_name, meters_name, params=None, root=True, **kwargs):
+        period = kwargs.get('period', 1)
+        immediate = kwargs.get('immediate', True)
+        repeat = kwargs.get('repeat', 1)
+        cycle_file_name = kwargs.get('cycle_file_name', None)
+        cycles_xml = self.generate_cycles(template_name, meters_name, period=period, immediate=immediate, repeat=repeat, cycle_file_name=cycle_file_name, params=params)
         if root:
             return "<cycles>\n{}\n</cycles>".format(cycles_xml)
         else:
             return cycles_xml
 
-    def generate_cycles(self, template_name, meters_name, period='1', immediate="true", repeat='1', params=None):
+    def generate_cycles(self, template_name, meters_name, period=1, immediate=True, repeat=1, params=None, cycle_file_name=None):
+        if cycle_file_name is None:
+            cycle_file_name = "Cicle_{}_raw".format(template_name)
+        immediate = str(immediate).lower()
         elements = self.get_template(template_name)['data']
         if params is None:
             params = {}
         else:
             params = prepare_params(params)
 
-        xml = '<cycle name="Cicle_{}_raw" period="{}" immediate="{}" repeat="{}" priority="1">\n'.format(
-            template_name, period, immediate, repeat)
+        xml = '<cycle name="{}" period="{}" immediate="{}" repeat="{}" priority="1">\n'.format(
+            cycle_file_name, period, immediate, repeat)
 
         for meter_name in meters_name:
             xml += '<device sn="{}"/>\n'.format(meter_name)
