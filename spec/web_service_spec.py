@@ -80,7 +80,8 @@ with description('Web services run'):
             try:
                 resp = self.s.get_meter_events('ZIV0040318130',
                                                '20170609010000',
-                                               '20170611000000')
+                                               '20170611000000',
+                                               'EvGroup:;EvCode:')
             except TransportError as te:
                 assert 'expected S09 error' in te.message
 
