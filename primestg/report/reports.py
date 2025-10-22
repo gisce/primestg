@@ -8,7 +8,8 @@ from primestg.message import MessageS
 from primestg.utils import octet2name, octet2number
 
 SUPPORTED_REPORTS = ['S01', 'S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S14', 'S15',
-                     'S17', 'S18', 'S21', 'S23', 'S24', 'S26', 'S27', 'S42', 'S52', 'G01']
+                     'S17', 'S18', 'S21', 'S23', 'S24', 'S26', 'S27', 'S42', 'S52',
+                     'G01', 'G02']
 
 
 def is_supported(report_code):
@@ -358,6 +359,35 @@ class MeasureS27(MeasureActiveReactive):
 
         return values
 
+
+class MeasureG02(Measure):
+
+    def get_hourly_value(self, value):
+        if not value:
+            return ""
+        elif len(value) == 24:
+            return hex(int(value, 2))[2:].upper()
+        else:  # already hex
+            return value
+
+    @property
+    def values(self):
+        try:
+            get = self.objectified.get
+            values = {
+                'timestamp': self._get_timestamp('Fh'),
+                'season': self.objectified.get('Fh')[-1:],
+                'atime': get_integer_value(get('Atime')),
+                'nchanges': get_integer_value(get('Nchanges')),
+                'aconc': get_integer_value(get('Aconc')),
+                'atimeperc': get_float_value(get('Atimeperc')),
+                'ahourly': self.get_hourly_value(get('Ahourly')),
+            }
+        except Exception as e:
+            self._warnings.append('ERROR: Reading G02 report. Thrown '
+                                  'exception: {}'.format(e))
+            return []
+        return [values]
 
 class OperationS42(Operation):
     """
@@ -1809,6 +1839,20 @@ class MeterS42(MeterWithConcentratorName):
         return OperationS42
 
 
+class MeterG02(MeterWithConcentratorName):
+    """
+    Class for a meter of report G02
+    """
+
+    @property
+    def report_type(self):
+        return 'G02'
+
+    @property
+    def measure_class(self):
+        return MeasureG02
+
+
 class ConcentratorS01(ConcentratorWithMetersWithConcentratorName):
     """
     Class for a concentrator of report S01.
@@ -2628,6 +2672,21 @@ class ConcentratorG01(Concentrator):
         return values
 
 
+class ConcentratorG02(ConcentratorWithMetersWithConcentratorName):
+    """
+    Class for a concentrator of report G02
+    """
+
+    @property
+    def meter_class(self):
+        """
+        The class used to instance meters for report G02.
+
+        :return: a class to instance meters of report G02
+        """
+        return MeterG02
+
+
 class RemoteTerminalUnitS52(RemoteTerminalUnitDetails):
     """
     Class for a remote terminal unit of report S52.
@@ -2849,6 +2908,10 @@ class Report(object):
                     objectified_concentrator,
                     self.report_version,
                 ],
+            },
+            'G02': {
+                'class': ConcentratorG02,
+                'args': [objectified_concentrator]
             }
         }
 
