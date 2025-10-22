@@ -969,7 +969,7 @@ class ParameterG01(Parameter):
         get = self.objectified.get
         try:
             values = {
-                'date': self._get_timestamp('Fh'),
+                'timestamp': self._get_timestamp('Fh'),
                 'season': self.objectified.get('Fh')[-1:],
                 'amed': get_integer_value(get('Amed')),
                 'amax': get_integer_value(get('Amax')),
