@@ -8,7 +8,8 @@ from primestg.message import MessageS
 from primestg.utils import octet2name, octet2number
 
 SUPPORTED_REPORTS = ['S01', 'S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S14', 'S15',
-                     'S17', 'S18', 'S21', 'S23', 'S24', 'S26', 'S27', 'S42', 'S52', 'G02']
+                     'S17', 'S18', 'S21', 'S23', 'S24', 'S26', 'S27', 'S42', 'S52',
+                     'G01', 'G02']
 
 
 def is_supported(report_code):
@@ -983,6 +984,31 @@ class ParameterS24(Parameter):
                 values['meters'].append(self.meter_availability(s24_meters))
         except Exception as e:
             self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+        return values
+
+
+class ParameterG01(Parameter):
+
+    @property
+    def values(self):
+        """
+        Set of parameters of report G01
+        :return: a dict with a set of parameters of report G01
+        """
+        values = {}
+        get = self.objectified.get
+        try:
+            values = {
+                'timestamp': self._get_timestamp('Fh'),
+                'season': self.objectified.get('Fh')[-1:],
+                'amed': get_integer_value(get('Amed')),
+                'amax': get_integer_value(get('Amax')),
+                'tot': get_integer_value(get('Tot')),
+                'aperc': get_float_value(get('Aperc')),
+            }
+        except Exception as e:
+            self._warnings.append('ERROR: Reading G01 report. Thrown '
+                                  'exception: {}'.format(e))
         return values
 
 
@@ -2585,6 +2611,67 @@ class ConcentratorS42(ConcentratorWithMetersWithConcentratorName):
         return MeterS42
 
 
+class ConcentratorG01(Concentrator):
+    """
+    Class for a concentrator of report G01.
+    """
+
+    def __init__(self, objectified_concentrator, report_version):
+        """
+        Create a Concentrator object for the report G01.
+
+        :param objectified_concentrator: an lxml.objectify.StringElement \
+            representing a meter
+        :param report_version: a string with the version of report
+        :return: a Meter object
+        """
+        super(ConcentratorG01, self).__init__(objectified_concentrator)
+        self.report_version = report_version
+
+    @property
+    def report_version(self):
+        """
+        The version of the report.
+
+        :return: a string with the version of the report
+        """
+        return self._report_version
+
+    @report_version.setter
+    def report_version(self, value):
+        """
+        Stores the report version.
+        :param value: a string with the version of the report
+        """
+        self._report_version = value
+
+    @property
+    def parameters(self):
+        """
+        Parameter set objects of this concentrator.
+
+        :return: a list of parameter set objects
+        """
+        parameters = []
+        if getattr(self.objectified, 'G01', None) is not None:
+            for parameter in self.objectified.G01:
+                parameters.append(ParameterG01(parameter, self.report_version))
+        return parameters
+
+    @property
+    def values(self):
+        """
+        Values of the set of parameters of this concentrator.
+
+        :return: a list with the values of the meters
+        """
+        values = []
+        for parameter in self.parameters:
+            values.append(parameter.values)
+            self._warnings.extend(parameter.warnings)
+        return values
+
+
 class ConcentratorG02(ConcentratorWithMetersWithConcentratorName):
     """
     Class for a concentrator of report G02
@@ -2814,6 +2901,13 @@ class Report(object):
             'S42': {
                 'class': ConcentratorS42,
                 'args': [objectified_concentrator]
+            },
+            'G01': {
+                'class': ConcentratorG01,
+                'args': [
+                    objectified_concentrator,
+                    self.report_version,
+                ],
             },
             'G02': {
                 'class': ConcentratorG02,
