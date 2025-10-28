@@ -21,6 +21,8 @@ def get_integer_value(param):
         result = int(param)
     except ValueError as e:
         result = 0
+    except TypeError as e:
+        result = 0
     return result
 
 
@@ -28,6 +30,8 @@ def get_float_value(param):
     try:
         result = float(param)
     except ValueError as e:
+        result = 0.0
+    except TypeError as e:
         result = 0.0
     return result
 
