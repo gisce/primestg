@@ -748,6 +748,16 @@ class LineSupervisor(BaseElement):
     Base class for a line supervisor.
     """
 
+    def __init__(self, objectified):
+        """
+        Create object.
+
+        :param objectified: an lxml.objectify.StringElement
+        :return: object
+        """
+        self.objectified = objectified
+        self._warnings = {}
+
     @property
     def errors(self):
         """
@@ -803,6 +813,15 @@ class LineSupervisor(BaseElement):
         for measure in self.measures:
             values.append(measure.value())
         return values
+
+    @property
+    def warnings(self):
+        """
+        Warnings
+
+        :return: a list with the errors found while reading
+        """
+        return self._warnings
 
 
 class LineSupervisorDetails(LineSupervisor):
