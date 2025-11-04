@@ -311,9 +311,10 @@ class MeasureS14(MeasureAverageVoltageAndCurrent):
 
         :return: a dict with a set of measures of report S14
         """
+        values = []
         try:
-            values = self.average_voltage_and_current(self.objectified)
-            values.update(
+            v = self.average_voltage_and_current(self.objectified)
+            v.update(
                 {
                     'timestamp': self._get_timestamp('Fh'),
                     'season': self.objectified.get('Fh')[-1:],
@@ -322,10 +323,12 @@ class MeasureS14(MeasureAverageVoltageAndCurrent):
                     'sexp': int(self.objectified.get('Sexp'))
                 }
             )
-            return [values]
+            values.append(v)
 
         except Exception as e:
             self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+
+        return values
 
 
 class MeasureS27(MeasureActiveReactive):
