@@ -491,7 +491,7 @@ class Meter(object):
         values = []
         for measure in self.measures:
             values.append(measure.value())
-        return values
+        return [v for v in values if v]
 
     @property
     def warnings(self):
@@ -566,7 +566,7 @@ class MeterWithConcentratorName(Meter):
                     self._warnings[self.name].extend(measure.warnings)
                 else:
                     self._warnings.update({self.name: measure.warnings})
-        return values
+        return [v for v in values if v]
 
 
 class MeterWithMagnitude(MeterWithConcentratorName):
@@ -665,7 +665,7 @@ class ConcentratorWithMeters(Concentrator):
         values = []
         for meter in self.meters:
             values.extend(meter.values)
-        return values
+        return [v for v in values if v]
 
 
 class ConcentratorWithMetersWithConcentratorName(ConcentratorWithMeters):
@@ -812,7 +812,7 @@ class LineSupervisor(BaseElement):
         values = []
         for measure in self.measures:
             values.append(measure.value())
-        return values
+        return [v for v in values if v]
 
     @property
     def warnings(self):
@@ -880,7 +880,7 @@ class LineSupervisorDetails(LineSupervisor):
                     self._warnings[self.name].extend(measure.warnings)
                 else:
                     self._warnings.update({self.name: measure.warnings})
-        return values
+        return [v for v in values if v]
 
     @property
     def magnitude(self):
@@ -925,7 +925,7 @@ class RemoteTerminalUnitDetails(BaseElement):
         values = []
         for line_supervisor in self.line_supervisors:
             values.extend(line_supervisor.values)
-        return values
+        return [v for v in values if v]
 
     @property
     def line_supervisors(self):
