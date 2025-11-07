@@ -490,8 +490,10 @@ class Meter(object):
         """
         values = []
         for measure in self.measures:
-            values.append(measure.value())
-        return [v for v in values if v]
+            vals = measure.value()
+            if vals:
+                values.append(vals)
+        return values
 
     @property
     def warnings(self):
@@ -560,13 +562,14 @@ class MeterWithConcentratorName(Meter):
                 v = subvalue.copy()
                 v['name'] = self.name
                 v['cnc_name'] = self.concentrator_name
-                values.append(v)
+                if v:
+                    values.append(v)
             if measure.warnings:
                 if self._warnings.get(self.name, False):
                     self._warnings[self.name].extend(measure.warnings)
                 else:
                     self._warnings.update({self.name: measure.warnings})
-        return [v for v in values if v]
+        return values
 
 
 class MeterWithMagnitude(MeterWithConcentratorName):
@@ -811,8 +814,10 @@ class LineSupervisor(BaseElement):
         """
         values = []
         for measure in self.measures:
-            values.append(measure.value())
-        return [v for v in values if v]
+            vals = measure.value()
+            if vals:
+                values.append(vals)
+        return values
 
     @property
     def warnings(self):
@@ -874,13 +879,14 @@ class LineSupervisorDetails(LineSupervisor):
                 v = subvalue.copy()
                 v['name'] = self.name
                 v['rt_unit_name'] = self.rt_unit_name
-                values.append(v)
+                if v:
+                    values.append(v)
             if measure.warnings:
                 if self._warnings.get(self.name, False):
                     self._warnings[self.name].extend(measure.warnings)
                 else:
                     self._warnings.update({self.name: measure.warnings})
-        return [v for v in values if v]
+        return values
 
     @property
     def magnitude(self):

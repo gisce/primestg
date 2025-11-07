@@ -1465,13 +1465,15 @@ class MeterS06(MeterWithMagnitude):
         """
         values = []
         for parameter in self.parameters:
-            values.append(parameter.values)
+            vals = parameter.values
+            if vals:
+                values.append(vals)
             if parameter.warnings:
                 if self._warnings.get(self.name, False):
                     self._warnings[self.name].extend(parameter.warnings)
                 else:
                     self._warnings.update({self.name: parameter.warnings})
-        return [v for v in values if v]
+        return values
 
     @property
     def warnings(self):
@@ -1785,13 +1787,15 @@ class MeterS23(MeterWithConcentratorName):
         """
         values = []
         for parameter in self.parameters:
-            values.append(parameter.values)
+            vals = parameter.values
+            if vals:
+                values.append(vals)
             if parameter.warnings:
                 if self._warnings.get(self.name, False):
                     self._warnings[self.name].extend(parameter.warnings)
                 else:
                     self._warnings.update({self.name: parameter.warnings})
-        return [v for v in values if v]
+        return values
 
     @property
     def warnings(self):
@@ -2144,9 +2148,11 @@ class ConcentratorS12(Concentrator):
         """
         values = []
         for parameter in self.parameters:
-            values.append(parameter.values)
+            vals = parameter.values
+            if vals:
+                values.append(vals)
             self._warnings.extend(parameter.warnings)
-        return [v for v in values if v]
+        return values
 
 
 class ConcentratorS13(ConcentratorWithMetersWithConcentratorName):
@@ -2244,11 +2250,12 @@ class ConcentratorEvents(Concentrator):
         """
         values = []
         for parameter in self.parameters:
-            if parameter.values:
-                values.append(parameter.values)
+            vals = parameter.values
+            if vals:
+                values.append(vals)
             if parameter.warnings:
                 self._warnings.extend(parameter.warnings)
-        return [v for v in values if v]
+        return values
 
 
 class ConcentratorS15(ConcentratorEvents):
@@ -2553,9 +2560,11 @@ class ConcentratorS23(ConcentratorWithMetersWithConcentratorName):
         """
         values = []
         for parameter in self.parameters:
-            values.append(parameter.values)
+            vals = parameter.values
+            if vals:
+                values.append(vals)
             self._warnings.extend(parameter.warnings)
-        return [v for v in values if v]
+        return values
 
 class ConcentratorS24(Concentrator):
     """
@@ -2598,9 +2607,11 @@ class ConcentratorS24(Concentrator):
         """
         values = []
         for parameter in self.parameters:
-            values.append(parameter.values)
+            vals = parameter.values
+            if vals:
+                values.append(vals)
             self._warnings.extend(parameter.warnings)
-        return [v for v in values if v]
+        return values
 
 
 class ConcentratorS42(ConcentratorWithMetersWithConcentratorName):
@@ -2674,9 +2685,11 @@ class ConcentratorG01(Concentrator):
         """
         values = []
         for parameter in self.parameters:
-            values.append(parameter.values)
+            vals = parameter.values
+            if vals:
+                values.append(vals)
             self._warnings.extend(parameter.warnings)
-        return [v for v in values if v]
+        return values
 
 
 class ConcentratorG02(ConcentratorWithMetersWithConcentratorName):
