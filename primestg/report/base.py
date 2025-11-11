@@ -490,7 +490,9 @@ class Meter(object):
         """
         values = []
         for measure in self.measures:
-            values.append(measure.value())
+            vals = measure.value()
+            if vals:
+                values.append(vals)
         return values
 
     @property
@@ -560,7 +562,8 @@ class MeterWithConcentratorName(Meter):
                 v = subvalue.copy()
                 v['name'] = self.name
                 v['cnc_name'] = self.concentrator_name
-                values.append(v)
+                if v:
+                    values.append(v)
             if measure.warnings:
                 if self._warnings.get(self.name, False):
                     self._warnings[self.name].extend(measure.warnings)
@@ -665,7 +668,7 @@ class ConcentratorWithMeters(Concentrator):
         values = []
         for meter in self.meters:
             values.extend(meter.values)
-        return values
+        return [v for v in values if v]
 
 
 class ConcentratorWithMetersWithConcentratorName(ConcentratorWithMeters):
@@ -748,6 +751,16 @@ class LineSupervisor(BaseElement):
     Base class for a line supervisor.
     """
 
+    def __init__(self, objectified):
+        """
+        Create object.
+
+        :param objectified: an lxml.objectify.StringElement
+        :return: object
+        """
+        self.objectified = objectified
+        self._warnings = {}
+
     @property
     def errors(self):
         """
@@ -801,8 +814,19 @@ class LineSupervisor(BaseElement):
         """
         values = []
         for measure in self.measures:
-            values.append(measure.value())
+            vals = measure.value()
+            if vals:
+                values.append(vals)
         return values
+
+    @property
+    def warnings(self):
+        """
+        Warnings
+
+        :return: a list with the errors found while reading
+        """
+        return self._warnings
 
 
 class LineSupervisorDetails(LineSupervisor):
@@ -855,7 +879,8 @@ class LineSupervisorDetails(LineSupervisor):
                 v = subvalue.copy()
                 v['name'] = self.name
                 v['rt_unit_name'] = self.rt_unit_name
-                values.append(v)
+                if v:
+                    values.append(v)
             if measure.warnings:
                 if self._warnings.get(self.name, False):
                     self._warnings[self.name].extend(measure.warnings)
@@ -906,7 +931,7 @@ class RemoteTerminalUnitDetails(BaseElement):
         values = []
         for line_supervisor in self.line_supervisors:
             values.extend(line_supervisor.values)
-        return values
+        return [v for v in values if v]
 
     @property
     def line_supervisors(self):

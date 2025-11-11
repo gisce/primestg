@@ -311,9 +311,10 @@ class MeasureS14(MeasureAverageVoltageAndCurrent):
 
         :return: a dict with a set of measures of report S14
         """
+        values = []
         try:
-            values = self.average_voltage_and_current(self.objectified)
-            values.update(
+            v = self.average_voltage_and_current(self.objectified)
+            v.update(
                 {
                     'timestamp': self._get_timestamp('Fh'),
                     'season': self.objectified.get('Fh')[-1:],
@@ -322,10 +323,12 @@ class MeasureS14(MeasureAverageVoltageAndCurrent):
                     'sexp': int(self.objectified.get('Sexp'))
                 }
             )
-            return [values]
+            values.append(v)
 
         except Exception as e:
             self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+
+        return values
 
 
 class MeasureS27(MeasureActiveReactive):
@@ -1146,7 +1149,7 @@ class LineSupervisorS52(LineSupervisorDetails):
         values = super(LineSupervisorS52, self).values
         for value in values:
             value['magn'] = self.magnitude
-        return values
+        return [v for v in values if v]
 
 
 class MeterS01(MeterWithMagnitude):
@@ -1267,7 +1270,7 @@ class MeterS02(MeterWithMagnitude):
         values = super(MeterS02, self).values
         for value in values:
             value['magn'] = self.magnitude
-        return values
+        return [v for v in values if v]
 
 
 class MeterS04(MeterWithMagnitude):
@@ -1462,7 +1465,9 @@ class MeterS06(MeterWithMagnitude):
         """
         values = []
         for parameter in self.parameters:
-            values.append(parameter.values)
+            vals = parameter.values
+            if vals:
+                values.append(vals)
             if parameter.warnings:
                 if self._warnings.get(self.name, False):
                     self._warnings[self.name].extend(parameter.warnings)
@@ -1782,7 +1787,9 @@ class MeterS23(MeterWithConcentratorName):
         """
         values = []
         for parameter in self.parameters:
-            values.append(parameter.values)
+            vals = parameter.values
+            if vals:
+                values.append(vals)
             if parameter.warnings:
                 if self._warnings.get(self.name, False):
                     self._warnings[self.name].extend(parameter.warnings)
@@ -2141,7 +2148,9 @@ class ConcentratorS12(Concentrator):
         """
         values = []
         for parameter in self.parameters:
-            values.append(parameter.values)
+            vals = parameter.values
+            if vals:
+                values.append(vals)
             self._warnings.extend(parameter.warnings)
         return values
 
@@ -2241,8 +2250,9 @@ class ConcentratorEvents(Concentrator):
         """
         values = []
         for parameter in self.parameters:
-            if parameter.values:
-                values.append(parameter.values)
+            vals = parameter.values
+            if vals:
+                values.append(vals)
             if parameter.warnings:
                 self._warnings.extend(parameter.warnings)
         return values
@@ -2550,7 +2560,9 @@ class ConcentratorS23(ConcentratorWithMetersWithConcentratorName):
         """
         values = []
         for parameter in self.parameters:
-            values.append(parameter.values)
+            vals = parameter.values
+            if vals:
+                values.append(vals)
             self._warnings.extend(parameter.warnings)
         return values
 
@@ -2595,7 +2607,9 @@ class ConcentratorS24(Concentrator):
         """
         values = []
         for parameter in self.parameters:
-            values.append(parameter.values)
+            vals = parameter.values
+            if vals:
+                values.append(vals)
             self._warnings.extend(parameter.warnings)
         return values
 
@@ -2671,7 +2685,9 @@ class ConcentratorG01(Concentrator):
         """
         values = []
         for parameter in self.parameters:
-            values.append(parameter.values)
+            vals = parameter.values
+            if vals:
+                values.append(vals)
             self._warnings.extend(parameter.warnings)
         return values
 
