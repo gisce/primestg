@@ -205,7 +205,7 @@ class DLMSTemplates(PrimeTemplates):
 
         if 'data' in elements[0]:
             for element in elements:
-                xml += '<set obis="{}" class="{}" element="{}"/>{}</set>\n'.format(
+                xml += '<set obis="{}" class="{}" element="{}">{}</set>\n'.format(
                 element['obis'], element['class'], element['element'], element['data'].format(**params))
         else:
             for element in elements:
