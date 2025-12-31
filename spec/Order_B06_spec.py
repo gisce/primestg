@@ -10,7 +10,7 @@ with description('Order B06 Generation'):
         expected_result = '<Order IdPet="1234" IdReq="B06" Version="3.4">\n  ' \
                           '<Cnc Id="CIR000000000">\n    <Cnt Id="CNT000000000">\n      ' \
                           '<B06 Operation="1"/>\n    </Cnt>\n  </Cnc>\n</Order>\n'
-        import pdb; pdb.set_trace()
+
         generic_values = {
             'id_pet': str(1234),
             'id_req': 'B06',
