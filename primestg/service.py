@@ -117,6 +117,15 @@ class Service(object):
         order = order.create(generic_values, payload)
         return self.send_order('B04', order)
 
+    def delete_meter(self, generic_values, payload):
+        """
+        Sends B06 order to meter
+        return Succes or fails
+        """
+        order = Order('B06')
+        order = order.create(generic_values, payload)
+        return self.send_order('B06', order)
+
     def get_concentrator_modification(self, generic_values, payload):
         """
         Sends B07 order to meter

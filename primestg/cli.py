@@ -23,6 +23,8 @@ REPORTS = [
 ]
 
 ORDERS = {
+    # UNREGISTER METER FROM CNC
+    'delete': {'order': 'B06', 'func': 'delete_meter'},
     # CUTOFF
     'cutoff': {'order': 'B03', 'func': 'get_cutoff_reconnection'},
     'reconnect': {'order': 'B03', 'func': 'get_cutoff_reconnection'},
