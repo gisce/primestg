@@ -8,7 +8,7 @@ from pytz import timezone
 
 TZ = timezone('Europe/Madrid')
 
-SUPPORTED_ORDERS = ['B02', 'B03', 'B04', 'B07', 'B09', 'B11']
+SUPPORTED_ORDERS = ['B02', 'B03', 'B04', 'B06', 'B07', 'B09', 'B11']
 
 
 def is_supported(order_code):
@@ -341,6 +341,41 @@ class B04Payload(XmlModel):
 
         super(B04Payload, self).__init__('b04Payload', 'payload', drop_empty=drop_empty)
 
+class B06:
+    """
+    The class used to instance B06 order.
+    Unregister meter from CNC db when retired.
+
+    :return: B06 order with parameters
+    """
+    def __init__(self, generic_values, payload):
+        self.generic_values = generic_values
+        self.order = CntOrderHeader(
+            generic_values.get('id_pet'),
+            generic_values.get('id_req'),
+            generic_values.get('cnc'),
+            generic_values.get('cnt'),
+            generic_values.get('version', '3.1.c'),
+        )
+        self.order.cnc.cnt.feed({'payload': B06Payload(payload)})
+        # Load generic order with values
+
+class B06Payload(XmlModel):
+    """
+    The class used to instance B06 parameters.
+    Supported parameters:
+        Operation:
+            1 -> Remove Meter
+
+    :return: B06 parameters
+    """
+    def __init__(self, payload, drop_empty=False):
+        self.payload = XmlField(
+            'B06', attributes={
+                'Operation': '1',
+            })
+        super(B06Payload, self).__init__('b06Payload', 'payload', drop_empty=drop_empty)
+
 
 class B07Ip:
     """
@@ -671,6 +706,10 @@ class Order(object):
             },
             'B04': {
                 'class': B04,
+                'args': [generic_values, payload]
+            },
+            'B06': {
+                'class': B06,
                 'args': [generic_values, payload]
             },
             'B07': {
