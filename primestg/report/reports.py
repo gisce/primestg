@@ -637,123 +637,340 @@ class ParameterS12(Parameter):
         :return: a dict with a set of parameters of report S12
         """
         values = {}
-
         try:
-            get = self.objectified.get
-
-            if self.report_version == '3.1c':
-                fwmtup_timeout_key = 'TimeOutMeterFwU'
-            else:
-                fwmtup_timeout_key = 'TimeOutPrimeFwU'
-
-            fwmtup_timeout = self.to_integer(get(fwmtup_timeout_key))
-
-            # Ormazabal Current concentrators returns the IPftp1 field
-            if 'IPftp' in self.objectified.keys():
-                rpt_ftp_ip_address_key = 'IPftp'
-            else:
-                rpt_ftp_ip_address_key = 'IPftp1'
-
-            rpt_ftp_ip_address = get(rpt_ftp_ip_address_key)
-
-            ntp_max_deviation = self.filter_integer(get('NTPMaxDeviation'))
-            session_timeout = self.filter_integer(get('AccInacTimeout'))
-            max_sessions = self.filter_integer(get('AccSimulMax'))
-
-            values = {
-                'date': self._get_timestamp('Fh'),
-                'model': get('Mod'),
-                'mf_year': get('Af'),
-                'type': get('Te'),
-                'w_password': get('DCPwdAdm'),
-                'r_password': get('DCPwdRead'),
-                'fw_version': get('Vf'),
-                'fw_comm_version': get('VfComm'),
-                'protocol': get('Pro'),
-                'communication': get('Com'),
-                'battery_mon': get('Bat'),
-                'ip_address': get('ipCom'),
-                'dc_ws_port': get('PortWS'),
-                'ip_mask': get('ipMask'),
-                'ip_gtw': get('ipGtw'),
-                'dhcp': self.get_boolean('ipDhcp'),
-                'slave1': get('Slave1'),
-                'slave2': get('Slave2'),
-                'slave3': get('Slave3'),
-                'local_ip_address': get('ipLoc'),
-                'local_ip_mask': get('ipMaskLoc'),
-                'plc_mac': get('Macplc'),
-                'serial_port_speed': get('Pse'),
-                'priority': self.get_boolean('Priority'),
-                'stg_ws_ip_address': get('IPstg'),
-                'stg_ws_password': get('stgPwd'),
-                'ntp_ip_address': get('IPNTP'),
-                'rpt_ftp_ip_address': rpt_ftp_ip_address,
-                'rpt_ftp_user': get('FTPUserReport'),
-                'rpt_ftp_password': get('FTPPwdReport'),
-                'fwdcup_ftp_ip_address': get('IPftpDCUpg'),
-                'fwdcup_ftp_user': get('UserftpDCUpg'),
-                'fwdcup_ftp_password': get('PwdftpDCUpg'),
-                'fwmtup_ftp_ip_address': get('IPftpMeterUpg'),
-                'fwmtup_ftp_user': get('UserftpMeterUpg'),
-                'fwmtup_ftp_password': get('UserftpMeterUpg'),
-                'retries': int(get('RetryFtp')),
-                'time_btw_retries': int(get('TimeBetwFtp')),
-                'cycle_ftp_ip_address': get('IPftpCycles'),
-                'cycle_ftp_user': get('UserftpCycles'),
-                'cycle_ftp_password': get('PwdftpCycles'),
-                'cycle_ftp_dir': get('DestDirCycles'),
-                'sync_meter': self.get_boolean('SyncMeter'),
-                'fwmtup_timeout': fwmtup_timeout,
-                'max_time_deviation': int(get('TimeDevOver')),
-                'min_time_deviation': int(get('TimeDev')),
-                'reset_msg': self.get_boolean('ResetMsg'),
-                'rpt_meter_limit': int(get('NumMeters')),
-                'rpt_time_limit': int(get('TimeSendReq')),
-                'disconn_time': int(get('TimeDisconMeter')),
-                'disconn_retries': int(get('RetryDisconMeter')),
-                'disconn_retry_interval': int(get('TimeRetryInterval')),
-                'meter_reg_data': get('MeterRegData'),
-                'report_format': get('ReportFormat'),
-                's26_content': get('S26Content'),
-                'values_check_delay': int(get('ValuesCheckDelay')),
-                'max_order_outdate': self.to_integer(get('MaxOrderOutdate')),
-                'restart_delay': self.to_integer(get('TimeDelayRestart')),
-                'ntp_max_deviation': ntp_max_deviation,
-                'session_timeout': session_timeout,
-                'max_sessions':  max_sessions
-            }
-            if hasattr(self.objectified, 'TP'):
-                tasks = []
-                for task in self.objectified.TP:
-                    task_values = {
-                        'name': task.get('TpTar'),
-                        'priority': int(task.get('TpPrio')),
-                        'date_from': self._get_timestamp('TpHi', element=task),
-                        'periodicity': task.get('TpPer'),
-                        'complete': self.get_boolean('TpCompl', element=task),
-                        'meters': task.get('TpMet'),
-                    }
-                    task_data_values = []
-                    if getattr(task, 'TpPro', None) is not None:
-                        for task_data in task.TpPro:
-                            task_data_value = {
-                                'request': task_data.get('TpReq'),
-                                'stg_send':
-                                    self.get_boolean('TpSend', element=task_data),
-                                'store':
-                                    self.get_boolean('TpStore', element=task_data),
-                                'attributes': task_data.get('TpAttr'),
-                            }
-                            task_data_values.append(task_data_value)
-                    task_values['task_data'] = task_data_values
-                    tasks.append(task_values)
-                values['tasks'] = tasks
-            else:
-                values['tasks'] = []
+            version_num = self.report_version[0]
+            func_name = '_get_v{}_S12_values'.format(version_num)
+            func = getattr(self, func_name)
+            values = func()
         except Exception as e:
             self._warnings.append('ERROR: Reading S12 report. Thrown '
                                   'exception: {}'.format(e))
+        return values
+
+    def _get_v4_S12_values(self):
+        get = self.objectified.get
+        values = {}
+        if hasattr(self.objectified, 'INFO'):
+            get_info = self.objectified.INFO.get
+        s12 = self.objectified
+        get_s12 = s12.get
+
+        get_info = s12.INFO.get if hasattr(s12, 'INFO') else lambda x: None
+        get_general = s12.GENERAL.get if hasattr(s12, 'GENERAL') else lambda x: None
+        get_network = s12.NETWORK.get if hasattr(s12, 'NETWORK') else lambda x: None
+        get_access = s12.ACCESS.get if hasattr(s12, 'ACCESS') else lambda x: None
+        get_time = s12.TIME.get if hasattr(s12, 'TIME') else lambda x: None
+        get_dlms = s12.DLMS.get if hasattr(s12, 'DLMS') else lambda x: None
+        get_task = s12.TASK.get if hasattr(s12, 'TASK') else lambda x: None
+        get_events = s12.EVENTS.get if hasattr(s12, 'EVENTS') else lambda x: None
+        get_snmp = s12.SNMP.get if hasattr(s12, 'SNMP') else lambda x: None
+        get_ftpcycles = s12.FTPcycles.get if hasattr(s12, 'FTPcycles') else lambda x: None
+
+        values = {
+            'date': self._get_timestamp('Fh'),
+
+            # --- INFO ---
+            'model': get_info('Mod'),
+            'mf_year': self.to_integer(get_info('Af')),
+            'type': get_info('Te'),
+            'fw_version': get_info('Vf'),
+            'protocol': get_info('Pro'),
+            'battery_mon': self.to_integer(get_info('Bat')),
+            'communication': get_info('Com'),
+            'rev_conf': get_info('revConf'),
+            'date_conf': self._get_timestamp('dateConf', element=s12.INFO),
+            'nom_instal': get_info('NomInstal'),
+            'cod_instal': get_info('CodInstal'),
+
+            # --- GENERAL ---
+            'max_log_depth': self.to_integer(get_general('MaxLogDepth')),
+            'statistics_period': self.to_integer(
+                get_general('StatisticsPeriod')),
+            'log_mask': get_general('LogMask'),
+            'check_stg': get_general('CheckSTG') == 'Y',
+            # O usa tu self.get_boolean si le puedes pasar el valor
+            'tpl_num_max': self.to_integer(get_general('TPLNumMax')),
+
+            # --- NETWORK ---
+            'ip_address': get_network('ipCom'),
+            'dc_ws_port': self.to_integer(get_network('DCPortWS')),
+            'ip_mask': get_network('ipMask'),
+            'ip_gtw': get_network('ipGtw'),
+            'dhcp': get_network('ipDhcp') == 'Y',
+            'local_ip_address': get_network('ipLoc'),
+            'local_ip_mask': get_network('ipMaskLoc'),
+            'ip_address_2': get_network('ipCom2'),
+            'ip_mask_2': get_network('ipMask2'),
+
+            # --- ACCESS ---
+            'session_timeout': self.to_integer(get_access('AccInacTimeout')),
+            'max_sessions': self.to_integer(get_access('AccSimulMax')),
+            'auth_ip': get_access('AuthIP'),
+            'auth_retry': self.to_integer(get_access('AuthRetry')),
+            'auth_retry_interval': self.to_integer(get_access('AuthRetryInterval')),
+            'ldap_cat_1': get_access('LdapCat1'),
+            'ldap_cat_2': get_access('LdapCat2'),
+            'ldap_cat_3': get_access('LdapCat3'),
+            'ldap_cat_4': get_access('LdapCat4'),
+            'ldap_cat_5': get_access('LdapCat5'),
+            'ldap_cat_6': get_access('LdapCat6'),
+            'ldap_cat_7': get_access('LdapCat7'),
+            'ldap_cat_8': get_access('LdapCat8'),
+            'tacacs_enable': get_access('TacacsEnable') == 'Y',
+            'ldap_base': get_access('LdapBase'),
+            'ldap_authentication': get_access('LdapAuthentication'),
+            'ldap_bind_user': get_access('LdapBindUser'),
+            'ldap_start_tls_policy': self.to_integer(get_access('LdapStartTlsPolicy')),
+            'ssh_enabled': get_access('sshEnabled') == 'Y',
+            'ssh_listen_address': get_access('sshListenAddress'),
+            'telnet_enabled': get_access('telnetEnabled') == 'Y',
+            'telnet_listen_address': get_access('telnetListenAddress'),
+            'x509_default_validation_policy': self.to_integer(get_access('x509DefaultValidationPolicy')),
+            'tls_versions': get_access('tlsVersions'),
+            'pki_url': get_access('PkiUrl'),
+            'web_ui_x509_authentication': get_access('WebUIX509Authentication') == 'Y',
+            'cert_renew_enabled': get_access('CertRenewEnabled') == 'Y',
+            'cert_renew_retry_interval': self.to_integer(get_access('CertRenewRetryInterval')),
+            'cert_exp_time': self.to_integer(get_access('CertExpTime')),
+            'ip_dns': get_access('ipDns'),
+
+            # --- TIME ---
+            'ntp_max_deviation': self.to_integer(get_time('NtpMaxDeviation')),
+            'ntp_ip_address': get_time('ipNtp'),
+            'ntp_ip_address_2': get_time('ipNtp2'),
+            'tout_ntp': self.to_integer(get_time('toutNtp')),
+            'n_retry_ntp': self.to_integer(get_time('nRetryNtp')),
+            't_retry_ntp': self.to_integer(get_time('tRetryNtp')),
+            'time_sincro_ntp': self.to_integer(get_time('timeSincroNtp')),
+            'time_zone': get_time('timeZone'),
+
+            # --- DLMS ---
+            'dlms_enable': get_dlms('DlmsEnable') == 'Y',
+            'disconn_time': self.to_integer(get_dlms('TimeDisconMeter')),
+            'disconn_retries': self.to_integer(get_dlms('RetryDisconMeter')),
+            'disconn_retry_interval': self.to_integer(get_dlms('TimeRetryInterval')),
+            'values_check_delay': self.to_integer(get_dlms('ValuesCheckDelay')),
+            'max_order_outdate': self.to_integer(get_dlms('MaxOrderOutdate')),
+            'tout_dc_config': self.to_integer(get_dlms('toutDCConfig')),
+            'restart_delay': self.to_integer(get_dlms('TimeDelayRestart')),
+            'sync_meter': get_dlms('SyncMeter') == 'Y',
+            'min_time_deviation': self.to_integer(get_dlms('TimeDev')),
+            'max_time_deviation': self.to_integer(get_dlms('TimeDevOver')),
+            'meter_reg_data': get_dlms('MeterRegData'),
+            'time_reg_over': self.to_integer(get_dlms('TimeRegOver')),
+            'plc_timeout_rm': self.to_integer(get_dlms('PLCTimeoutRM')),
+            'plc_timeout_f': self.to_integer(get_dlms('PLCTimeoutF')),
+            'fwmtup_timeout': self.to_integer(get_dlms('TimeOutMeterFwU')),
+            'num_ret_fw_u': self.to_integer(get_dlms('NumRetFwU')),
+            'time_fw_u_ret': self.to_integer(get_dlms('TimeFwURet')),
+            'rpt_meter_limit': self.to_integer(get_dlms('NumMeters')),
+            'rpt_time_limit': self.to_integer(get_dlms('TimeSendReq')),
+
+            # --- TASK ---
+            'max_parallel_orders': self.to_integer(get_task('MaxParallelOrders')),
+            'read_on_reconnection': get_task('ReadOnReconnection') == 'Y',
+            'retry_per_dev': get_task('RetryPerDev') == 'Y',
+            'odd_days_sorting': get_task('OddDaysSorting'),
+            'even_days_sorting': get_task('EvenDaysSorting'),
+            'odd_days_sorting_direction': get_task('OddDaysSortingDirection'),
+            'even_days_sorting_direction': get_task('EvenDaysSortingDirection'),
+            'report_depth': self.to_integer(get_task('ReportDepth')),
+            'max_tp_tar': self.to_integer(get_task('MaxTpTar')),
+            'task_scheduler_enable': get_task('TaskSchedulerEnable') == 'Y',
+
+            # --- EVENTS ---
+            'cfg_dc_ev_mask_1': get_events('CfgDCEvMask1'),
+            'cfg_dc_ev_mask_2': get_events('CfgDCEvMask2'),
+            'cfg_dc_ev_mask_3': get_events('CfgDCEvMask3'),
+            'cfg_dc_ev_mask_4': get_events('CfgDCEvMask4'),
+            'cfg_dc_ev_mask_5': get_events('CfgDCEvMask5'),
+            'spont_stg_dest': self.to_integer(get_events('SpontSTGDest')),
+            'spon_dc_ev_mask_1': get_events('SponDCEvMask1'),
+            'spon_dc_ev_mask_2': get_events('SponDCEvMask2'),
+            'spon_dc_ev_mask_3': get_events('SponDCEvMask3'),
+            'spon_dc_ev_mask_4': get_events('SponDCEvMask4'),
+            'spon_dc_ev_mask_5': get_events('SponDCEvMask5'),
+
+            # --- SNMP ---
+            'snmp_enable': get_snmp('SnmpEnable') == 'Y',
+            'snmp_version': self.to_integer(get_snmp('SnmpVersion')),
+            'snmp_public': get_snmp('SnmpPublic'),
+            'snmp_private': get_snmp('SnmpPrivate'),
+            'trap_community': get_snmp('TrapCommunity'),
+            'trap_ip_address': get_snmp('TrapAddress'),
+            'snmp_3_sec_level': get_snmp('Snmp3SecLevel'),
+            'snmp_3_sec_user': get_snmp('Snmp3SecUser'),
+
+            # --- FTPcycles ---
+            'ftp_cycles_protocol': get_ftpcycles('FtpCyclesProtocol'),
+            'cycle_ftp_ip_address': get_ftpcycles('ipFtpCycles'),
+            'cycle_ftp_user': get_ftpcycles('UserFtpCycles'),
+            'cycle_ftp_dir': get_ftpcycles('DestDirCycles'),
+            'prefix_cycles': get_ftpcycles('PrefixCycles'),
+
+            'other': {},
+            'tasks': []
+        }
+
+        # --- MULTI_STG ---
+        if hasattr(s12, 'MULTI_STG') and hasattr(s12.MULTI_STG, 'STG'):
+            for stg_node in s12.MULTI_STG.STG:
+                values.update({
+                    'stg_id': stg_node.get('STGid'),
+                    'port_stg': self.to_integer(stg_node.get('PortSTG')),
+                    'report_format': self.to_integer(stg_node.get('ReportFormat')),
+                    'stg_ws_ip_address': stg_node.get('ipStg'),
+                    'stg_protocol': stg_node.get('StgProtocol'),
+                    'stg_path': stg_node.get('StgPath'),
+                    'n_retry_ws': self.to_integer(stg_node.get('nRetryWS')),
+                    't_retry_ws': self.to_integer(stg_node.get('tRetryWS')),
+                    'tout_ws': self.to_integer(stg_node.get('toutWS')),
+                    'ftp_protocol': stg_node.get('FtpProtocol'),
+                    'dest_dir_report': stg_node.get('DestDirReport'),
+                    'rpt_ftp_ip_address': stg_node.get('ipFtp'),
+                    'n_retry_ftp': self.to_integer(stg_node.get('nRetryFtp')),
+                    't_retry_ftp': self.to_integer(stg_node.get('tRetryFtp')),
+                    'tout_ftp': self.to_integer(stg_node.get('toutFtp')),
+                    'ftp_random_delay': self.to_integer(stg_node.get('FtpRandomDelay')),
+                    'rpt_ftp_user': stg_node.get('FtpUserReport'),
+                    'fwdcup_ftp_ip_address': stg_node.get('ipFtpDCUpg'),
+                    'fwdcup_ftp_user': stg_node.get('UserFtpDCUpg'),
+                    'fwmtup_ftp_ip_address': stg_node.get('ipFtpMeterUpg'),
+                    'fwmtup_ftp_user': stg_node.get('UserFtpMeterUpg')
+                })
+
+        # --- DLMSovTCP ---
+        if hasattr(s12, 'DLMSovTCP') and hasattr(s12.DLMSovTCP, 'DlmsC'):
+            for dlmsc_node in s12.DLMSovTCP.DlmsC:
+                values.update({
+                    'dlms_c_id': self.to_integer(dlmsc_node.get('DlmsC_id')),
+                    'dlms_c_ip_addr': dlmsc_node.get('DlmsC_ip_Addr'),
+                    'dlms_c_type': dlmsc_node.get('DlmsC_Type'),
+                    'dlms_c_tcp_port': self.to_integer(dlmsc_node.get('DlmsC_Tcp_Port')),
+                    'dlms_c_descr': dlmsc_node.get('DlmsC_Descr')
+                })
+
+        # --- Other ---
+        if hasattr(s12, 'Other') and hasattr(s12.Other, 'Parameter'):
+            for param_node in s12.Other.Parameter:
+                values['other'].update({
+                    param_node.get('Key'): param_node.get('Value')
+                })
+        return values
+
+    def _get_v3_S12_values(self):
+        get = self.objectified.get
+
+        if self.report_version == '3.1c':
+            fwmtup_timeout_key = 'TimeOutMeterFwU'
+        else:
+            fwmtup_timeout_key = 'TimeOutPrimeFwU'
+
+        fwmtup_timeout = self.to_integer(get(fwmtup_timeout_key))
+
+        # Ormazabal Current concentrators returns the IPftp1 field
+        if 'IPftp' in self.objectified.keys():
+            rpt_ftp_ip_address_key = 'IPftp'
+        else:
+            rpt_ftp_ip_address_key = 'IPftp1'
+
+        rpt_ftp_ip_address = get(rpt_ftp_ip_address_key)
+
+        ntp_max_deviation = self.filter_integer(get('NTPMaxDeviation'))
+        session_timeout = self.filter_integer(get('AccInacTimeout'))
+        max_sessions = self.filter_integer(get('AccSimulMax'))
+
+        values = {
+            'date': self._get_timestamp('Fh'),
+            'model': get('Mod'),
+            'mf_year': get('Af'),
+            'type': get('Te'),
+            'w_password': get('DCPwdAdm'),
+            'r_password': get('DCPwdRead'),
+            'fw_version': get('Vf'),
+            'fw_comm_version': get('VfComm'),
+            'protocol': get('Pro'),
+            'communication': get('Com'),
+            'battery_mon': get('Bat'),
+            'ip_address': get('ipCom'),
+            'dc_ws_port': get('PortWS'),
+            'ip_mask': get('ipMask'),
+            'ip_gtw': get('ipGtw'),
+            'dhcp': self.get_boolean('ipDhcp'),
+            'slave1': get('Slave1'),
+            'slave2': get('Slave2'),
+            'slave3': get('Slave3'),
+            'local_ip_address': get('ipLoc'),
+            'local_ip_mask': get('ipMaskLoc'),
+            'plc_mac': get('Macplc'),
+            'serial_port_speed': get('Pse'),
+            'priority': self.get_boolean('Priority'),
+            'stg_ws_ip_address': get('IPstg'),
+            'stg_ws_password': get('stgPwd'),
+            'ntp_ip_address': get('IPNTP'),
+            'rpt_ftp_ip_address': rpt_ftp_ip_address,
+            'rpt_ftp_user': get('FTPUserReport'),
+            'rpt_ftp_password': get('FTPPwdReport'),
+            'fwdcup_ftp_ip_address': get('IPftpDCUpg'),
+            'fwdcup_ftp_user': get('UserftpDCUpg'),
+            'fwdcup_ftp_password': get('PwdftpDCUpg'),
+            'fwmtup_ftp_ip_address': get('IPftpMeterUpg'),
+            'fwmtup_ftp_user': get('UserftpMeterUpg'),
+            'fwmtup_ftp_password': get('UserftpMeterUpg'),
+            'retries': int(get('RetryFtp')),
+            'time_btw_retries': int(get('TimeBetwFtp')),
+            'cycle_ftp_ip_address': get('IPftpCycles'),
+            'cycle_ftp_user': get('UserftpCycles'),
+            'cycle_ftp_password': get('PwdftpCycles'),
+            'cycle_ftp_dir': get('DestDirCycles'),
+            'sync_meter': self.get_boolean('SyncMeter'),
+            'fwmtup_timeout': fwmtup_timeout,
+            'max_time_deviation': int(get('TimeDevOver')),
+            'min_time_deviation': int(get('TimeDev')),
+            'reset_msg': self.get_boolean('ResetMsg'),
+            'rpt_meter_limit': int(get('NumMeters')),
+            'rpt_time_limit': int(get('TimeSendReq')),
+            'disconn_time': int(get('TimeDisconMeter')),
+            'disconn_retries': int(get('RetryDisconMeter')),
+            'disconn_retry_interval': int(get('TimeRetryInterval')),
+            'meter_reg_data': get('MeterRegData'),
+            'report_format': get('ReportFormat'),
+            's26_content': get('S26Content'),
+            'values_check_delay': int(get('ValuesCheckDelay')),
+            'max_order_outdate': self.to_integer(get('MaxOrderOutdate')),
+            'restart_delay': self.to_integer(get('TimeDelayRestart')),
+            'ntp_max_deviation': ntp_max_deviation,
+            'session_timeout': session_timeout,
+            'max_sessions': max_sessions
+        }
+        if hasattr(self.objectified, 'TP'):
+            tasks = []
+            for task in self.objectified.TP:
+                task_values = {
+                    'name': task.get('TpTar'),
+                    'priority': int(task.get('TpPrio')),
+                    'date_from': self._get_timestamp('TpHi', element=task),
+                    'periodicity': task.get('TpPer'),
+                    'complete': self.get_boolean('TpCompl', element=task),
+                    'meters': task.get('TpMet'),
+                }
+                task_data_values = []
+                if getattr(task, 'TpPro', None) is not None:
+                    for task_data in task.TpPro:
+                        task_data_value = {
+                            'request': task_data.get('TpReq'),
+                            'stg_send':
+                                self.get_boolean('TpSend', element=task_data),
+                            'store':
+                                self.get_boolean('TpStore', element=task_data),
+                            'attributes': task_data.get('TpAttr'),
+                        }
+                        task_data_values.append(task_data_value)
+                task_values['task_data'] = task_data_values
+                tasks.append(task_values)
+            values['tasks'] = tasks
+        else:
+            values['tasks'] = []
         return values
 
 
