@@ -112,7 +112,7 @@ CONTRACT_TEMPLATES = {
             '01': [
                 {'hour': 0, 'period': 3},
                 {'hour': 8, 'period': 2},
-                {'hour': 9, 'period': 1},
+                {'hour': 10, 'period': 1},
                 {'hour': 14, 'period': 2},
                 {'hour': 18, 'period': 1},
                 {'hour': 22, 'period': 2}
@@ -122,15 +122,15 @@ CONTRACT_TEMPLATES = {
             ],
         },
         'special_days': [
-            {'datetime': 'FFFF0101000000000W', 'datetime_card': True, 'day_id': '03'},
-            {'datetime': 'FFFF0106000000000W', 'datetime_card': True, 'day_id': '03'},
-            {'datetime': 'FFFF0501000000000S', 'datetime_card': True, 'day_id': '03'},
-            {'datetime': 'FFFF0815000000000S', 'datetime_card': True, 'day_id': '03'},
-            {'datetime': 'FFFF1012000000000S', 'datetime_card': True, 'day_id': '03'},
-            {'datetime': 'FFFF1101000000000W', 'datetime_card': True, 'day_id': '03'},
-            {'datetime': 'FFFF1206000000000W', 'datetime_card': True, 'day_id': '03'},
-            {'datetime': 'FFFF1208000000000W', 'datetime_card': True, 'day_id': '03'},
-            {'datetime': 'FFFF1225000000000W', 'datetime_card': True, 'day_id': '03'},
+            {'datetime': 'FFFF0101000000000W', 'datetime_card': True, 'day_id': '02'},
+            {'datetime': 'FFFF0106000000000W', 'datetime_card': True, 'day_id': '02'},
+            {'datetime': 'FFFF0501000000000S', 'datetime_card': True, 'day_id': '02'},
+            {'datetime': 'FFFF0815000000000S', 'datetime_card': True, 'day_id': '02'},
+            {'datetime': 'FFFF1012000000000S', 'datetime_card': True, 'day_id': '02'},
+            {'datetime': 'FFFF1101000000000W', 'datetime_card': True, 'day_id': '02'},
+            {'datetime': 'FFFF1206000000000W', 'datetime_card': True, 'day_id': '02'},
+            {'datetime': 'FFFF1208000000000W', 'datetime_card': True, 'day_id': '02'},
+            {'datetime': 'FFFF1225000000000W', 'datetime_card': True, 'day_id': '02'},
         ],
     },
     '3.0TDA': {
