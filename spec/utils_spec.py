@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from expects import expect, raise_error, be_a, equal, match
+
+from primestg.contract_templates import CONTRACT_TEMPLATES
 from primestg.utils import DLMSTemplates, ContractTemplates, datetohexprime, octet2name, name2octet, octet2date
 from primestg.dlms_templates import DLMS_TEMPLATES
 from datetime import date, datetime
@@ -138,3 +140,67 @@ with description('Utils'):
                     result_date = octet2date(octet)
                     expect(dt).to(equal(result_date))
 
+    with context("ContractTemplates"):
+        with context('get_available_templates'):
+            with it('returns all templates list of tuples'):
+                ct = ContractTemplates()
+                retrieved = ct.get_available_templates()
+                retrieved_names = [t[0] for t in retrieved]
+
+                available_templates = CONTRACT_TEMPLATES
+                available_names = [t for t in available_templates.keys()]
+
+                expect(available_names).to(equal(retrieved_names))
+
+            with it('returns only selected category templates'):
+                all_templates = CONTRACT_TEMPLATES
+                available_categories = list(set([t['category'] for t in all_templates.values()]))
+
+                ct = ContractTemplates()
+
+                for category in available_categories:
+                    retrieved = ct.get_available_templates(template_type=category)
+                    retrieved_names = [t[0] for t in retrieved]
+
+                    available_names = [n for n, t in all_templates.items() if t['category'] == category]
+                    expect(available_names).to(equal(retrieved_names))
+
+            with it('returns only selected origin templates'):
+                all_templates = CONTRACT_TEMPLATES
+                available_origins = list(set([t['origin'] for t in all_templates.values()]))
+
+                ct = ContractTemplates()
+
+                for origin in available_origins:
+                    retrieved = ct.get_available_templates(origin=origin)
+                    retrieved_names = [t[0] for t in retrieved]
+
+                    available_names = [n for n, t in all_templates.items() if t['origin'] == origin]
+                    expect(available_names).to(equal(retrieved_names))
+
+            with it('returns only selected origin and category templates'):
+                all_templates = CONTRACT_TEMPLATES
+
+                ct = ContractTemplates()
+
+                category = 'contract'
+                origin = 'library'
+                retrieved = ct.get_available_templates(origin=origin, template_type=category)
+                retrieved_names = [t[0] for t in retrieved]
+
+                available_names = [n for n, t in all_templates.items()
+                                   if t['origin'] == origin and t['category'] == category]
+
+                expect(available_names).to(equal(retrieved_names))
+
+            with it('returns only active templates'):
+                all_templates = CONTRACT_TEMPLATES
+
+                ct = ContractTemplates()
+
+                retrieved = ct.get_available_templates(active=True)
+                retrieved_names = [t[0] for t in retrieved]
+
+                available_names = [n for n, t in all_templates.items() if t['active']]
+
+                expect(available_names).to(equal(retrieved_names))
