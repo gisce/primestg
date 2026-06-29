@@ -171,7 +171,7 @@ with description('Order B04 Generation'):
                                    <Day id="01">
                                      <Change Hour="00000000" TariffRate="0003"/>
                                      <Change Hour="08000000" TariffRate="0002"/>
-                                     <Change Hour="09000000" TariffRate="0001"/>
+                                     <Change Hour="0A000000" TariffRate="0001"/>
                                      <Change Hour="0E000000" TariffRate="0002"/>
                                      <Change Hour="12000000" TariffRate="0001"/>
                                      <Change Hour="16000000" TariffRate="0002"/>
@@ -179,15 +179,15 @@ with description('Order B04 Generation'):
                                    <Day id="02">
                                      <Change Hour="00000000" TariffRate="0003"/>
                                    </Day>
-                                   <SpecialDays DT="FFFF0101000000000W" DTCard="Y" DayID="03"/>
-                                   <SpecialDays DT="FFFF0106000000000W" DTCard="Y" DayID="03"/>
-                                   <SpecialDays DT="FFFF0501000000000S" DTCard="Y" DayID="03"/>
-                                   <SpecialDays DT="FFFF0815000000000S" DTCard="Y" DayID="03"/>
-                                   <SpecialDays DT="FFFF1012000000000S" DTCard="Y" DayID="03"/>
-                                   <SpecialDays DT="FFFF1101000000000W" DTCard="Y" DayID="03"/>
-                                   <SpecialDays DT="FFFF1206000000000W" DTCard="Y" DayID="03"/>
-                                   <SpecialDays DT="FFFF1208000000000W" DTCard="Y" DayID="03"/>
-                                   <SpecialDays DT="FFFF1225000000000W" DTCard="Y" DayID="03"/>
+                                   <SpecialDays DT="FFFF0101000000000W" DTCard="Y" DayID="02"/>
+                                   <SpecialDays DT="FFFF0106000000000W" DTCard="Y" DayID="02"/>
+                                   <SpecialDays DT="FFFF0501000000000S" DTCard="Y" DayID="02"/>
+                                   <SpecialDays DT="FFFF0815000000000S" DTCard="Y" DayID="02"/>
+                                   <SpecialDays DT="FFFF1012000000000S" DTCard="Y" DayID="02"/>
+                                   <SpecialDays DT="FFFF1101000000000W" DTCard="Y" DayID="02"/>
+                                   <SpecialDays DT="FFFF1206000000000W" DTCard="Y" DayID="02"/>
+                                   <SpecialDays DT="FFFF1208000000000W" DTCard="Y" DayID="02"/>
+                                   <SpecialDays DT="FFFF1225000000000W" DTCard="Y" DayID="02"/>
                                 </Contract>
                             </B04>
                         </Cnt>

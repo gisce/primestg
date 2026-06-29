@@ -146,12 +146,14 @@ class PrimeTemplates:
     def __init__(self):
         self.templates = {}
 
-    def get_available_templates(self, origin=None, template_type=None):
+    def get_available_templates(self, origin=None, template_type=None, active=None):
         template_list = []
         for name, contract in self.templates.items():
             if origin is not None and contract['origin'] != origin:
                 continue
             if template_type is not None and contract['category'] != template_type:
+                continue
+            if active is not None and contract['active'] != active:
                 continue
 
             template_list.append((name, contract['description'], contract['origin']))

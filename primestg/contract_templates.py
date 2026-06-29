@@ -4,7 +4,8 @@ CONTRACT_TEMPLATES = {
     '2.0_ST': {
         'description': '2.x 1 period contracts (Simple Tariff)',
         'origin': 'library',
-        'type': '01',
+        'category': 'contract',
+        'active': False,
         'seasons': [
             {
                 'name': '01',
@@ -24,7 +25,8 @@ CONTRACT_TEMPLATES = {
     'DHA_IT': {
         'description': '2.xDHA 2 period contracts (Double Tariff)',
         'origin': 'library',
-        'type': '01',
+        'category': 'contract',
+        'active': False,
         'seasons': [
           {
             'name': '01',
@@ -59,7 +61,8 @@ CONTRACT_TEMPLATES = {
     'DHS_IT': {
         'description': '2.xDHS 3 period contracts (Triple Tariff)',
         'origin': 'library',
-        'type': '01',
+        'category': 'contract',
+        'active': False,
         'seasons': [
             {
               'name': '01',
@@ -97,7 +100,8 @@ CONTRACT_TEMPLATES = {
     '2.0TDA': {
         'description': '2.0TDA 3 periods and special days',
         'origin': 'library',
-        'type': '01',
+        'category': 'contract',
+        'active': True,
         'seasons': [
             {
                 'name': '01',
@@ -136,7 +140,8 @@ CONTRACT_TEMPLATES = {
     '3.0TDA': {
         'description': '3.0TDA with seasons and special days',
         'origin': 'library',
-        'type': '01',
+        'category': 'contract',
+        'active': True,
         'seasons': [
             {
                 'name': '01',
