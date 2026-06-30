@@ -10,7 +10,14 @@ with description('Report S23 examples'):
         self.data_filenames = [
             'spec/data/ZIV0004488684_59412C2_S23_0_20190424225341',
             # File with supervisor
-            'spec/data/CIR4621816077_59864AC_S23_0_20190514165558'
+            'spec/data/CIR4621816077_59864AC_S23_0_20190514165558',
+            # 4.0 S23 with Contrat 3 powers (pc(act/latent)->Contract3)
+            'spec/data/CIR4622531320_87A65_S23_0_20260619115923',
+        ]
+
+        self.data_filenames_40 = [
+            # 4.0 S23 with Contrat 3 powers (pc(act/latent)->Contract3)
+            'spec/data/CIR4622531320_87A65_S23_0_20260619115923',
         ]
 
         self.report = []
@@ -363,3 +370,27 @@ with description('Report S23 examples'):
                     for meter in cnc.meters:
                         expect(meter.values[0].get('active_calendars')).not_to(be_empty)
                         expect(meter.values[0].get('latent_calendars')).not_to(be_empty)
+
+    with context('4.0 version'):
+        with it('reads contract 1 pc_act powers'):
+            for filename in self.data_filenames_40:
+                with open(filename) as data_file:
+                    report = Report(data_file)
+                    for cnc in report.concentrators:
+                        for meter in cnc.meters:
+                            expect(meter.values[0].get('pc_act')).not_to(be_empty)
+                            powers_act = meter.values[0].get('pc_act')
+                            contrato = powers_act['contrato1']
+                            expect(contrato).not_to(be_empty)
+                            expect(len(contrato.keys())).to(equal(6))
+        with it('reads contract 3 pc_act powers'):
+            for filename in self.data_filenames_40:
+                with open(filename) as data_file:
+                    report = Report(data_file)
+                    for cnc in report.concentrators:
+                        for meter in cnc.meters:
+                            expect(meter.values[0].get('pc_act')).not_to(be_empty)
+                            powers_act = meter.values[0].get('pc_act')
+                            contrato = powers_act['contrato3']
+                            expect(contrato).not_to(be_empty)
+                            expect(len(contrato.keys())).to(equal(6))
