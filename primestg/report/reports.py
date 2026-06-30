@@ -1011,7 +1011,9 @@ class ParameterS23(Parameter):
                     if obj_data.get('ActDate3'):
                         obj_contrato_value.update({'act_date': Measure(obj_data)._get_timestamp('ActDate3')})
                 if obj_contrato_value.get('act_date'):
-                    obj_values.update({'act_date': max(obj_contrato_value.get('act_date'), obj_values.get('act_date'))})
+                    obj_values.update(
+                        {'act_date': max(obj_contrato_value.get('act_date', ''), obj_values.get('act_date', ''))}
+                    )
                 obj_values.update({key: obj_contrato_value})
 
         if getattr(obj, 'PResidual', None) is not None:
