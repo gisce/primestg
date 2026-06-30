@@ -989,17 +989,33 @@ class ParameterS23(Parameter):
         obj_values = {}
         if obj.get('ActDate'):
             obj_values.update({'act_date': Measure(obj)._get_timestamp('ActDate')})
-        if getattr(obj, 'Contrato1', None) is not None:
-            for obj_data in obj.Contrato1:
-                obj_contrato1_value = {
-                    'tr1': int(obj_data.get('TR1')),
-                    'tr2': int(obj_data.get('TR2')),
-                    'tr3': int(obj_data.get('TR3')),
-                    'tr4': int(obj_data.get('TR4')),
-                    'tr5': int(obj_data.get('TR5')),
-                    'tr6': int(obj_data.get('TR6')),
-                }
-            obj_values.update({'contrato1': obj_contrato1_value})
+        CONTRACT_KEY_DICTS = {
+            'Contrato1': 'contrato1',
+            'Contract1': 'contrato1',
+            'Contrato3': 'contrato3',
+            'Contract3': 'contrato3',
+        }
+        for tag, key in CONTRACT_KEY_DICTS.items():
+            if getattr(obj, tag, None) is not None:
+                for obj_data in getattr(obj, tag):
+                    obj_contrato_value = {
+                        'tr1': int(obj_data.get('TR1')),
+                        'tr2': int(obj_data.get('TR2')),
+                        'tr3': int(obj_data.get('TR3')),
+                        'tr4': int(obj_data.get('TR4')),
+                        'tr5': int(obj_data.get('TR5')),
+                        'tr6': int(obj_data.get('TR6')),
+                    }
+                    if obj_data.get('ActDate'):
+                        obj_contrato_value.update({'act_date': Measure(obj_data)._get_timestamp('ActDate')})
+                    if obj_data.get('ActDate3'):
+                        obj_contrato_value.update({'act_date': Measure(obj_data)._get_timestamp('ActDate3')})
+                if obj_contrato_value.get('act_date'):
+                    obj_values.update(
+                        {'act_date': max(obj_contrato_value.get('act_date', ''), obj_values.get('act_date', ''))}
+                    )
+                obj_values.update({key: obj_contrato_value})
+
         if getattr(obj, 'PResidual', None) is not None:
             for obj_data in obj.PResidual:
                 obj_presidual_value = {
@@ -2758,6 +2774,26 @@ class ConcentratorS23(ConcentratorWithMetersWithConcentratorName):
     """
     Class for a concentrator of report S23.
     """
+    def __init__(self, objectified_concentrator, report_version):
+        super(ConcentratorS23, self).__init__(objectified_concentrator)
+        self.report_version = report_version
+
+    @property
+    def report_version(self):
+        """
+        The version of the report.
+
+        :return: a string with the version of the report
+        """
+        return self._report_version
+
+    @report_version.setter
+    def report_version(self, value):
+        """
+        Stores the report version.
+        :param value: a string with the version of the report
+        """
+        self._report_version = value
 
     @property
     def meter_class(self):
@@ -3112,7 +3148,7 @@ class Report(object):
             },
             'S23': {
                 'class': ConcentratorS23,
-                'args': [objectified_concentrator]
+                'args': [objectified_concentrator, self.report_version]
             },
             'S24': {
                 'class': ConcentratorS24,
