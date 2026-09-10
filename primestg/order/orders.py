@@ -8,7 +8,7 @@ from pytz import timezone
 
 TZ = timezone('Europe/Madrid')
 
-SUPPORTED_ORDERS = ['B02', 'B03', 'B04', 'B06', 'B07', 'B09', 'B11']
+SUPPORTED_ORDERS = ['B02', 'B03', 'B04', 'B06', 'B07', 'B08','B09', 'B11']
 
 
 def is_supported(order_code):
@@ -476,6 +476,46 @@ class B07TpAttr(XmlModel):
 
         super(B07TpAttr, self).__init__('TpAttr', 'tpattr', drop_empty=drop_empty)
 
+class B08:
+    """
+    The class used to instance B08 order.
+    Requires a firmware of the data concentrator
+
+    :return: B08 order with parameters
+    """
+    def __init__(self, generic_values, payload):
+        self.generic_values = generic_values
+        self.order = OrderHeader(
+            generic_values.get('id_pet'),
+            generic_values.get('id_req'),
+            generic_values.get('cnc'),
+            generic_values.get('version', '3.1.c'),
+        )
+        self.order.cnc.feed({'payload': B08Payload(payload)})
+        # Load generic order with values
+
+class B08Payload(XmlModel):
+    """
+    The class used to instance B08 parameters.
+    Supported parameters:
+           actvation_date: Datetime of activation localized or not. It gets always CE(S)T timezone
+           path: firmware file absolute path
+
+    :return: B08 parameters
+    """
+    def __init__(self, payload, drop_empty=False):
+        fw_path = payload.get('path')
+        act_date_param = payload.get('activation_date')
+
+        activation_date = datetimetoprime(act_date_param)
+
+        self.payload = XmlField(
+            'B08', attributes={
+                'ActDate': activation_date,
+                'Firmware': fw_path,
+            })
+        super(B08Payload, self).__init__('b08Payload', 'payload', drop_empty=drop_empty)
+
 class B09:
     """
     The class used to instance B09 order.
@@ -718,6 +758,10 @@ class Order(object):
             },
             'B07_ip': {
                 'class': B07Ip,
+                'args': [generic_values, payload]
+            },
+            'B08': {
+                'class': B08,
                 'args': [generic_values, payload]
             },
             'B09': {
