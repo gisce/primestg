@@ -243,6 +243,20 @@ equipos = {
                 }
             }
         }
+    },
+    'KAIFA': {
+        'prefix': 'KFM',
+        'marca': 'KAIFA',
+        'manufacturers': {
+            'X': {
+                'models': {
+                    'AA': {
+                        'equipment_type': 'contador'
+                    },
+                }
+            }
+        }
     }
+
 
 }
