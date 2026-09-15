@@ -257,6 +257,15 @@ equipos = {
             }
         }
     }
-
-
 }
+
+def get_marcas_dict():
+    """Returns a dictionary like {id_fabricant: nom_marca}"""
+    marcas = {}
+
+    for marca, dades in equipos.items():
+        manufacturers = dades.get('manufacturers', {})
+        for mfr_id in manufacturers.keys():
+            marcas[mfr_id] = marca
+
+    return marcas
