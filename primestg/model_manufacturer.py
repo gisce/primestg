@@ -6,7 +6,10 @@ equipos = {
             '9': {
                 'models': {
                     'BS':{
-                        'equipment_type': 'contador'
+                        'equipment_type': 'contador',
+                        'fases': 'monofasico',
+                        'tipo_pm': 't5',
+                        'medida': 'directa'
                     }
                 }
             }
@@ -16,10 +19,65 @@ equipos = {
         'prefix': 'ITE',
         'marca': 'ITRON',
         'manufacturers': {
-            'C':{
+            'B':{
                 'models':{
                     'KD': {
-                        'equipment_type': 'contador'
+                        'equipment_type': 'contador',
+                        'fases': 'monofasico',
+                        'tipo_pm': 't5',
+                        'medida': 'directa'
+                    }
+                }
+            }
+        }
+    },
+    'LANDIS': {
+        'prefix': 'LGZ',
+        'marca': 'LANDIS',
+        'manufacturers': {
+            'C': {
+                'models':{
+                    'YK': {
+                        'equipment_type': 'contador',
+                        'fases': 'monofasico',
+                        'tipo_pm': 't5',
+                        'medida': 'directa'
+                    },
+                    'YL': {
+                        'equipment_type': 'contador',
+                        'fases': 'monofasico',
+                        'tipo_pm': 't5',
+                        'medida': 'directa'
+                    },
+                    'YM':{
+                        'equipment_type': 'contador',
+                        'fases': 'trifasico'
+                    },
+                    'YN': {
+                        'equipment_type': 'contador',
+                        'fases': 'monofasico',
+                        'tipo_pm': 't5',
+                        'medida': 'directa'
+                    },
+                    'YO': {
+                        'equipment_type': 'contador',
+                        'fases': 'trifasico',
+                        'tipo_pm': 't4'
+                    },
+                    'YS': {
+                        'equipment_type': 'contador',
+                        'fases': 'monofasico',
+                        'tipo_pm': 't5',
+                        'medida': 'directa'
+                    },
+                    'YT': {
+                        'equipment_type': 'contador',
+                        'fases': 'trifasico'
+                    },
+                    'YV': {
+                        'equipment_type': 'contador',
+                        'fases': 'trifasico',
+                        'tipo_pm': 't4'
                     }
                 }
             }
@@ -32,19 +90,38 @@ equipos = {
             'I':{
                 'models': {
                     'BS': {
-                        'equipment_type': 'contador'
+                        'equipment_type': 'contador',
+                        'fases': 'trifasico',
+                        'medida': 'directa'
                     },
                     'BT': {
-                        'equipment_type': 'contador'
+                        'equipment_type': 'contador',
+                        'fases': 'monofasico',
+                        'tipo_pm': 't5',
+                        'medida': 'directa'
                     },
                     'BY': {
-                        'equipment_type': 'contador'
+                        'equipment_type': 'contador',
+                        'fases': 'trifasico',
+                        'tipo_pm': 't5',
+                        'medida': 'directa'
                     },
                     'BZ': {
-                        'equipment_type': 'Tipo4MDPLC'
+                        'equipment_type': 'Tipo4MDPLC',
+                        'fases': 'trifasico',
+                        'tipo_pm': 't4',
+                        'medida': 'directa'
                     },
                     'CA': {
-                        'equipment_type': 'Tipo4MDPLC'
+                        'equipment_type': 'Tipo4MDPLC',
+                        'fases': 'trifasico',
+                        'tipo_pm': 't4',
+                        'medida': 'directa'
+                    },
+                    'CB':{
+                        'fases': 'trifasico',
+                        'tipo_pm': 't4',
+                        'medida': 'indirecta'
                     },
                     'CD': {
                         'equipment_type': 'contador'
@@ -76,13 +153,22 @@ equipos = {
                         'equipment_type': 'contador'
                     },
                     'CH': {
-                        'equipment_type': 'contador'
+                        'equipment_type': 'contador',
+                        'fases': 'monofasico',
+                        'tipo_pm': 't5',
+                        'medida': 'directa'
                     },
                     'CJ': {
-                        'equipment_type': 'contador'
+                        'equipment_type': 'contador',
+                        'fases': 'monofasico',
+                        'tipo_pm': 't5',
+                        'medida': 'directa'
                     },
                     'CM': {
-                        'equipment_type': 'contador'
+                        'equipment_type': 'contador',
+                        'fases': 'monofasico',
+                        'tipo_pm': 't5',
+                        'medida': 'directa'
                     },
                 }
             }
@@ -97,11 +183,13 @@ equipos = {
                     'DI': {
                         'equipment_type': 'contador',
                         'fases': 'monofasico',
-                        'tipo_pm': 't5'
+                        'tipo_pm': 't5',
+                        'medida': 'directa'
                     },
                     'GB': {
                         'equipment_type': 'contador',
                         'fases': 'trifasico',
+                        'tipo_pm': 't5',
                         'medida': 'directa'
                     },
                     'GD': {
@@ -120,12 +208,13 @@ equipos = {
                         'medida': 'indirecta'
                     },
                     'GU': {
-                        'equipment_type': 'contador',
-                        'fases': 'monofasico',
-                        'tipo_pm': 't5'
+                        'equipment_type': 'contador'
                     },
                     'MJ': {
-                        'equipment_type': 'contador'
+                        'equipment_type': 'contador',
+                        'fases': 'monofasico',
+                        'tipo_pm': 't5',
+                        'medida': 'directa'
                     },
                     'MK': {
                         'equipment_type': 'contador'
@@ -171,7 +260,10 @@ equipos = {
                         'equipment_type': 'contador'
                     },
                     'NA': {
-                        'equipment_type': 'contador'
+                        'equipment_type': 'contador',
+                        'fases': 'monofasico',
+                        'tipo_pm': 't5',
+                        'medida': 'directa'
                     },
                     'NC': {
                         'equipment_type': 'contador'
@@ -180,60 +272,101 @@ equipos = {
                         'equipment_type': 'contador'
                     },
                     'NO': {
-                        'equipment_type': 'contador'
+                        'equipment_type': 'contador',
+                        'fases': 'trifasico'
                     },
                     'NP': {
                         'equipment_type': 'contador'
                     },
                     'NT': {
-                        'equipment_type': 'contador'
+                        'equipment_type': 'contador',
+                        'fases': 'monofasico',
+                        'tipo_pm': 't5',
+                        'medida': 'directa'
                     },
                     'NU': {
-                        'equipment_type': 'contador'
+                        'equipment_type': 'contador',
+                        'fases': 'trifasico'
+                    },
+                    'NV': {
+                        'equipment_type': 'contador',
+                        'fases': 'trifasico',
+                        'tipo_pm': 't4'
                     },
                     'NW': {
                         'equipment_type': 'contador'
+                    },
+                    'NY': {
+                        'equipment_type': 'contador',
+                        'fases': 'trifasico',
+                        'tipo_pm': 't4'
                     },
                     'NZ': {
                         'equipment_type': 'contador'
                     },
                     'OA': {
-                        'equipment_type': 'contador'
+                        'equipment_type': 'Tipo4MIPLC',
+                        'fases': 'trifasico',
+                        'tipo_pm': 't3',
+                        'medida': 'indirecta'
                     },
                     'OC': {
-                        'equipment_type': 'contador'
+                        'equipment_type': 'contador',
+                        'fases': 'monofasico',
+                        'tipo_pm': 't5',
+                        'medida': 'directa'
                     },
                     'OS': {
                         'equipment_type': 'Tipo4MIPLC',
                         'fases': 'trifasico',
+                        'tipo_pm': 't4',
                         'medida': 'indirecta'
                     },
                     'OT': {
-                        'equipment_type': 'contador'
+                        'equipment_type': 'contador',
+                        'fases': 'trifasico'
                     },
                     'OX': {
-                        'equipment_type': 'Tipo4MIPLC'
+                        'equipment_type': 'Tipo4MIPLC',
+                        'fases': 'trifasico',
+                        'medida': 'indirecta'
                     },
                     'OZ': {
-                        'equipment_type': 'contador'
+                        'equipment_type': 'contador',
+                        'fases': 'trifasico'
                     },
                     'PG': {
-                        'equipment_type': 'Tipo4MDPLC'
+                        'equipment_type': 'Tipo4MDPLC',
+                        'fases': 'trifasico',
+                        'tipo_pm': 't4',
+                        'medida': 'directa'
                     },
                     'PM': {
-                        'equipment_type': 'contador'
+                        'equipment_type': 'contador',
+                        'fases': 'trifasico',
+                        'tipo_pm': 't4',
+                        'medida': 'directa'
                     },
                     'PP': {
-                        'equipment_type': 'contador'
+                        'equipment_type': 'contador',
+                        'fases': 'monofasico',
+                        'tipo_pm': 't5',
+                        'medida': 'directa'
                     },
                     'PQ': {
-                        'equipment_type': 'Tipo4MDPLC'
+                        'equipment_type': 'Tipo4MDPLC',
+                        'fases': 'trifasico',
+                        'medida': 'directa'
                     },
                     'PV': {
-                        'equipment_type': 'Tipo4MDPLC'
+                        'equipment_type': 'Tipo4MDPLC',
+                        'fases': 'trifasico',
+                        'medida': 'directa'
                     },
                     'PZ': {
-                        'equipment_type': 'Tipo4MIPLC'
+                        'equipment_type': 'Tipo4MIPLC',
+                        'fases': 'trifasico',
+                        'medida': 'indirecta'
                     },
                     'QA': {
                         'equipment_type': 'Tipo4MIPLC',
