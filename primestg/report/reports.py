@@ -8,7 +8,7 @@ from primestg.message import MessageS
 from primestg.utils import octet2name, octet2number
 
 SUPPORTED_REPORTS = ['S01', 'S02', 'S04', 'S05', 'S06', 'S09', 'S12', 'S13', 'S14', 'S15',
-                     'S17', 'S18', 'S21', 'S23', 'S24', 'S26', 'S27', 'S42', 'S52',
+                     'S17', 'S18', 'S21', 'S23', 'S24', 'S26', 'S27', 'S31', 'S42', 'S52',
                      'G01', 'G02']
 
 
@@ -198,6 +198,86 @@ class MeasureS26(MeasureActiveReactive):
             self._warnings.append('ERROR: Thrown exception: {}'.format(e))
             return []
         return [values]
+
+
+class ParameterS31(Parameter):
+    def __init__(
+        self,
+        objectified_parameter,
+        concentrator_name,
+        meter_name,
+        report_version,
+        request_id,
+    ):
+        """
+        Create a ParameterS06 object.
+
+        :param objectified_parameter: an lxml.objectify.StringElement \
+            representing a set of parameters
+        :return: a Measure object
+        """
+        super(ParameterS31, self).__init__(
+            objectified_parameter,
+            report_version
+        )
+        self.concentrator_name = concentrator_name
+        self.meter_name = meter_name
+        self.request_id = request_id
+
+    @property
+    def values(self):
+        """
+        Set of measures of report S26.
+        :return: a dict with a set of measures of report S26.
+        """
+
+        def key_request(key, pos):
+            if len(key) > pos:
+                return int(key[pos])
+            raise ValueError(
+                "KeyRequest does't have the position {}".format(pos))
+
+        def get_cdt_csec_cur(objectified):
+            res = []
+            if hasattr(objectified, 'CDTSecCur'):
+                for cdt_sec_cur in objectified.CDTSecCur:
+                    res.append({
+                        'key_id': int(cdt_sec_cur.get('KeyId')),
+                        'key_type': cdt_sec_cur.get('KeyType'),
+                    })
+            return res
+
+        # it can only have one S31 tag per Meter
+        values = {}
+        try:
+            get = self.objectified.get
+            key = get('KeyRequest')
+            values.update(
+                {
+                    'concentrator': self.concentrator_name,
+                    'meter': self.meter_name,
+                    'version': self.report_version,
+                    'request_id': self.request_id,
+
+                    'timestamp': self._get_timestamp('Fh'),
+                    'season': get('Fh')[-1:],
+                    'client_id': get_integer_value(get('ClientId', 0)),
+                    'status': get_integer_value(get('Status', 0)),
+                    'key_request': get('KeyRequest'),
+                    'lls_opt_rea': key_request(key, 2),
+                    'lls_opt_sec': key_request(key, 3),
+                    'lls_plc': key_request(key, 4),
+                    'gaukey': key_request(key, 5),
+                    'gbrkey': key_request(key, 6),
+                    'gunkey': key_request(key, 7),
+
+                    'cdt_sec_cur': get_cdt_csec_cur(self.objectified),
+                }
+            )
+        except Exception as e:
+            self._warnings.append('ERROR: Thrown exception: {}'.format(e))
+            return {}
+        return values
 
 
 class MeasureS02(MeasureActiveReactiveFloat):
@@ -1936,6 +2016,59 @@ class MeterS26(MeterWithMagnitude):
         return MeasureS26
 
 
+class MeterS31(MeterWithConcentratorName):
+    def __init__(
+            self,
+            objectified_meter,
+            concentrator_name,
+            report_version,
+            request_id,
+    ):
+        super(MeterS31, self).__init__(objectified_meter, concentrator_name)
+        self.report_version = report_version
+        self.request_id = request_id
+
+    @property
+    def report_type(self):
+        return 'S31'
+
+    @property
+    def parameters(self):
+        """
+        Parameter set objects of this concentrator.
+
+        :return: a list of parameter set objects
+        """
+        if not self.errors:
+            parameters = []
+            for parameter in self.objectified.S31:
+                parameters.append(ParameterS31(
+                    parameter,
+                    self.concentrator_name,
+                    self.name,
+                    self.report_version,
+                    self.request_id,
+                ))
+        else:
+            parameters = []
+        return parameters
+
+    @property
+    def values(self):
+        self._warnings = {}
+        values = []
+        for parameter in self.parameters:
+            vals = parameter.values
+            if vals:
+                values.append(vals)
+            if parameter.warnings:
+                if self._warnings.get(self.name, False):
+                    self._warnings[self.name].extend(parameter.warnings)
+                else:
+                    self._warnings.update({self.name: parameter.warnings})
+        return values
+
+
 class MeterS23(MeterWithConcentratorName):
     """
     Class for a meter of report S23.
@@ -2769,6 +2902,47 @@ class ConcentratorS26(ConcentratorWithMetersWithConcentratorName):
         return meters
 
 
+class ConcentratorS31(ConcentratorWithMetersWithConcentratorName):
+    def __init__(self, objectified_concentrator, report_version, request_id):
+        super(ConcentratorS31, self).__init__(objectified_concentrator)
+        self.report_version = report_version
+        self.request_id = request_id
+        self._meters = []
+
+    @property
+    def report_version(self):
+        return self._report_version
+
+    @report_version.setter
+    def report_version(self, value):
+        self._report_version = value
+
+    @property
+    def meters(self):
+        meters = self._meters
+        if not meters:
+            if getattr(self.objectified, 'Cnt', None) is not None:
+                for meter in self.objectified.Cnt:
+                    meters.append(MeterS31(
+                        meter,
+                        self.name,
+                        self.report_version,
+                        self.request_id,
+                    ))
+        self._meters = meters
+        return meters
+
+    @property
+    def values(self):
+        self._warnings = []
+        values = []
+        for meter in self.meters:
+            values.extend(meter.values)
+            if meter.warnings:
+                self._warnings.append(meter.warnings)
+        return [v for v in values if v]
+
+
 class ConcentratorS23(ConcentratorWithMetersWithConcentratorName):
 
     """
@@ -3170,6 +3344,14 @@ class Report(object):
             'S27': {
                 'class': ConcentratorS27,
                 'args': [objectified_concentrator]
+            },
+            'S31': {
+                'class': ConcentratorS31,
+                'args': [
+                    objectified_concentrator,
+                    self.report_version,
+                    self.request_id,
+                ]
             },
             'S42': {
                 'class': ConcentratorS42,
