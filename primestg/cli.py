@@ -37,6 +37,8 @@ ORDERS = {
     'cnc_ftpip': {'order': 'B07', 'func': 'set_concentrator_ip'},
     'cnc_ntpip': {'order': 'B07', 'func': 'set_concentrator_ip'},
     'cnc_stgip': {'order': 'B07', 'func': 'set_concentrator_ip'},
+    # FW update
+    'cnc_firmware_update': {'order': 'B08', 'func': 'update_cnc_firmware' }
 }
 
 
@@ -117,6 +119,7 @@ def get_sync_sxx(**kwargs):
               help='comma separated orders list of 6 powers'
 )
 @click.option("--ip", "-i", default="10.26.0.4", help='IP i.e CNC FTPIp')
+@click.option("--fw", "-f", default="/firmware/firmware.dat", help='Path to firmware in FTP')
 def sends_order(**kwargs):
    """Sends one of available Orders to Meter or CNC"""
    id_pet = get_id_pet()
@@ -185,6 +188,13 @@ def sends_order(**kwargs):
        vals = {
            'IPstg': kwargs['ip']
        }
+   elif order_name == 'cnc_firmware_update':
+       vals = {
+           'activation_date': TZ.localize(
+               datetime.strptime(kwargs['activation_date'], '%Y-%m-%d %H:%M:%S')
+           ),
+           'path': kwargs['fw']
+        }
 
    vals.update({
        'date_to': format_timestamp(datetime.now()+timedelta(hours=1)),
