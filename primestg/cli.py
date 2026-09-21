@@ -38,7 +38,9 @@ ORDERS = {
     'cnc_ntpip': {'order': 'B07', 'func': 'set_concentrator_ip'},
     'cnc_stgip': {'order': 'B07', 'func': 'set_concentrator_ip'},
     # FW update
-    'cnc_firmware_update': {'order': 'B08', 'func': 'update_cnc_firmware' }
+    'cnc_firmware_update': {'order': 'B08', 'func': 'update_cnc_firmware' },
+    # Update Meter Keys
+    'keys': {'order': 'B32', 'func': 'update_meter_keys'}
 }
 
 
@@ -56,6 +58,48 @@ def get_id_pet():
     return (
         now - now.replace(hour=0, minute=0, second=0, microsecond=0)
     ).seconds
+
+
+def get_update_meter_keys_parameters(keys):
+    vals = {}
+    local_da_sec = []
+    key_types = {'gu': 'GUnKey', 'ga': 'GAuKey', 'gb': 'GBrKey'}
+    cdt_secs = []
+    for key_values in keys.split(';'):
+        if ':' in key_values:
+            key, values = key_values.split(':')
+            if key == 'mk':
+                key_id, key_wrap = values.split(',')
+                vals['master_key'] = {'key_id': key_id, 'key_wrap': key_wrap}
+            elif key == 'c1':
+                local_da_sec.append({'client_id': 1, 'secret': values})
+            elif key == 'c2':
+                local_da_sec.append({'client_id': 2, 'secret': values})
+            elif key == 'c4':
+                parts = values.split(',')
+                remote_data_access_sec = {'client_id': 4, 'secret': parts[-1]}
+                if len(parts) == 2:
+                    remote_data_access_sec['factory_secret'] = parts[0]
+                vals['remote_data_access_sec'] = remote_data_access_sec
+            elif key in ['gu', 'ga', 'gb']:
+                if 'c4' not in keys:
+                    raise click.BadParameter('requires c4', param_hint=key)
+                key_type = key_types[key]
+                key_id, key_wrap, key_val = values.split(',')
+                cdt_secs.append({
+                    'key_id': key_id, 'key_type': key_type,
+                    'key_wrap': key_wrap, 'key_val': key_val,
+                })
+            else:
+                raise click.BadParameter('Not a valid parameter', param_hint=key)
+        else:
+            raise click.BadParameter('Not a valid parameter', param_hint=key_values)
+    if local_da_sec:
+        vals['local_data_access_sec'] = local_da_sec
+    if cdt_secs:
+        vals['remote_data_access_sec'].update({'data_transport_sec_keys': cdt_secs})
+    return vals
+
 
 @click.group(name="primestg")
 def primestg(**kwargs):
@@ -120,6 +164,12 @@ def get_sync_sxx(**kwargs):
 )
 @click.option("--ip", "-i", default="10.26.0.4", help='IP i.e CNC FTPIp')
 @click.option("--fw", "-f", default="/firmware/firmware.dat", help='Path to firmware in FTP')
+@click.option("--meter_keys", "-k",
+              help="Semicolon-separated list of optional keys. Format: mk:<KeyI"
+                   "d>,<KeyWrap>;c1:<Secret>;c2:<Secret>;c4:[FactorySecret,]<Se"
+                   "cret>;gu:<KeyId>,<KeyWrap>,<KeyVal>;ga:<KeyId>,<KeyWrap>,<K"
+                   "eyVal>;gb:<KeyId>,<KeyWrap>,<KeyVal>. (Note: gu, ga, gb req"
+                   "uire c4)")
 def sends_order(**kwargs):
    """Sends one of available Orders to Meter or CNC"""
    id_pet = get_id_pet()
@@ -195,6 +245,8 @@ def sends_order(**kwargs):
            ),
            'path': kwargs['fw']
         }
+   elif order_name == 'keys':
+       vals = get_update_meter_keys_parameters(kwargs['meter_keys'])
 
    vals.update({
        'date_to': format_timestamp(datetime.now()+timedelta(hours=1)),

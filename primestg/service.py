@@ -167,6 +167,17 @@ class Service(object):
         order = order.create(generic_values, payload)
         return self.send_order('B12', order)
 
+    def update_meter_keys(self, generic_values, payload):
+        """
+        Sends B32 order to the concentrator
+        Message to change the meter keys. Allows to send the meter the Master
+        Key, the Keys for each client or both at the same time.
+        :return: Success or fail
+        """
+        order = Order('B32')
+        order = order.create(generic_values, payload)
+        return self.send_order('B32', order)
+
     def create_service(self):
         transport = Transport(timeout=20, operation_timeout=60)
         binding = '{http://www.asais.fr/ns/Saturne/DC/ws}WS_DCSoap'

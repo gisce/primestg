@@ -1,0 +1,12 @@
+<Order IdPet="11006811" IdReq="B32" Version="4.0">
+    <Cnc Id="AAA57C4730016">
+        <Cnt Id="BBB0115108646">
+            <B32>
+                <RemoteDASec ClientId="4" FactorySecret="" Secret="00ABCDEF">
+                    <CDTSec KeyId="5647378" KeyType="GUnKey" KeyWrap="805398099580948550" KeyVal="85575445575837537"/>
+                    <CDTSec KeyId="64838374" KeyType="GAuKey" KeyWrap="648763278468726487" KeyVal="75757875375875353"/>
+                </RemoteDASec>
+            </B32>
+        </Cnt>
+    </Cnc>
+</Order>
