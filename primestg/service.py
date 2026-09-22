@@ -352,3 +352,22 @@ class Service(object):
         :return: an S27 report from the meter.
         """
         return self.send('S27', meter, date_from, date_to)
+
+    def get_meter_keys(self, meter):
+        """
+        This message is used to send a meter key request from DC to STG, and the
+        state of a DC regarding secure communication with a meter.
+        Asks for a S31 report to the DC.
+        :param meter: a meter_id
+        :return: an S31 report from the meter.
+        """
+        return self.send('S31', meter)
+
+    def get_all_meter_keys(self):
+        """
+        This message is used to send a meter key request from DC to STG, and the
+        state of a DC regarding secure communication with a meter.
+        Asks for a S31 report to the DC.
+        :return: an S31 report from the meter.
+        """
+        return self.send('S31', '')
