@@ -8,7 +8,7 @@ from pytz import timezone
 
 TZ = timezone('Europe/Madrid')
 
-SUPPORTED_ORDERS = ['B02', 'B03', 'B04', 'B06', 'B07', 'B08','B09', 'B11']
+SUPPORTED_ORDERS = ['B02', 'B03', 'B04', 'B06', 'B07', 'B08','B09', 'B11', 'B32']
 
 
 def is_supported(order_code):
@@ -716,6 +716,109 @@ class B12Payload(XmlModel):
         super(B12Payload, self).__init__('b12Payload', 'payload', drop_empty=drop_empty)
 
 
+class B32:
+    """
+    The class used to instantiate B32 orders.
+
+    :return: B32 order with parameters
+    """
+    def __init__(self, generic_values, payload):
+        self.generic_values = generic_values
+        self.order = CntOrderHeader(
+            generic_values.get('id_pet'),
+            generic_values.get('id_req'),
+            generic_values.get('cnc'),
+            generic_values.get('cnt'),
+            generic_values.get('version', '3.1.c'),
+        )
+        self.order.cnc.cnt.feed({'payload': B32Payload(payload)})
+
+
+class B32Payload(XmlModel):
+    """
+    The class used to instantiate the B32 parameters
+    :return: B32 parameters
+    """
+
+    _sort_order = ('master_key', 'local_da_sec', 'remote_da_sec')
+
+    class MasterKey(XmlModel):
+        def __init__(self, payload, drop_empty=False):
+            self.master_key_content = XmlField(
+                'MasterKey', attributes={
+                    'KeyId': str(payload['key_id']),
+                    'KeyWrap': str(payload['key_wrap']),
+                }
+            )
+            super(B32Payload.MasterKey, self).__init__(
+                'MasterKey', 'master_key_content', drop_empty=drop_empty
+            )
+
+    class LocalDASec(XmlModel):
+        def __init__(self, payload, drop_empty=False):
+            self.local_data_access_sec = XmlField(
+                'LocalDASec', attributes={
+                    'ClientId': str(payload['client_id']),
+                    'Secret': str(payload.get('secret', '')),
+                }
+            )
+            super(B32Payload.LocalDASec, self).__init__(
+                'LocalDASec', 'local_data_access_sec', drop_empty=drop_empty
+            )
+
+    class RemoteDASec(XmlModel):
+        class CDTSec(XmlModel):
+            def __init__(self, payload, drop_empty=False):
+                self.data_transport_sec_key = XmlField(
+                    'CDTSec', attributes={
+                        'KeyId': str(payload['key_id']),
+                        'KeyType': str(payload['key_type']),
+                        'KeyWrap': str(payload['key_wrap']),
+                        'KeyVal': str(payload['key_val']),
+                    }
+                )
+                super(B32Payload.RemoteDASec.CDTSec, self).__init__(
+                    'CDTSec', 'data_transport_sec_key', drop_empty=drop_empty
+                )
+
+        def __init__(self, payload, drop_empty=False):
+            self.remote_data_access_sec = XmlField(
+                'RemoteDASec', attributes={
+                    'ClientId': str(payload['client_id']),
+                    'FactorySecret': str(payload.get('factory_secret', '')),
+                    'Secret': str(payload.get('secret', '')),
+                }
+            )
+
+            self.cdt_secs = []
+            cdt_secs = payload.get('data_transport_sec_keys', [])
+            for cdt_sec in cdt_secs:
+                self.cdt_secs.append(self.CDTSec(cdt_sec, drop_empty=drop_empty))
+            super(B32Payload.RemoteDASec, self).__init__(
+                'RemoteDASec', 'remote_data_access_sec', drop_empty=drop_empty
+            )
+
+    def __init__(self, payload, drop_empty=False):
+        self.b32_content = XmlField('B32')
+
+        master_key_payload = payload.get('master_key')
+        if master_key_payload:
+            self.master_key = self.MasterKey(master_key_payload, drop_empty=drop_empty)
+
+        self.local_da_sec = []
+        local_data_access_sec_payloads = payload.get('local_data_access_sec', [])
+        for ldas_payload in local_data_access_sec_payloads:
+            self.local_da_sec.append(self.LocalDASec(ldas_payload, drop_empty=drop_empty))
+
+        remote_data_access_sec_payload = payload.get('remote_data_access_sec')
+        if remote_data_access_sec_payload:
+            self.remote_da_sec = self.RemoteDASec(remote_data_access_sec_payload, drop_empty=drop_empty)
+
+        super(B32Payload, self).__init__(
+            'b32Payload', 'b32_content', drop_empty=drop_empty
+        )
+
+
 class Order(object):
     """
     Order class
@@ -774,6 +877,10 @@ class Order(object):
             },
             'B12': {
                 'class': B12,
+                'args': [generic_values, payload]
+            },
+            'B32': {
+                'class': B32,
                 'args': [generic_values, payload]
             }
         }

@@ -1,0 +1,9 @@
+<Order IdPet="11006811" IdReq="B32" Version="4.0">
+    <Cnc Id="AAA57C4730016">
+        <Cnt Id="BBB0115108646">
+            <B32>
+                <LocalDASec ClientId="1" Secret="11223344"></LocalDASec>
+            </B32>
+        </Cnt>
+    </Cnc>
+</Order>

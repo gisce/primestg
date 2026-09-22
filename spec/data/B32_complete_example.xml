@@ -1,0 +1,15 @@
+<Order IdReq="B32" IdPet="11006811" Version="4.0">
+    <Cnc Id="AAA57C4730016">
+        <Cnt Id="BBB0115108646">
+            <B32>
+                <MasterKey KeyId="3657378" KeyWrap="805398099580948550"/>
+                <LocalDASec ClientId="1" Secret=""/>
+                <LocalDASec ClientId="2" Secret="66778899"/>
+                <RemoteDASec ClientId="4" FactorySecret="2134B3FE" Secret="00ABCDEF">
+                    <CDTSec KeyId="5647378" KeyType="GUnKey" KeyWrap="805398099580948550" KeyVal="01010101010101010101010101010101"/>
+                    <CDTSec KeyId="64838374" KeyType="GAuKey" KeyWrap="648763278468726487" KeyVal="01010101010101010101010101010101"/>
+                </RemoteDASec>
+            </B32>
+        </Cnt>
+    </Cnc>
+</Order>
