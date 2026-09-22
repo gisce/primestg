@@ -41,7 +41,7 @@ ORDERS = {
     # FW update
     'cnc_firmware_update': {'order': 'B08', 'func': 'update_cnc_firmware' },
     # Update Meter Keys
-    'keys': {'order': 'B32', 'func': 'update_meter_keys'}
+    'meter_keys': {'order': 'B32', 'func': 'update_meter_keys'}
 }
 
 
@@ -166,7 +166,7 @@ def get_sync_sxx(**kwargs):
 )
 @click.option("--ip", "-i", default="10.26.0.4", help='IP i.e CNC FTPIp')
 @click.option("--fw", "-f", default="/firmware/firmware.dat", help='Path to firmware in FTP')
-@click.option("--meter_keys", "-k",
+@click.option("--keys", "-k",
               help="Semicolon-separated list of optional keys. Format: mk:<KeyI"
                    "d>,<KeyWrap>;c1:<Secret>;c2:<Secret>;c4:[FactorySecret,]<Se"
                    "cret>;gu:<KeyId>,<KeyWrap>,<KeyVal>;ga:<KeyId>,<KeyWrap>,<K"
@@ -247,8 +247,8 @@ def sends_order(**kwargs):
            ),
            'path': kwargs['fw']
         }
-   elif order_name == 'keys':
-       vals = get_update_meter_keys_parameters(kwargs['meter_keys'])
+   elif order_name == 'meter_keys':
+       vals = get_update_meter_keys_parameters(kwargs['keys'])
 
    vals.update({
        'date_to': format_timestamp(datetime.now()+timedelta(hours=1)),
