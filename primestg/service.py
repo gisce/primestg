@@ -167,6 +167,17 @@ class Service(object):
         order = order.create(generic_values, payload)
         return self.send_order('B12', order)
 
+    def update_cnc_keys(self, generic_values, payload):
+        """
+        Sends B31 order to the concentrator
+        Message to deliver to the concentrator the current Keys existing in the
+        meters.
+        :return: Success or fail
+        """
+        order = Order('B31')
+        order = order.create(generic_values, payload)
+        return self.send_order('B31', order)
+
     def update_meter_keys(self, generic_values, payload):
         """
         Sends B32 order to the concentrator

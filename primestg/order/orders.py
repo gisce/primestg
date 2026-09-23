@@ -8,7 +8,7 @@ from pytz import timezone
 
 TZ = timezone('Europe/Madrid')
 
-SUPPORTED_ORDERS = ['B02', 'B03', 'B04', 'B06', 'B07', 'B08','B09', 'B11', 'B32']
+SUPPORTED_ORDERS = ['B02', 'B03', 'B04', 'B06', 'B07', 'B08','B09', 'B11', 'B31', 'B32']
 
 
 def is_supported(order_code):
@@ -716,6 +716,66 @@ class B12Payload(XmlModel):
         super(B12Payload, self).__init__('b12Payload', 'payload', drop_empty=drop_empty)
 
 
+class B31:
+    """
+    The class used to instantiate B31 orders.
+
+    :return: B31 order with parameters
+    """
+    def __init__(self, generic_values, payload):
+        self.generic_values = generic_values
+        self.order = OrderHeader(
+            generic_values.get('id_pet'),
+            generic_values.get('id_req'),
+            generic_values.get('cnc'),
+            generic_values.get('version', '3.1.c'),
+        )
+        meter_list = []
+        for meter_payload in payload['meters']:
+            meter_list.append(B31Meter(meter_payload))
+
+        self.order.cnc.b31_meters = meter_list
+
+
+class B31Meter(XmlModel):
+    class DASec(XmlModel):
+        class CDTSec(XmlModel):
+            def __init__(self, payload, drop_empty=False):
+                self.cdt_sec = XmlField('CDTSec', attributes={
+                    'KeyId': str(payload['key_id']),
+                    'KeyType': str(payload['key_type']),
+                    'KeyVal': str(payload['key_val']),
+                })
+                super(B31Meter.DASec.CDTSec, self).__init__(
+                    'CDTSec', 'cdt_sec', drop_empty=drop_empty
+                )
+
+        def __init__(self, payload, drop_empty=False):
+            self.da_sec = XmlField(
+                'DASec', attributes={
+                    'ClientId': str(payload['client_id']),
+                    'Secret': str(payload['secret']),
+                }
+            )
+            self.cdt_secs = []
+            for cdt_sec_payload in payload['data_transport_sec_keys']:
+                self.cdt_secs.append(self.CDTSec(cdt_sec_payload, drop_empty=drop_empty))
+            super(B31Meter.DASec, self).__init__(
+                'DASec', 'da_sec', drop_empty
+            )
+
+    def __init__(self, payload, drop_empty=False):
+        self.b31_content = XmlField(
+            'B31', attributes={
+                'CntId': str(payload['meter_id']),
+            }
+        )
+        self.da_sec = self.DASec(payload, drop_empty=drop_empty)
+        super(B31Meter, self).__init__(
+            'B31Meter', 'b31_content', drop_empty=drop_empty
+        )
+
+
 class B32:
     """
     The class used to instantiate B32 orders.
@@ -877,6 +937,10 @@ class Order(object):
             },
             'B12': {
                 'class': B12,
+                'args': [generic_values, payload]
+            },
+            'B31': {
+                'class': B31,
                 'args': [generic_values, payload]
             },
             'B32': {
