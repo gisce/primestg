@@ -731,7 +731,7 @@ class B31:
             generic_values.get('version', '3.1.c'),
         )
         meter_list = []
-        for meter_payload in payload['meters']:
+        for meter_payload in payload.get('meters', []):
             meter_list.append(B31Meter(meter_payload))
 
         self.order.cnc.b31_meters = meter_list

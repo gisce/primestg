@@ -299,7 +299,7 @@ def sends_order(**kwargs):
    elif order_name == 'meter_keys':
        vals = get_update_meter_keys_parameters(kwargs['keys'])
    elif order_name == 'cnc_keys':
-       vals = get_update_cnc_keys_parameters(kwargs['keys'], kwargs['meter'])
+       vals = get_update_cnc_keys_parameters(kwargs['keys'], meter_name)
 
    vals.update({
        'date_to': format_timestamp(datetime.now()+timedelta(hours=1)),
