@@ -1,7 +1,5 @@
 [
     {
-    },
-    {
         'protocol': 'DLMS0105',
         'concentrator': 'CIR4621704174',
         'timestamp': '2018-01-01 20:41:34',
@@ -34,7 +32,5 @@
         'time_scroll_display': 3,
         'voltage_sag_threshold': '7.00',
         'long_power_failure_threshold': 180
-    },
-    {
     }
 ]

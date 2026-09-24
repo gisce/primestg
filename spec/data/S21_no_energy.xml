@@ -1,0 +1,7 @@
+<Report IdRpt="S21" IdPet="55568" Version="3.2">
+	<Cnc Id="ZIV0004366654">
+        <Cnt Id="ORB0000631939">
+            <S21 Fh="20241221160004647W" Ca="4" I3="2.6" L1v="220" L1i="2.6" Pimp1="" Pexp1="" Qimp1="" Qexp1="" PF1="" Ca1="" L2v="0" L2i="0.0" Pimp2="" Pexp2="" Qimp2="" Qexp2="" PF2="" Ca2="" L3v="" L3i="" Pimp3="" Pexp3="" Qimp3="" Qexp3="" PF3="" Ca3="" PP="" Fc="5" Eacti="" Eanti="" AIa="" AEa="" R1a="" R2a="" R3a="" R4a=""/>
+        </Cnt>
+	</Cnc>
+</Report>

@@ -1,0 +1,4 @@
+starting cycle Ciclo_instant_data_minute at 2024/11/29 11:23:35
+time;dev_sn;operation;obis;class_id;element_id;result;action return
+2024/11/29 11:23:36;SAG0155349819;get;0.0.21.0.5.255;7;2;array{structure{octet_string{2024/11/29 11:23:30}long_unsigned{224}long_unsigned{0}long_unsigned{0}long_unsigned{0}long_unsigned{0}long_unsigned{0}long_unsigned{0}double_long_unsigned{0}double_long_unsigned{0}double_long_unsigned{0}double_long_unsigned{0}long_unsigned{1000}}}
+ending cycle Ciclo_instant_data_minute at 2024/11/29 11:23:36

@@ -1,0 +1,355 @@
+<Report IdRpt="G02" IdPet="0" Version="3.4">
+	<Cnc Id="CIR4621531018">
+		<Cnt Id="CIR2081531008">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="LGZ0012240491">
+			<G02 Fh="20250625000000000S" Atime="1435" Nchanges="1" Aconc="1439" Atimeperc="99.75"/>
+		</Cnt>
+		<Cnt Id="LGZ0012559875">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="LGZ0018846211">
+			<G02 Fh="20250625000000000S" Atime="1424" Nchanges="5" Aconc="1439" Atimeperc="98.99"/>
+		</Cnt>
+		<Cnt Id="LGZ0018846212">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="LGZ0018846223">
+			<G02 Fh="20250625000000000S" Atime="1151" Nchanges="5" Aconc="1439" Atimeperc="80.02"/>
+		</Cnt>
+		<Cnt Id="LGZ0018846240">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="LGZ0019085454">
+			<G02 Fh="20250625000000000S" Atime="1302" Nchanges="11" Aconc="1439" Atimeperc="90.49"/>
+		</Cnt>
+		<Cnt Id="LGZ0019085462">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="LGZ0019085494">
+			<G02 Fh="20250625000000000S" Atime="1437" Nchanges="1" Aconc="1439" Atimeperc="99.93"/>
+		</Cnt>
+		<Cnt Id="LGZ0098311553">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="LGZ0098315237">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="LGZ0098315903">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="LGZ0098315904">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="LGZ0098315905">
+			<G02 Fh="20250625000000000S" Atime="1391" Nchanges="11" Aconc="1439" Atimeperc="96.69"/>
+		</Cnt>
+		<Cnt Id="LGZ0098317161">
+			<G02 Fh="20250625000000000S" Atime="1428" Nchanges="9" Aconc="1439" Atimeperc="99.26"/>
+		</Cnt>
+		<Cnt Id="SAG0135551585">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0136960629">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0145993638">
+			<G02 Fh="20250625000000000S" Atime="1401" Nchanges="3" Aconc="1439" Atimeperc="97.42"/>
+		</Cnt>
+		<Cnt Id="SAG0145996637">
+			<G02 Fh="20250625000000000S" Atime="1264" Nchanges="5" Aconc="1439" Atimeperc="87.88"/>
+		</Cnt>
+		<Cnt Id="SAG0145996645">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0145999245">
+			<G02 Fh="20250625000000000S" Atime="1216" Nchanges="6" Aconc="1439" Atimeperc="84.54"/>
+		</Cnt>
+		<Cnt Id="SAG0155302492">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155304204">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155304211">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155304224">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155304262">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155304269">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155304286">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155304296">
+			<G02 Fh="20250625000000000S" Atime="1408" Nchanges="9" Aconc="1439" Atimeperc="97.91"/>
+		</Cnt>
+		<Cnt Id="SAG0155388401">
+			<G02 Fh="20250625000000000S" Atime="0" Nchanges="0" Aconc="1439" Atimeperc="0.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155388402">
+			<G02 Fh="20250625000000000S" Atime="1290" Nchanges="1" Aconc="1439" Atimeperc="89.69"/>
+		</Cnt>
+		<Cnt Id="SAG0155388403">
+			<G02 Fh="20250625000000000S" Atime="1285" Nchanges="1" Aconc="1439" Atimeperc="89.31"/>
+		</Cnt>
+		<Cnt Id="SAG0155388404">
+			<G02 Fh="20250625000000000S" Atime="1364" Nchanges="9" Aconc="1439" Atimeperc="94.81"/>
+		</Cnt>
+		<Cnt Id="SAG0155388406">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155388407">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155388408">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155388409">
+			<G02 Fh="20250625000000000S" Atime="1117" Nchanges="9" Aconc="1439" Atimeperc="77.68"/>
+		</Cnt>
+		<Cnt Id="SAG0155388410">
+			<G02 Fh="20250625000000000S" Atime="1425" Nchanges="4" Aconc="1439" Atimeperc="99.09"/>
+		</Cnt>
+		<Cnt Id="SAG0155388411">
+			<G02 Fh="20250625000000000S" Atime="0" Nchanges="0" Aconc="1439" Atimeperc="0.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155388412">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155388413">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155388414">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155388415">
+			<G02 Fh="20250625000000000S" Atime="1160" Nchanges="3" Aconc="1439" Atimeperc="80.64"/>
+		</Cnt>
+		<Cnt Id="SAG0155388416">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155388417">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155388418">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155388419">
+			<G02 Fh="20250625000000000S" Atime="1435" Nchanges="6" Aconc="1439" Atimeperc="99.79"/>
+		</Cnt>
+		<Cnt Id="SAG0155388420">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155388421">
+			<G02 Fh="20250625000000000S" Atime="1340" Nchanges="11" Aconc="1439" Atimeperc="93.14"/>
+		</Cnt>
+		<Cnt Id="SAG0155388422">
+			<G02 Fh="20250625000000000S" Atime="1055" Nchanges="5" Aconc="1439" Atimeperc="73.37"/>
+		</Cnt>
+		<Cnt Id="SAG0155388423">
+			<G02 Fh="20250625000000000S" Atime="1437" Nchanges="1" Aconc="1439" Atimeperc="99.89"/>
+		</Cnt>
+		<Cnt Id="SAG0155388424">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155388425">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155388426">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155388427">
+			<G02 Fh="20250625000000000S" Atime="1348" Nchanges="0" Aconc="1439" Atimeperc="93.69"/>
+		</Cnt>
+		<Cnt Id="SAG0155388428">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155388429">
+			<G02 Fh="20250625000000000S" Atime="1213" Nchanges="1" Aconc="1439" Atimeperc="84.33"/>
+		</Cnt>
+		<Cnt Id="SAG0155388430">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155388473">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155388474">
+			<G02 Fh="20250625000000000S" Atime="1422" Nchanges="4" Aconc="1439" Atimeperc="98.85"/>
+		</Cnt>
+		<Cnt Id="SAG0155388478">
+			<G02 Fh="20250625000000000S" Atime="1255" Nchanges="6" Aconc="1439" Atimeperc="87.26"/>
+		</Cnt>
+		<Cnt Id="SAG0155388480">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155392671">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155392672">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155392675">
+			<G02 Fh="20250625000000000S" Atime="1228" Nchanges="19" Aconc="1439" Atimeperc="85.38"/>
+		</Cnt>
+		<Cnt Id="SAG0155392678">
+			<G02 Fh="20250625000000000S" Atime="1048" Nchanges="6" Aconc="1439" Atimeperc="72.88"/>
+		</Cnt>
+		<Cnt Id="SAG0155392679">
+			<G02 Fh="20250625000000000S" Atime="1412" Nchanges="2" Aconc="1439" Atimeperc="98.15"/>
+		</Cnt>
+		<Cnt Id="SAG0155393201">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155393202">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155393203">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155393204">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155393205">
+			<G02 Fh="20250625000000000S" Atime="1430" Nchanges="1" Aconc="1439" Atimeperc="99.44"/>
+		</Cnt>
+		<Cnt Id="SAG0155393206">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155393207">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155393208">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155393209">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155393210">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155393221">
+			<G02 Fh="20250625000000000S" Atime="1409" Nchanges="3" Aconc="1439" Atimeperc="97.94"/>
+		</Cnt>
+		<Cnt Id="SAG0155393222">
+			<G02 Fh="20250625000000000S" Atime="1269" Nchanges="8" Aconc="1439" Atimeperc="88.20"/>
+		</Cnt>
+		<Cnt Id="SAG0155393223">
+			<G02 Fh="20250625000000000S" Atime="1336" Nchanges="6" Aconc="1439" Atimeperc="92.89"/>
+		</Cnt>
+		<Cnt Id="SAG0155393224">
+			<G02 Fh="20250625000000000S" Atime="1423" Nchanges="3" Aconc="1439" Atimeperc="98.95"/>
+		</Cnt>
+		<Cnt Id="SAG0155393225">
+			<G02 Fh="20250625000000000S" Atime="1410" Nchanges="5" Aconc="1439" Atimeperc="98.05"/>
+		</Cnt>
+		<Cnt Id="SAG0155393226">
+			<G02 Fh="20250625000000000S" Atime="1404" Nchanges="5" Aconc="1439" Atimeperc="97.59"/>
+		</Cnt>
+		<Cnt Id="SAG0155393227">
+			<G02 Fh="20250625000000000S" Atime="1438" Nchanges="1" Aconc="1439" Atimeperc="99.96"/>
+		</Cnt>
+		<Cnt Id="SAG0155393228">
+			<G02 Fh="20250625000000000S" Atime="1425" Nchanges="1" Aconc="1439" Atimeperc="99.09"/>
+		</Cnt>
+		<Cnt Id="SAG0155393229">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155393230">
+			<G02 Fh="20250625000000000S" Atime="1423" Nchanges="2" Aconc="1439" Atimeperc="98.95"/>
+		</Cnt>
+		<Cnt Id="SAG0155393271">
+			<G02 Fh="20250625000000000S" Atime="1417" Nchanges="3" Aconc="1439" Atimeperc="98.50"/>
+		</Cnt>
+		<Cnt Id="SAG0155393272">
+			<G02 Fh="20250625000000000S" Atime="1422" Nchanges="2" Aconc="1439" Atimeperc="98.85"/>
+		</Cnt>
+		<Cnt Id="SAG0155393273">
+			<G02 Fh="20250625000000000S" Atime="155" Nchanges="28" Aconc="1439" Atimeperc="10.79"/>
+		</Cnt>
+		<Cnt Id="SAG0155393275">
+			<G02 Fh="20250625000000000S" Atime="1273" Nchanges="23" Aconc="1439" Atimeperc="88.47"/>
+		</Cnt>
+		<Cnt Id="SAG0155393276">
+			<G02 Fh="20250625000000000S" Atime="1117" Nchanges="13" Aconc="1439" Atimeperc="77.68"/>
+		</Cnt>
+		<Cnt Id="SAG0155393277">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155393278">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0155393279">
+			<G02 Fh="20250625000000000S" Atime="1053" Nchanges="6" Aconc="1439" Atimeperc="73.19"/>
+		</Cnt>
+		<Cnt Id="SAG0155393280">
+			<G02 Fh="20250625000000000S" Atime="1305" Nchanges="1" Aconc="1439" Atimeperc="90.70"/>
+		</Cnt>
+		<Cnt Id="SAG0155393281">
+			<G02 Fh="20250625000000000S" Atime="1424" Nchanges="2" Aconc="1439" Atimeperc="98.99"/>
+		</Cnt>
+		<Cnt Id="SAG0155393282">
+			<G02 Fh="20250625000000000S" Atime="1437" Nchanges="1" Aconc="1439" Atimeperc="99.89"/>
+		</Cnt>
+		<Cnt Id="SAG0155393283">
+			<G02 Fh="20250625000000000S" Atime="1428" Nchanges="4" Aconc="1439" Atimeperc="99.30"/>
+		</Cnt>
+		<Cnt Id="SAG0155393284">
+			<G02 Fh="20250625000000000S" Atime="1430" Nchanges="2" Aconc="1439" Atimeperc="99.44"/>
+		</Cnt>
+		<Cnt Id="SAG0155393285">
+			<G02 Fh="20250625000000000S" Atime="1424" Nchanges="4" Aconc="1439" Atimeperc="98.99"/>
+		</Cnt>
+		<Cnt Id="SAG0155393286">
+			<G02 Fh="20250625000000000S" Atime="1437" Nchanges="1" Aconc="1439" Atimeperc="99.93"/>
+		</Cnt>
+		<Cnt Id="SAG0155393287">
+			<G02 Fh="20250625000000000S" Atime="1420" Nchanges="4" Aconc="1439" Atimeperc="98.71"/>
+		</Cnt>
+		<Cnt Id="SAG0155393288">
+			<G02 Fh="20250625000000000S" Atime="1424" Nchanges="4" Aconc="1439" Atimeperc="99.02"/>
+		</Cnt>
+		<Cnt Id="SAG0155393289">
+			<G02 Fh="20250625000000000S" Atime="1006" Nchanges="15" Aconc="1439" Atimeperc="69.96"/>
+		</Cnt>
+		<Cnt Id="SAG0155393290">
+			<G02 Fh="20250625000000000S" Atime="1426" Nchanges="4" Aconc="1439" Atimeperc="99.12"/>
+		</Cnt>
+		<Cnt Id="SAG0165755853">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0165787253">
+			<G02 Fh="20250625000000000S" Atime="1247" Nchanges="6" Aconc="1439" Atimeperc="86.66"/>
+		</Cnt>
+		<Cnt Id="SAG0166250379">
+			<G02 Fh="20250625000000000S" Atime="1390" Nchanges="2" Aconc="1439" Atimeperc="96.62"/>
+		</Cnt>
+		<Cnt Id="SAG0166250380">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0166250383">
+			<G02 Fh="20250625000000000S" Atime="1437" Nchanges="2" Aconc="1439" Atimeperc="99.89"/>
+		</Cnt>
+		<Cnt Id="SAG0176253943">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="SAG0185906633">
+			<G02 Fh="20250625000000000S" Atime="1437" Nchanges="1" Aconc="1439" Atimeperc="99.93"/>
+		</Cnt>
+		<Cnt Id="SAG0216255261">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="ZIV0037156307">
+			<G02 Fh="20250625000000000S" Atime="1422" Nchanges="1" Aconc="1439" Atimeperc="98.88"/>
+		</Cnt>
+		<Cnt Id="ZIV0037156345">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+	</Cnc>
+</Report>

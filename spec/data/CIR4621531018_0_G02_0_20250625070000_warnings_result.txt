@@ -1,0 +1,9 @@
+[{'atimeperc': 100.0,
+    'cnc_name': 'CIR4621531018',
+    'nchanges': 0,
+    'name': 'LGZ0012559875',
+    'season': 'S',
+    'timestamp': '2025-06-25 00:00:00',
+    'atime': 1439,
+    'ahourly': '',
+    'aconc': 1439}]

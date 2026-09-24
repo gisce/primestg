@@ -1,0 +1,7 @@
+<Report IdRpt="G01" IdPet="0" Version="3.4">
+	<Cnc Id="CIR4621531018">
+		<G01 Fh="0000530070000000S" Amed="113" Amax="114" Tot="117" Aperc="94.87"/>
+		<G01 Fh="000000030080000000S" Amed="110" Amax="112" Tot="117" Aperc="95.72"/>
+		<G01 Fh="20250530090000000S" Amed="113" Amax="114" Tot="117" Aperc="96.58"/>
+	</Cnc>
+</Report>

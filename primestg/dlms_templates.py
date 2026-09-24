@@ -72,5 +72,14 @@ DLMS_TEMPLATES = {
             {'obis': "1.0.0.4.5.255", 'class': "1", 'element': "2"},  # primary voltage
             {'obis': "1.0.0.4.6.255", 'class': "1", 'element': "2"},  # secondary voltage
         ],
+    },
+    'GET_INSTANT': {
+        'description': 'Gets instant data',
+        'origin': 'library',
+        'category': 'info',
+        'params': [],
+        'data': [
+            {'obis': "0.0.21.0.5.255", 'class': "7", 'element': "2"},  # instant data
+        ],
     }
 }

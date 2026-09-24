@@ -1,0 +1,13 @@
+<Report IdRpt="S31" xmlns="http://stgdc/ws/S31" IdPet="0" Version="4.0">
+    <Cnc Id="AAA79DE402219">
+        <Cnt Id="BBB0135084421">
+            <S31 Fh="20000S" ClientId="4" Status="0" KeyRequest="00111101">
+                <CDTSecCur KeyId="253673732" KeyType="GUnKey"/>
+                <CDTSecCur KeyId="5363527" KeyType="GAuKey"/>
+            </S31>
+        </Cnt>
+        <Cnt Id="CCC0135084421">
+            <S31 Fh="20130712131500000S" ClientId="4" Status="1" KeyRequest="00001101"/>
+        </Cnt>
+    </Cnc>
+</Report>

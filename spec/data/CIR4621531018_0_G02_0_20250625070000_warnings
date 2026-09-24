@@ -1,0 +1,16 @@
+<Report IdRpt="G02" IdPet="0" Version="3.4">
+	<Cnc Id="CIR4621531018">
+		<Cnt Id="CIR2081531008">
+			<G02 Fh="0000625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+		<Cnt Id="LGZ0012240491">
+			<G02 Fh="0000625000000000S" Atime="1435" Nchanges="1" Aconc="1439" Atimeperc="99.75"/>
+		</Cnt>
+		<Cnt Id="LGZ0012240491">
+			<G02 Fh="0000605000000000S" Atime="1435" Nchanges="3" Aconc="1439" Atimeperc="99.75"/>
+		</Cnt>
+		<Cnt Id="LGZ0012559875">
+			<G02 Fh="20250625000000000S" Atime="1439" Nchanges="0" Aconc="1439" Atimeperc="100.00"/>
+		</Cnt>
+	</Cnc>
+</Report>

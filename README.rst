@@ -2,8 +2,12 @@
 PrimeSTG
 ========
 
-.. image:: https://travis-ci.org/gisce/primestg.png?branch=master
-    :target: https://travis-ci.org/gisce/primestg
+.. image:: https://github.com/gisce/primestg/actions/workflows/python2.7-app.yml/badge.svg
+    :target: https://github.com/gisce/primestg/actions/workflows/python2.7-app.yml
+    :alt: Build status
+
+.. image:: https://github.com/gisce/primestg/actions/workflows/python3.11-app.yml/badge.svg
+    :target: https://github.com/gisce/primestg/actions/workflows/python3.11-app.yml
     :alt: Build status
 
 Python library of Prime STG-DC Interface Specification

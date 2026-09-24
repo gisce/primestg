@@ -17,6 +17,8 @@ Magnitude value (1000) for measures represented in kW.
 SAGE_BAD_TIMESTAMP = [
     'FFFFFFFFFFFFFFW',
     'FFFFFFFF000000S',
+    '00150000000000W',
+    '18070000000000W',
 ]
 
 S23_BAD_TIMESTAMP = [
@@ -25,7 +27,9 @@ S23_BAD_TIMESTAMP = [
     '000000000000000',
     'FFFFFFFFFFFFFF9',
     'FFFFFFFFFFFFFF0',
-    'FFFFFFFFFFFFFFF'
+    'FFFFFFFFFFFFFFF',
+    'FFFFFFFFFFFFF79',
+    'FFFFFFFF06FFFF0',
 ]
 
 BAD_TIMESTAMP = SAGE_BAD_TIMESTAMP + S23_BAD_TIMESTAMP
@@ -165,12 +169,12 @@ class MeasureActiveReactive(Measure):
         :return: a dict with the active and reactive measures
         """
         return {
-            'ai': int(measure.get('AI{}'.format(measure_type))),
-            'ae': int(measure.get('AE{}'.format(measure_type))),
-            'r1': int(measure.get('R1{}'.format(measure_type))),
-            'r2': int(measure.get('R2{}'.format(measure_type))),
-            'r3': int(measure.get('R3{}'.format(measure_type))),
-            'r4': int(measure.get('R4{}'.format(measure_type))),
+            'ai': int(measure.get('AI{}'.format(measure_type), 0) or 0),
+            'ae': int(measure.get('AE{}'.format(measure_type), 0) or 0),
+            'r1': int(measure.get('R1{}'.format(measure_type), 0) or 0),
+            'r2': int(measure.get('R2{}'.format(measure_type), 0) or 0),
+            'r3': int(measure.get('R3{}'.format(measure_type), 0) or 0),
+            'r4': int(measure.get('R4{}'.format(measure_type), 0) or 0),
         }
 
 
@@ -196,6 +200,25 @@ class MeasureActiveReactiveFloat(Measure):
             'r2': float(measure.get('R2{}'.format(measure_type))),
             'r3': float(measure.get('R3{}'.format(measure_type))),
             'r4': float(measure.get('R4{}'.format(measure_type))),
+        }
+
+    def active_reactive_with_phase(self, measure, phase_num):
+        """
+        Get the active and reactive measures.
+
+        :param measure: an lxml.objectify.StringElement representing a set of \
+            measures
+        :param phase_num: the phase number of measure, added at the end of the \
+            name of each measure (1,2,3)
+        :return: a dict with the active and reactive phase measures
+        """
+        return {
+            'ai{}'.format(phase_num): float(measure.get('AI{}'.format(phase_num))),
+            'ae{}'.format(phase_num): float(measure.get('AE{}'.format(phase_num))),
+            'r1{}'.format(phase_num): float(measure.get('R1{}'.format(phase_num))),
+            'r2{}'.format(phase_num): float(measure.get('R2{}'.format(phase_num))),
+            'r3{}'.format(phase_num): float(measure.get('R3{}'.format(phase_num))),
+            'r4{}'.format(phase_num): float(measure.get('R4{}'.format(phase_num))),
         }
 
 
@@ -467,7 +490,9 @@ class Meter(object):
         """
         values = []
         for measure in self.measures:
-            values.append(measure.value())
+            vals = measure.value()
+            if vals:
+                values.append(vals)
         return values
 
     @property
@@ -537,7 +562,8 @@ class MeterWithConcentratorName(Meter):
                 v = subvalue.copy()
                 v['name'] = self.name
                 v['cnc_name'] = self.concentrator_name
-                values.append(v)
+                if v:
+                    values.append(v)
             if measure.warnings:
                 if self._warnings.get(self.name, False):
                     self._warnings[self.name].extend(measure.warnings)
@@ -642,7 +668,7 @@ class ConcentratorWithMeters(Concentrator):
         values = []
         for meter in self.meters:
             values.extend(meter.values)
-        return values
+        return [v for v in values if v]
 
 
 class ConcentratorWithMetersWithConcentratorName(ConcentratorWithMeters):
@@ -725,6 +751,16 @@ class LineSupervisor(BaseElement):
     Base class for a line supervisor.
     """
 
+    def __init__(self, objectified):
+        """
+        Create object.
+
+        :param objectified: an lxml.objectify.StringElement
+        :return: object
+        """
+        self.objectified = objectified
+        self._warnings = {}
+
     @property
     def errors(self):
         """
@@ -778,15 +814,25 @@ class LineSupervisor(BaseElement):
         """
         values = []
         for measure in self.measures:
-            values.append(measure.value())
+            vals = measure.value()
+            if vals:
+                values.append(vals)
         return values
+
+    @property
+    def warnings(self):
+        """
+        Warnings
+
+        :return: a list with the errors found while reading
+        """
+        return self._warnings
 
 
 class LineSupervisorDetails(LineSupervisor):
     """
     Base class for a line supervisors of report that need the name of the remote terminal unit in the values, like S52.
     """
-
     def __init__(self, objectified_line_supervisor, rt_unit_name):
         """
         Create a line supervisor object using line supervisor constructor and adding the remote terminal unit name.
@@ -797,6 +843,10 @@ class LineSupervisorDetails(LineSupervisor):
         """
         super(LineSupervisorDetails, self).__init__(objectified_line_supervisor)
         self.rt_unit_name = rt_unit_name
+        
+    @property
+    def report_type(self):
+        return self.__class__.__name__[-3:]
 
     @property
     def rt_unit_name(self):
@@ -829,7 +879,8 @@ class LineSupervisorDetails(LineSupervisor):
                 v = subvalue.copy()
                 v['name'] = self.name
                 v['rt_unit_name'] = self.rt_unit_name
-                values.append(v)
+                if v:
+                    values.append(v)
             if measure.warnings:
                 if self._warnings.get(self.name, False):
                     self._warnings[self.name].extend(measure.warnings)
@@ -880,7 +931,7 @@ class RemoteTerminalUnitDetails(BaseElement):
         values = []
         for line_supervisor in self.line_supervisors:
             values.extend(line_supervisor.values)
-        return values
+        return [v for v in values if v]
 
     @property
     def line_supervisors(self):

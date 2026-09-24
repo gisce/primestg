@@ -1,0 +1,6 @@
+<Report IdPet="0" IdRpt="S52" Version="1.6-MRT">
+	<Rtu Id="MRTR000000822522">
+		<LVSLine Id="MRTL000006609121" Magn="1" Pos="02">
+		</LVSLine>
+	</Rtu>
+</Report>

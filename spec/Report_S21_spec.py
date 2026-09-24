@@ -10,6 +10,7 @@ with description('Report S21 example'):
             'spec/data/S21.xml',
             'spec/data/S21_with_error.xml',
             'spec/data/S21_empty.xml',
+            'spec/data/S21_no_energy.xml',
         ]
 
         self.report = []
@@ -23,6 +24,7 @@ with description('Report S21 example'):
         expected_first_value_first_meter = [
             {
                 'timestamp': '2019-10-15 15:27:14',
+                'season': 'S',
                 'active_quadrant': 4,
                 'current_sum_3_phases': 8.2,
 

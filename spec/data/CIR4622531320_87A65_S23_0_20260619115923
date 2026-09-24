@@ -1,0 +1,74 @@
+<Report IdRpt="S23" IdPet="555621" Version="3.4">
+	<Cnc Id="CIR4622531320">
+		<Cnt Id="SAG0252810148">
+			<S23 Fh="20260618154941000S">
+				<PCact>
+					<Contract1 ActDate="" TR1="15000" TR2="15000" TR3="15000" TR4="15000" TR5="15000" TR6="15000"></Contract1>
+					<Contract3 ActDate3="" TR1="0" TR2="0" TR3="0" TR4="0" TR5="0" TR6="0"></Contract3>
+				</PCact>
+				<PCLatent>
+					<Contract1 ActDate="FFFFFFFFFFFFFFFFFF800009" TR1="15000" TR2="15000" TR3="15000" TR4="15000" TR5="15000" TR6="15000"></Contract1>
+					<Contract3 ActDate3="FFFFFFFFFFFFFFFFFF800009" TR1="0" TR2="0" TR3="0" TR4="0" TR5="0" TR6="0"></Contract3>
+				</PCLatent>
+				<ActiveCalendars>
+					<Contract c="1" CalendarType="01" CalendarName="322E3054445F" ActDate="">
+						<Season Name="01" Start="FFFFFEFFFFFFFF0000800080" Week="01"></Season>
+						<Week Name="01" Week="01010101010202"></Week>
+						<Day id="01">
+							<Change Hour="00000000" TariffRate="0103"></Change>
+							<Change Hour="08000000" TariffRate="0002"></Change>
+							<Change Hour="0A000000" TariffRate="0001"></Change>
+							<Change Hour="0E000000" TariffRate="0002"></Change>
+							<Change Hour="12000000" TariffRate="0001"></Change>
+							<Change Hour="16000000" TariffRate="0002"></Change>
+						</Day>
+						<Day id="02">
+							<Change Hour="00000000" TariffRate="0103"></Change>
+							<Change Hour="08000000" TariffRate="0003"></Change>
+						</Day>
+						<SpecialDays DT="FFFF0101000000000W" DTCard="Y" DayID="02"></SpecialDays>
+						<SpecialDays DT="FFFF0106000000000W" DTCard="Y" DayID="02"></SpecialDays>
+						<SpecialDays DT="FFFF0501000000000W" DTCard="Y" DayID="02"></SpecialDays>
+						<SpecialDays DT="FFFF0815000000000W" DTCard="Y" DayID="02"></SpecialDays>
+						<SpecialDays DT="FFFF1012000000000W" DTCard="Y" DayID="02"></SpecialDays>
+						<SpecialDays DT="FFFF1101000000000W" DTCard="Y" DayID="02"></SpecialDays>
+						<SpecialDays DT="FFFF1206000000000W" DTCard="Y" DayID="02"></SpecialDays>
+						<SpecialDays DT="FFFF1208000000000W" DTCard="Y" DayID="02"></SpecialDays>
+						<SpecialDays DT="FFFF1225000000000W" DTCard="Y" DayID="02"></SpecialDays>
+					</Contract>
+					<Contract c="2" CalendarType="01" CalendarName="000000000000" ActDate=""></Contract>
+					<Contract c="3" CalendarType="01" CalendarName="000000000000" ActDate=""></Contract>
+				</ActiveCalendars>
+				<LatentCalendars>
+					<Contract c="1" CalendarType="01" CalendarName="322E3054445F" ActDate="FFFFFFFFFFFFFFFFFF800009">
+						<Season Name="01" Start="FFFFFEFFFFFFFF0000800080" Week="01"></Season>
+						<Week Name="01" Week="01010101010202"></Week>
+						<Day id="01">
+							<Change Hour="00000000" TariffRate="0103"></Change>
+							<Change Hour="08000000" TariffRate="0002"></Change>
+							<Change Hour="0A000000" TariffRate="0001"></Change>
+							<Change Hour="0E000000" TariffRate="0002"></Change>
+							<Change Hour="12000000" TariffRate="0001"></Change>
+							<Change Hour="16000000" TariffRate="0002"></Change>
+						</Day>
+						<Day id="02">
+							<Change Hour="00000000" TariffRate="0103"></Change>
+							<Change Hour="08000000" TariffRate="0003"></Change>
+						</Day>
+						<SpecialDays DT="FFFF0101000000000W" DTCard="Y" DayID="02"></SpecialDays>
+						<SpecialDays DT="FFFF0106000000000W" DTCard="Y" DayID="02"></SpecialDays>
+						<SpecialDays DT="FFFF0501000000000W" DTCard="Y" DayID="02"></SpecialDays>
+						<SpecialDays DT="FFFF0815000000000W" DTCard="Y" DayID="02"></SpecialDays>
+						<SpecialDays DT="FFFF1012000000000W" DTCard="Y" DayID="02"></SpecialDays>
+						<SpecialDays DT="FFFF1101000000000W" DTCard="Y" DayID="02"></SpecialDays>
+						<SpecialDays DT="FFFF1206000000000W" DTCard="Y" DayID="02"></SpecialDays>
+						<SpecialDays DT="FFFF1208000000000W" DTCard="Y" DayID="02"></SpecialDays>
+						<SpecialDays DT="FFFF1225000000000W" DTCard="Y" DayID="02"></SpecialDays>
+					</Contract>
+					<Contract c="2" CalendarType="01" CalendarName="000000000000" ActDate="FFFFFFFFFFFFFFFFFF800009"></Contract>
+					<Contract c="3" CalendarType="01" CalendarName="000000000000" ActDate="FFFFFFFFFFFFFFFFFF800009"></Contract>
+				</LatentCalendars>
+			</S23>
+		</Cnt>
+	</Cnc>
+</Report>

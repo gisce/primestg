@@ -1,0 +1,22 @@
+<Order IdReq="B31" IdPet="831" Version="4.0">
+    <Cnc Id="ZZZ0000000001">
+        <B31 CntId="XXX0219910832">
+            <DASec ClientId="4" Secret="00000005">
+                <CDTSec KeyId="5647378" KeyType="GUnKey" KeyVal="01010101010101010101010101010101"/>
+                <CDTSec KeyId="64838374" KeyType="GAuKey" KeyVal="02020202020202020202020202020202"/>
+            </DASec>
+        </B31>
+        <B31 CntId="XXX0219910833">
+            <DASec ClientId="4" Secret="00000005">
+                <CDTSec KeyId="5647378" KeyType="GUnKey" KeyVal="01010101010101010101010101010101"/>
+                <CDTSec KeyId="64838374" KeyType="GAuKey" KeyVal="02020202020202020202020202020202"/>
+            </DASec>
+        </B31>
+        <B31 CntId="XXX0219910834">
+            <DASec ClientId="4" Secret="00000005">
+                <CDTSec KeyId="5647378" KeyType="GUnKey" KeyVal="01010101010101010101010101010101"/>
+                <CDTSec KeyId="64838374" KeyType="GAuKey" KeyVal="02020202020202020202020202020202"/>
+            </DASec>
+        </B31>
+    </Cnc>
+</Order>

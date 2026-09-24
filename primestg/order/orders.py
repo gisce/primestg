@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from libcomxml.core import XmlModel, XmlField
 from primestg.order.base import (OrderHeader, CntOrderHeader)
 from primestg.utils import ContractTemplates, DLMSTemplates, datetimetoprime, name2octet, prepare_params
@@ -6,11 +8,82 @@ from pytz import timezone
 
 TZ = timezone('Europe/Madrid')
 
-SUPPORTED_ORDERS = ['B03', 'B04', 'B07', 'B09', 'B11']
+SUPPORTED_ORDERS = ['B02', 'B03', 'B04', 'B06', 'B07', 'B08','B09', 'B11', 'B31', 'B32']
 
 
 def is_supported(order_code):
     return order_code in SUPPORTED_ORDERS
+
+
+# B02 Node classes
+class Contrato1(XmlModel):
+    """
+    The class to instance B04 Contract
+    Parameters:
+        powers: powers (in W) for every 6 periods
+    """
+    def __init__(self, payload):
+        powers = payload.get('powers')
+        self.contrato1 = XmlField(
+            'Contrato1', attributes={
+                'TR1': powers[0],
+                'TR2': powers[1],
+                'TR3': powers[2],
+                'TR4': powers[3],
+                'TR5': powers[4],
+                'TR6': powers[5],
+            }
+        )
+        super(Contrato1, self).__init__('Contrato1', 'contrato1')
+
+
+class B02:
+    """
+    The class used to instance B02 order.
+
+    :return: B02 order with parameters
+    """
+    def __init__(self, generic_values, payload):
+        self.generic_values = generic_values
+        self.order = CntOrderHeader(
+            generic_values.get('id_pet'),
+            generic_values.get('id_req'),
+            generic_values.get('cnc'),
+            generic_values.get('cnt'),
+            generic_values.get('version'),
+        )
+        self.order.cnc.cnt.feed({'payload': B02Payload(payload)})
+        # Load generic order with values
+
+
+class B02Payload(XmlModel):
+    """
+    The class used to instance B02 parameters.
+    Supported parameters:
+        actvation_date: Datetime of activation localized or not. It gets always CE(S)T timezone
+        powers: P1 to P6 ordered list of 6 powers in W
+
+    :return: B02 parameters
+
+    """
+
+    _sort_order = ('payload', 'contrato1')
+
+    def __init__(self, payload, drop_empty=False):
+        powers = payload.get('powers')
+        act_date_param = payload.get('activation_date')
+
+        activation_date = datetimetoprime(act_date_param)
+
+        self.payload = XmlField(
+            'B02', attributes={
+                'ActDate': activation_date,
+            })
+
+        self.contrato1 = Contrato1({'powers': powers})
+        self.contrato1.feed({'powers': powers})
+
+        super(B02Payload, self).__init__('b02Payload', 'payload', drop_empty=drop_empty)
 
 
 class B03:
@@ -268,10 +341,45 @@ class B04Payload(XmlModel):
 
         super(B04Payload, self).__init__('b04Payload', 'payload', drop_empty=drop_empty)
 
-
-class B07IpFtp:
+class B06:
     """
-    The class used to instance B07 order. Only for IPftp parameter.
+    The class used to instance B06 order.
+    Unregister meter from CNC db when retired.
+
+    :return: B06 order with parameters
+    """
+    def __init__(self, generic_values, payload):
+        self.generic_values = generic_values
+        self.order = CntOrderHeader(
+            generic_values.get('id_pet'),
+            generic_values.get('id_req'),
+            generic_values.get('cnc'),
+            generic_values.get('cnt'),
+            generic_values.get('version', '3.1.c'),
+        )
+        self.order.cnc.cnt.feed({'payload': B06Payload(payload)})
+        # Load generic order with values
+
+class B06Payload(XmlModel):
+    """
+    The class used to instance B06 parameters.
+    Supported parameters:
+        Operation:
+            1 -> Remove Meter
+
+    :return: B06 parameters
+    """
+    def __init__(self, payload, drop_empty=False):
+        self.payload = XmlField(
+            'B06', attributes={
+                'Operation': '1',
+            })
+        super(B06Payload, self).__init__('b06Payload', 'payload', drop_empty=drop_empty)
+
+
+class B07Ip:
+    """
+    The class used to instance B07 order. Only for IPftp/IPNTP/IPstg parameters.
     :return: B07 order with parameters
     """
     def __init__(self, generic_values, payload):
@@ -282,16 +390,24 @@ class B07IpFtp:
             generic_values.get('cnc'),
             generic_values.get('version', '3.1.c'),
         )
-        self.order.cnc.feed({'payload': B07IpFtpPayload(payload)})
+        self.order.cnc.feed({'payload': B07IpPayload(payload)})
 
 
-class B07IpFtpPayload(XmlModel):
+class B07IpPayload(XmlModel):
     def __init__(self, payload, drop_empty=False):
+        attr_name = None
+        if 'IPftp' in payload:
+            attr_name = 'IPftp'
+        elif 'IPNTP' in payload:
+            attr_name = 'IPNTP'
+        elif 'IPstg' in payload:
+            attr_name = 'IPstg'
+
         self.payload = XmlField(
             'B07', attributes={
-                'IPftp': payload.get('IPftp'),
+                attr_name: payload.get(attr_name),
             })
-        super(B07IpFtpPayload, self).__init__('b07Payload', 'payload', drop_empty=drop_empty)
+        super(B07IpPayload, self).__init__('b07Payload', 'payload', drop_empty=drop_empty)
 
 
 class B07:
@@ -308,12 +424,17 @@ class B07:
             generic_values.get('version', '3.1.c'),
         )
         b07 = B07Payload(payload)
-        tasks = payload.get("tasks")
+        tasks = payload.get("tasks", [])
         for task in tasks:
+            tppros = task.pop("TpPro")
             task_xml = B07Task(task)
-            tppros = task.get("task_data")
             for tppro in tppros:
+                attrs = tppro.pop('TpAttr')
                 tppro_xml = B07TpPro(tppro)
+
+                tpattr_xml = B07TpAttr(attrs)
+                tppro_xml.tpattr.append(tpattr_xml)
+
                 task_xml.tppro.append(tppro_xml)
             b07.tasks.append(task_xml)
         self.order.cnc.feed({'payload': b07})
@@ -325,7 +446,7 @@ class B07Payload(XmlModel):
     """
     def __init__(self, payload, drop_empty=False):
         # Discard empty strings and values and compose field
-        attributes = {k: v for k, v in payload.items() if v is not None and v != "" and k != "tasks"}
+        attributes = {k: v for k, v in payload.items() if v is not None and k != "tasks"}
         self.payload = XmlField('B07', attributes=attributes)
         self.tasks = []
         super(B07Payload, self).__init__('b07Payload', 'payload', drop_empty=drop_empty)
@@ -333,7 +454,7 @@ class B07Payload(XmlModel):
 
 class B07Task(XmlModel):
     def __init__(self, task, drop_empty=False):
-        attributes = {k: v for k, v in task.items() if v is not None and v != "" and k != "task_data"}
+        attributes = {k: v for k, v in task.items() if v is not None and k != "task_data"}
         self.task = XmlField('TP', attributes=attributes)
         self.tppro = []
         super(B07Task, self).__init__('TP', 'task', drop_empty=drop_empty)
@@ -341,10 +462,59 @@ class B07Task(XmlModel):
 
 class B07TpPro(XmlModel):
     def __init__(self, task, drop_empty=False):
-        attributes = {k: v for k, v in task.items() if v is not None and v != ""}
+        attributes = {k: v for k, v in task.items() if v is not None}
         self.tppro = XmlField('TpPro', attributes=attributes)
-        self.tpattr = XmlField('TpAttr')
+        self.tpattr = []
         super(B07TpPro, self).__init__('TpPro', 'tppro', drop_empty=drop_empty)
+
+
+class B07TpAttr(XmlModel):
+    def __init__(self, values, drop_empty=False):
+        self.tpattr = XmlField('TpAttr')
+        for k, v in values.items():
+            setattr(self, k, XmlField(k, value=v, parent='TpAttr'))
+
+        super(B07TpAttr, self).__init__('TpAttr', 'tpattr', drop_empty=drop_empty)
+
+class B08:
+    """
+    The class used to instance B08 order.
+    Requires a firmware of the data concentrator
+
+    :return: B08 order with parameters
+    """
+    def __init__(self, generic_values, payload):
+        self.generic_values = generic_values
+        self.order = OrderHeader(
+            generic_values.get('id_pet'),
+            generic_values.get('id_req'),
+            generic_values.get('cnc'),
+            generic_values.get('version', '3.1.c'),
+        )
+        self.order.cnc.feed({'payload': B08Payload(payload)})
+        # Load generic order with values
+
+class B08Payload(XmlModel):
+    """
+    The class used to instance B08 parameters.
+    Supported parameters:
+           actvation_date: Datetime of activation localized or not. It gets always CE(S)T timezone
+           path: firmware file absolute path
+
+    :return: B08 parameters
+    """
+    def __init__(self, payload, drop_empty=False):
+        fw_path = payload.get('path')
+        act_date_param = payload.get('activation_date')
+
+        activation_date = datetimetoprime(act_date_param)
+
+        self.payload = XmlField(
+            'B08', attributes={
+                'ActDate': activation_date,
+                'Firmware': fw_path,
+            })
+        super(B08Payload, self).__init__('b08Payload', 'payload', drop_empty=drop_empty)
 
 class B09:
     """
@@ -546,6 +716,169 @@ class B12Payload(XmlModel):
         super(B12Payload, self).__init__('b12Payload', 'payload', drop_empty=drop_empty)
 
 
+class B31:
+    """
+    The class used to instantiate B31 orders.
+
+    :return: B31 order with parameters
+    """
+    def __init__(self, generic_values, payload):
+        self.generic_values = generic_values
+        self.order = OrderHeader(
+            generic_values.get('id_pet'),
+            generic_values.get('id_req'),
+            generic_values.get('cnc'),
+            generic_values.get('version', '3.1.c'),
+        )
+        meter_list = []
+        for meter_payload in payload.get('meters', []):
+            meter_list.append(B31Meter(meter_payload))
+
+        self.order.cnc.b31_meters = meter_list
+
+
+class B31Meter(XmlModel):
+    class DASec(XmlModel):
+        class CDTSec(XmlModel):
+            def __init__(self, payload, drop_empty=False):
+                self.cdt_sec = XmlField('CDTSec', attributes={
+                    'KeyId': str(payload['key_id']),
+                    'KeyType': str(payload['key_type']),
+                    'KeyVal': str(payload['key_val']),
+                })
+                super(B31Meter.DASec.CDTSec, self).__init__(
+                    'CDTSec', 'cdt_sec', drop_empty=drop_empty
+                )
+
+        def __init__(self, payload, drop_empty=False):
+            self.da_sec = XmlField(
+                'DASec', attributes={
+                    'ClientId': str(payload['client_id']),
+                    'Secret': str(payload['secret']),
+                }
+            )
+            self.cdt_secs = []
+            for cdt_sec_payload in payload['data_transport_sec_keys']:
+                self.cdt_secs.append(self.CDTSec(cdt_sec_payload, drop_empty=drop_empty))
+            super(B31Meter.DASec, self).__init__(
+                'DASec', 'da_sec', drop_empty
+            )
+
+    def __init__(self, payload, drop_empty=False):
+        self.b31_content = XmlField(
+            'B31', attributes={
+                'CntId': str(payload['meter_id']),
+            }
+        )
+        self.da_sec = self.DASec(payload, drop_empty=drop_empty)
+        super(B31Meter, self).__init__(
+            'B31Meter', 'b31_content', drop_empty=drop_empty
+        )
+
+
+class B32:
+    """
+    The class used to instantiate B32 orders.
+
+    :return: B32 order with parameters
+    """
+    def __init__(self, generic_values, payload):
+        self.generic_values = generic_values
+        self.order = CntOrderHeader(
+            generic_values.get('id_pet'),
+            generic_values.get('id_req'),
+            generic_values.get('cnc'),
+            generic_values.get('cnt'),
+            generic_values.get('version', '3.1.c'),
+        )
+        self.order.cnc.cnt.feed({'payload': B32Payload(payload)})
+
+
+class B32Payload(XmlModel):
+    """
+    The class used to instantiate the B32 parameters
+    :return: B32 parameters
+    """
+
+    _sort_order = ('master_key', 'local_da_sec', 'remote_da_sec')
+
+    class MasterKey(XmlModel):
+        def __init__(self, payload, drop_empty=False):
+            self.master_key_content = XmlField(
+                'MasterKey', attributes={
+                    'KeyId': str(payload['key_id']),
+                    'KeyWrap': str(payload['key_wrap']),
+                }
+            )
+            super(B32Payload.MasterKey, self).__init__(
+                'MasterKey', 'master_key_content', drop_empty=drop_empty
+            )
+
+    class LocalDASec(XmlModel):
+        def __init__(self, payload, drop_empty=False):
+            self.local_data_access_sec = XmlField(
+                'LocalDASec', attributes={
+                    'ClientId': str(payload['client_id']),
+                    'Secret': str(payload.get('secret', '')),
+                }
+            )
+            super(B32Payload.LocalDASec, self).__init__(
+                'LocalDASec', 'local_data_access_sec', drop_empty=drop_empty
+            )
+
+    class RemoteDASec(XmlModel):
+        class CDTSec(XmlModel):
+            def __init__(self, payload, drop_empty=False):
+                self.data_transport_sec_key = XmlField(
+                    'CDTSec', attributes={
+                        'KeyId': str(payload['key_id']),
+                        'KeyType': str(payload['key_type']),
+                        'KeyWrap': str(payload['key_wrap']),
+                        'KeyVal': str(payload['key_val']),
+                    }
+                )
+                super(B32Payload.RemoteDASec.CDTSec, self).__init__(
+                    'CDTSec', 'data_transport_sec_key', drop_empty=drop_empty
+                )
+
+        def __init__(self, payload, drop_empty=False):
+            self.remote_data_access_sec = XmlField(
+                'RemoteDASec', attributes={
+                    'ClientId': str(payload['client_id']),
+                    'FactorySecret': str(payload.get('factory_secret', '')),
+                    'Secret': str(payload.get('secret', '')),
+                }
+            )
+
+            self.cdt_secs = []
+            cdt_secs = payload.get('data_transport_sec_keys', [])
+            for cdt_sec in cdt_secs:
+                self.cdt_secs.append(self.CDTSec(cdt_sec, drop_empty=drop_empty))
+            super(B32Payload.RemoteDASec, self).__init__(
+                'RemoteDASec', 'remote_data_access_sec', drop_empty=drop_empty
+            )
+
+    def __init__(self, payload, drop_empty=False):
+        self.b32_content = XmlField('B32')
+
+        master_key_payload = payload.get('master_key')
+        if master_key_payload:
+            self.master_key = self.MasterKey(master_key_payload, drop_empty=drop_empty)
+
+        self.local_da_sec = []
+        local_data_access_sec_payloads = payload.get('local_data_access_sec', [])
+        for ldas_payload in local_data_access_sec_payloads:
+            self.local_da_sec.append(self.LocalDASec(ldas_payload, drop_empty=drop_empty))
+
+        remote_data_access_sec_payload = payload.get('remote_data_access_sec')
+        if remote_data_access_sec_payload:
+            self.remote_da_sec = self.RemoteDASec(remote_data_access_sec_payload, drop_empty=drop_empty)
+
+        super(B32Payload, self).__init__(
+            'b32Payload', 'b32_content', drop_empty=drop_empty
+        )
+
+
 class Order(object):
     """
     Order class
@@ -566,6 +899,10 @@ class Order(object):
         :return: Order formatted in XML
         """
         order_type_class = {
+            'B02': {
+                'class': B02,
+                'args': [generic_values, payload]
+            },
             'B03': {
                 'class': B03,
                 'args': [generic_values, payload]
@@ -574,16 +911,24 @@ class Order(object):
                 'class': B04,
                 'args': [generic_values, payload]
             },
-            'B09': {
-                'class': B09,
+            'B06': {
+                'class': B06,
                 'args': [generic_values, payload]
             },
             'B07': {
                 'class': B07,
                 'args': [generic_values, payload]
             },
-            'B07_ipftp': {
-                'class': B07IpFtp,
+            'B07_ip': {
+                'class': B07Ip,
+                'args': [generic_values, payload]
+            },
+            'B08': {
+                'class': B08,
+                'args': [generic_values, payload]
+            },
+            'B09': {
+                'class': B09,
                 'args': [generic_values, payload]
             },
             'B11': {
@@ -592,6 +937,14 @@ class Order(object):
             },
             'B12': {
                 'class': B12,
+                'args': [generic_values, payload]
+            },
+            'B31': {
+                'class': B31,
+                'args': [generic_values, payload]
+            },
+            'B32': {
+                'class': B32,
                 'args': [generic_values, payload]
             }
         }

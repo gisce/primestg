@@ -64,6 +64,18 @@ class Service(object):
                                                     meters, priority, self.source)
         return results
 
+    def send_with_parameters(self, report_id, meters, date_from='', date_to='', parameters=None, priority=None):
+        if priority is None:
+            priority = self.priority
+        if parameters is None:
+            parameters = 'EvGroup:;EvCode:'
+
+        results = self.DC_service.ReportQuery(self.fact_id, report_id,
+                                              date_from, date_to,
+                                              meters, priority,
+                                              'Q1', parameters)
+        return results
+
     def send_order(self, report_id, order, priority=None):
         """
         Sends order
@@ -77,6 +89,15 @@ class Service(object):
         print(order)
         results = self.DC_service.Order(self.fact_id, 0, order, priority)
         return results
+
+    def get_powers(self, generic_values, payload):
+        """
+        Sends B02 order to meter
+        :return: Success or fail
+        """
+        order = Order('B02')
+        order = order.create(generic_values, payload)
+        return self.send_order('B02', order)
 
     def get_cutoff_reconnection(self, generic_values, payload):
         """
@@ -96,6 +117,15 @@ class Service(object):
         order = order.create(generic_values, payload)
         return self.send_order('B04', order)
 
+    def delete_meter(self, generic_values, payload):
+        """
+        Sends B06 order to meter
+        return Succes or fails
+        """
+        order = Order('B06')
+        order = order.create(generic_values, payload)
+        return self.send_order('B06', order)
+
     def get_concentrator_modification(self, generic_values, payload):
         """
         Sends B07 order to meter
@@ -105,8 +135,8 @@ class Service(object):
         order = order.create(generic_values, payload)
         return self.send_order('B07', order)
 
-    def set_concentrator_ipftp(self, generic_values, payload):
-        order = Order('B07_ipftp')
+    def set_concentrator_ip(self, generic_values, payload):
+        order = Order('B07_ip')
         order = order.create(generic_values, payload)
         return self.send_order('B07', order)
 
@@ -136,6 +166,28 @@ class Service(object):
         order = Order('B12')
         order = order.create(generic_values, payload)
         return self.send_order('B12', order)
+
+    def update_cnc_keys(self, generic_values, payload):
+        """
+        Sends B31 order to the concentrator
+        Message to deliver to the concentrator the current Keys existing in the
+        meters.
+        :return: Success or fail
+        """
+        order = Order('B31')
+        order = order.create(generic_values, payload)
+        return self.send_order('B31', order)
+
+    def update_meter_keys(self, generic_values, payload):
+        """
+        Sends B32 order to the concentrator
+        Message to change the meter keys. Allows to send the meter the Master
+        Key, the Keys for each client or both at the same time.
+        :return: Success or fail
+        """
+        order = Order('B32')
+        order = order.create(generic_values, payload)
+        return self.send_order('B32', order)
 
     def create_service(self):
         transport = Transport(timeout=20, operation_timeout=60)
@@ -236,20 +288,20 @@ class Service(object):
         """
         return self.send('S05', '', date_from, date_to)
 
-    def get_meter_events(self, meters, date_from, date_to):
+    def get_meter_events(self, meters, date_from, date_to, parameters):
         """
         Asks for a S09 report to the specified meter.
         :param meters: a meter_id
         :return: an S09 report for the corresponding meter
         """
-        return self.send('S09', meters, date_from, date_to)
+        return self.send_with_parameters('S09', meters, date_from, date_to, parameters)
 
-    def get_all_meter_events(self, date_from, date_to):
+    def get_all_meter_events(self, date_from, date_to, parameters):
         """
         Asks for a S09 report to all meters.
         :return: an S09 report from every meter
         """
-        return self.send('S09', '', date_from, date_to)
+        return self.send_with_parameters('S09', '', date_from, date_to, parameters)
 
     def get_meter_parameters(self, meters, date_from, date_to):
         """
@@ -288,12 +340,12 @@ class Service(object):
         """
         return self.send('S14', '', date_from, date_to)
 
-    def get_concentrator_events(self, dc, date_from, date_to):
+    def get_concentrator_events(self, dc, date_from, date_to, parameters):
         """
         Asks for a S17 report to the concentrator.
         :return: an S17 report from the concentrator.
         """
-        return self.send('S17', dc, date_from, date_to)
+        return self.send_with_parameters('S17', dc, date_from, date_to, parameters)
 
     def get_cutoffs_status(self, meters, date_from, date_to):
         """
@@ -324,9 +376,36 @@ class Service(object):
         """
         return self.send('S24', dc, date_from, date_to)
 
+    def get_instant_data_demand(self, meters):
+        """
+        Asks for a S26 report to the specified meter.
+        :param meters: a meter_id
+        :return: an S26 report for the corresponding meter
+        """
+        return self.send('S26', meters)
+
     def get_current_billing(self, meter, date_from, date_to):
         """
         Asks for a S27 report to the meter.
         :return: an S27 report from the meter.
         """
         return self.send('S27', meter, date_from, date_to)
+
+    def get_meter_keys(self, meter):
+        """
+        This message is used to send a meter key request from DC to STG, and the
+        state of a DC regarding secure communication with a meter.
+        Asks for a S31 report to the DC.
+        :param meter: a meter_id
+        :return: an S31 report from the meter.
+        """
+        return self.send('S31', meter)
+
+    def get_all_meter_keys(self):
+        """
+        This message is used to send a meter key request from DC to STG, and the
+        state of a DC regarding secure communication with a meter.
+        Asks for a S31 report to the DC.
+        :return: an S31 report from the meter.
+        """
+        return self.send('S31', '')

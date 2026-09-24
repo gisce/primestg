@@ -11,6 +11,7 @@ from string import printable
 
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from .event_groups import *
 
 TZ = timezone('Europe/Madrid')
 PRIORITY_VERYHIGH = 1
@@ -86,6 +87,9 @@ def octet2date(txt):
     elif year == 0:
         hexadecimal = False
         year = 0000
+    elif year < 100:
+        hexadecimal = False
+        year = int(txt[0:4]) + 2000
     month = hexadecimal and octet2number(txt[4:6]) or int(txt[4:6])
     if month < 1 or month > 12:
         month = 1
@@ -97,6 +101,8 @@ def octet2date(txt):
         hour = 0
     else:
         hour = hexadecimal and octet2number(hour_txt) or int(hour_txt)
+        if int(hour_txt) > 23:
+            hour = 0
     minute_txt = txt[10:12]
     if minute_txt == 'FF':
         minute = 0
@@ -140,12 +146,14 @@ class PrimeTemplates:
     def __init__(self):
         self.templates = {}
 
-    def get_available_templates(self, origin=None, template_type=None):
+    def get_available_templates(self, origin=None, template_type=None, active=None):
         template_list = []
         for name, contract in self.templates.items():
             if origin is not None and contract['origin'] != origin:
                 continue
             if template_type is not None and contract['category'] != template_type:
+                continue
+            if active is not None and contract['active'] != active:
                 continue
 
             template_list.append((name, contract['description'], contract['origin']))
@@ -170,29 +178,41 @@ class DLMSTemplates(PrimeTemplates):
     def __init__(self):
         self.templates = DLMS_TEMPLATES
 
-    def generate_cycle_file(self, template_name, meters_name, params=None, root=True):
-        cycles_xml =self.generate_cycles(template_name, meters_name, params=params)
+    def generate_cycle_file(self, template_name, meters_name, params=None, root=True, **kwargs):
+        period = kwargs.get('period', 1)
+        immediate = kwargs.get('immediate', True)
+        repeat = kwargs.get('repeat', 1)
+        cycle_file_name = kwargs.get('cycle_file_name', None)
+        cycles_xml = self.generate_cycles(template_name, meters_name, period=period, immediate=immediate, repeat=repeat, cycle_file_name=cycle_file_name, params=params)
         if root:
             return "<cycles>\n{}\n</cycles>".format(cycles_xml)
         else:
             return cycles_xml
 
-    def generate_cycles(self, template_name, meters_name, params=None):
+    def generate_cycles(self, template_name, meters_name, period=1, immediate=True, repeat=1, params=None, cycle_file_name=None):
+        if cycle_file_name is None:
+            cycle_file_name = "Cicle_{}_raw".format(template_name)
+        immediate = str(immediate).lower()
         elements = self.get_template(template_name)['data']
         if params is None:
             params = {}
         else:
             params = prepare_params(params)
 
-        xml = '<cycle name="Ciclo_{}_raw" period="1" immediate="true" repeat="1" priority="1">\n'.format(
-            template_name)
+        xml = '<cycle name="{}" period="{}" immediate="{}" repeat="{}" priority="1">\n'.format(
+            cycle_file_name, period, immediate, repeat)
 
         for meter_name in meters_name:
             xml += '<device sn="{}"/>\n'.format(meter_name)
 
-        for element in elements:
-            xml += '<set obis="{}" class="{}" element="{}">{}</set>\n'.format(
+        if 'data' in elements[0]:
+            for element in elements:
+                xml += '<set obis="{}" class="{}" element="{}">{}</set>\n'.format(
                 element['obis'], element['class'], element['element'], element['data'].format(**params))
+        else:
+            for element in elements:
+                xml += '<get obis="{}" class="{}" element="{}"/>'.format(
+                element['obis'], element['class'], element['element'])
 
         xml += '</cycle>'
 
