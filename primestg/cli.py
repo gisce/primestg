@@ -40,8 +40,9 @@ ORDERS = {
     'cnc_stgip': {'order': 'B07', 'func': 'set_concentrator_ip'},
     # FW update
     'cnc_firmware_update': {'order': 'B08', 'func': 'update_cnc_firmware' },
-    # Update Meter Keys
-    'meter_keys': {'order': 'B32', 'func': 'update_meter_keys'}
+    # Update Keys
+    'cnc_keys': {'order': 'B31', 'func': 'update_cnc_keys'},
+    'meter_keys': {'order': 'B32', 'func': 'update_meter_keys'},
 }
 
 
@@ -61,46 +62,94 @@ def get_id_pet():
     ).seconds
 
 
-def get_update_meter_keys_parameters(keys):
+def get_update_meter_keys_parameters(raw_keys):
+    parsed = parse_parameters_keys(raw_keys)
+
     vals = {}
+    if 'mk' in parsed:
+        vals['master_key'] = parsed['mk']
+
     local_da_sec = []
-    key_types = {'gu': 'GUnKey', 'ga': 'GAuKey', 'gb': 'GBrKey'}
-    cdt_secs = []
-    if isinstance(keys, string_types):
-        for key_values in keys.split(';'):
-            if ':' in key_values:
-                key, values = key_values.split(':')
-                if key == 'mk':
-                    key_id, key_wrap = values.split(',')
-                    vals['master_key'] = {'key_id': key_id, 'key_wrap': key_wrap}
-                elif key == 'c1':
-                    local_da_sec.append({'client_id': 1, 'secret': values})
-                elif key == 'c2':
-                    local_da_sec.append({'client_id': 2, 'secret': values})
-                elif key == 'c4':
-                    parts = values.split(',')
-                    remote_data_access_sec = {'client_id': 4, 'secret': parts[-1]}
-                    if len(parts) == 2:
-                        remote_data_access_sec['factory_secret'] = parts[0]
-                    vals['remote_data_access_sec'] = remote_data_access_sec
-                elif key in ['gu', 'ga', 'gb']:
-                    if 'c4' not in keys:
-                        raise click.BadParameter('requires c4', param_hint=key)
-                    key_type = key_types[key]
-                    key_id, key_wrap, key_val = values.split(',')
-                    cdt_secs.append({
-                        'key_id': key_id, 'key_type': key_type,
-                        'key_wrap': key_wrap, 'key_val': key_val,
-                    })
-                else:
-                    raise click.BadParameter('Not a valid parameter', param_hint=key)
-            else:
-                raise click.BadParameter('Not a valid parameter', param_hint=key_values)
-        if local_da_sec:
-            vals['local_data_access_sec'] = local_da_sec
-        if cdt_secs:
-            vals['remote_data_access_sec'].update({'data_transport_sec_keys': cdt_secs})
+    for client in ['c1', 'c2']:
+        if client in parsed:
+            values = {'client_id': client[-1]}
+            values.update(parsed[client])
+            local_da_sec.append(values)
+    if local_da_sec:
+        vals['local_data_access_sec'] = local_da_sec
+
+    if 'c4' in parsed:
+        remote_sec = {'client_id': 4}
+        remote_sec.update(parsed['c4'])
+        if 'cdt_secs' in parsed:
+            for cdt_sec in parsed['cdt_secs']:
+                if len(cdt_sec) != 4:
+                    raise click.BadParameter('required <KeyId>,<KeyWrap>,<KeyVal>', param_hint='gu, ga and gb')
+            remote_sec['data_transport_sec_keys'] = parsed['cdt_secs']
+        vals['remote_data_access_sec'] = remote_sec
+
     return vals
+
+
+def get_update_cnc_keys_parameters(raw_keys, meter):
+    parsed = parse_parameters_keys(raw_keys)
+    if 'c4' in parsed:
+        vals = {'meter_id': meter}
+        vals['client_id'] = 4
+        vals['secret'] = parsed['c4']['secret']
+        if 'cdt_secs' in parsed:
+            vals['data_transport_sec_keys'] = parsed['cdt_secs']
+        res = {'meters': [vals]}
+    else:
+        res = {'meters': []}
+    return res
+
+
+def parse_parameters_keys(raw_keys):
+    if not isinstance(raw_keys, string_types) or not raw_keys:
+        return {}
+    parsed = {}
+    key_types = {'gu': 'GUnKey', 'ga': 'GAuKey', 'gb': 'GBrKey'}
+
+    segments = raw_keys.split(';')
+    has_c4 = any(seg.startswith('c4:') for seg in segments)
+
+    for segment in segments:
+        if not segment:
+            raise click.BadParameter("Empty segment", param_hint=segment)
+        if ':' not in segment:
+            raise click.BadParameter("Missing ':'", param_hint=segment)
+
+        key, key_data = segment.split(':', 1)
+        parts = key_data.split(',')
+
+        if key == 'mk':
+            if len(parts) == 2:
+                parsed['mk'] = {'key_id': parts[0], 'key_wrap': parts[1]}
+            else:
+                raise click.BadParameter('mk requires <KeyId>,<KeyWrap>', param_hint=segment)
+        elif key in ['c1', 'c2']:
+            parsed[key] = {'secret': key_data}  # secret
+        elif key == 'c4':
+            if len(parts) == 1:
+                parsed['c4'] = {'secret': parts[0]}
+            elif len(parts) >= 2:
+                parsed['c4'] = {'factory_secret': parts[0], 'secret': parts[-1]}
+        elif key in key_types:
+            if not has_c4:
+                raise click.BadParameter('requires c4', param_hint=key)
+            cdt_sec = {'key_type': key_types[key]}
+            if len(parts) == 3:
+                cdt_sec.update({'key_id': parts[0], 'key_wrap': parts[1], 'key_val': parts[2]})
+            elif len(parts) == 2:
+                cdt_sec.update({'key_id': parts[0], 'key_val': parts[1]})
+            else:
+                raise click.BadParameter('requires <KeyId>,[KeyWrap,]<KeyVal>', param_hint=segment)
+
+            parsed.setdefault('cdt_secs', []).append(cdt_sec)
+        else:
+            raise click.BadParameter('parameter not supported', param_hint=key)
+    return parsed
 
 
 @click.group(name="primestg")
@@ -167,11 +216,11 @@ def get_sync_sxx(**kwargs):
 @click.option("--ip", "-i", default="10.26.0.4", help='IP i.e CNC FTPIp')
 @click.option("--fw", "-f", default="/firmware/firmware.dat", help='Path to firmware in FTP')
 @click.option("--keys", "-k",
-              help="Semicolon-separated list of optional keys. Format: mk:<KeyI"
-                   "d>,<KeyWrap>;c1:<Secret>;c2:<Secret>;c4:[FactorySecret,]<Se"
-                   "cret>;gu:<KeyId>,<KeyWrap>,<KeyVal>;ga:<KeyId>,<KeyWrap>,<K"
-                   "eyVal>;gb:<KeyId>,<KeyWrap>,<KeyVal>. (Note: gu, ga, gb req"
-                   "uire c4)")
+    help="Semicolon-separated list of optional keys. Format: mk:<KeyId>,<KeyWra"
+         "p>;c1:<Secret>;c2:<Secret>;c4:[FactorySecret,]<Secret>;gu:<KeyId>[,Ke"
+         "yWrap],<KeyVal>;ga:<KeyId>[,KeyWrap],<KeyVal>;gb:<KeyId>[,KeyWrap],<K"
+         "eyVal>. (Note: gu, ga, gb require c4. <KeyWrap> is required for meter"
+         " keys but ignored for CNC keys)")
 def sends_order(**kwargs):
    """Sends one of available Orders to Meter or CNC"""
    id_pet = get_id_pet()
@@ -249,6 +298,8 @@ def sends_order(**kwargs):
         }
    elif order_name == 'meter_keys':
        vals = get_update_meter_keys_parameters(kwargs['keys'])
+   elif order_name == 'cnc_keys':
+       vals = get_update_cnc_keys_parameters(kwargs['keys'], meter_name)
 
    vals.update({
        'date_to': format_timestamp(datetime.now()+timedelta(hours=1)),
