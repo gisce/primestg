@@ -578,12 +578,10 @@ class MeasureG04(Measure):
       - season
       - bc
       - in
-      - v1_lv
-      - v1_mv
-      - v2_lv
-      - v2_mv
+      - v1
+      - v2
       - ...
-      - i3_lv
+      - i3
       - ineutral
     """
     @property
