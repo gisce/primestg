@@ -1,0 +1,13 @@
+<Report IdRpt="S07" IdPet="0" Version="3.1.c">
+	<Cnc Id="CIR4622119033">
+		<Cnt Id="SAG0155354621">
+			<S07 Fh="20240103002719000W" Dc="180" Nc="54" Df="23433" Hc="20231224112241000W"/>
+		</Cnt>
+		<Cnt Id="SAG0155354657">
+			<S07 Fh="20240103002757000W" Dc="180" Nc="49" Df="11317" Hc="20231224112057000W"/>
+		</Cnt>
+		<Cnt Id="CIR0141439819" ErrCat="2" ErrCode="0"/>
+		<Cnt Id="SAG0155354669" ErrCat="2" ErrCode="1"/>
+		<Cnt Id="SAG0176451808" ErrCat="2" ErrCode="1"/>
+	</Cnc>
+</Report>
