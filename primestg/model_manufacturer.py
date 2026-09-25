@@ -144,7 +144,7 @@ equipos = {
         }
     },
     'ORBIS': {
-        'prfeix': 'ORB',
+        'prefix': 'ORB',
         'marca': 'ORBIS',
         'manufacturers': {
             'K':{
