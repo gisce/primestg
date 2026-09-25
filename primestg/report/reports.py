@@ -10,7 +10,7 @@ from primestg.utils import octet2name, octet2number
 
 SUPPORTED_REPORTS = ['S01', 'S02', 'S04', 'S05', 'S06', 'S07', 'S08', 'S09', 'S12', 'S13', 'S14',
                      'S15', 'S17', 'S18', 'S21', 'S23', 'S24', 'S26', 'S27', 'S31', 'S42', 'S52',
-                     'G01', 'G02']
+                     'G01', 'G02', 'G04']
 
 
 def is_supported(report_code):
@@ -566,6 +566,54 @@ class MeasureG02(Measure):
             }
         except Exception as e:
             self._warnings.append('ERROR: Reading G02 report. Thrown '
+                                  'exception: {}'.format(e))
+            return []
+        return [values]
+
+
+class MeasureG04(Measure):
+    """
+    Measure fields:
+      - timestamp
+      - season
+      - bc
+      - in
+      - v1
+      - v2
+      - ...
+      - i3
+      - ineutral
+    """
+    @property
+    def values(self):
+        try:
+            get = self.objectified.get
+            values = {
+                'timestamp': self._get_timestamp('Fh'),
+                'season': get('Fh')[-1:],
+                'i1_lv': get_float_value(get('MaxIph1_lv')),
+                'i2_lv': get_float_value(get('MaxIph2_lv')),
+                'i3_lv': get_float_value(get('MaxIph3_lv')),
+                'ineutral': get_float_value(get('MaxIneutral')),
+                'v1_lv': get_integer_value(get('MaxVph1_lv')),
+                'v2_lv': get_integer_value(get('MaxVph2_lv')),
+                'v3_lv': get_integer_value(get('MaxVph3_lv')),
+                'v1_mv': get_integer_value(get('MaxVph1_mv')),
+                'v2_mv': get_integer_value(get('MaxVph2_mv')),
+                'v3_mv': get_integer_value(get('MaxVph3_mv')),
+                'ai': get_integer_value(get('MaxPplus_triph')),
+                'ae': get_integer_value(get('MaxPminus_triph')),
+                'r_inductiva': get_integer_value(get('MaxQplus_triph')),
+                'r_capacitiva': get_integer_value(get('MaxQminus_triph')),
+                'v1_comp': get_integer_value(get('MaxV1_comp')),
+                'v2_comp': get_integer_value(get('MaxV2_comp')),
+                'vo_comp': get_integer_value(get('MaxVo_comp')),
+                'v_hs': get_integer_value(get('MaxVhs')),
+                'bc': get('Bc'),
+            }
+
+        except Exception as e:
+            self._warnings.append('ERROR: Reading G04 report. Thrown '
                                   'exception: {}'.format(e))
             return []
         return [values]
@@ -2392,6 +2440,20 @@ class MeterG02(MeterWithConcentratorName):
         return MeasureG02
 
 
+class MeterG04(MeterWithConcentratorName):
+    """
+    Class for a meter of report G04
+    """
+
+    @property
+    def report_type(self):
+        return 'G04'
+
+    @property
+    def measure_class(self):
+        return MeasureG04
+
+
 class ConcentratorS01(ConcentratorWithMetersWithConcentratorName):
     """
     Class for a concentrator of report S01.
@@ -3326,6 +3388,21 @@ class ConcentratorG02(ConcentratorWithMetersWithConcentratorName):
         return MeterG02
 
 
+class ConcentratorG04(ConcentratorWithMetersWithConcentratorName):
+    """
+    Class for a concentrator of report G04
+    """
+
+    @property
+    def meter_class(self):
+        """
+        The class used to instance meters for report G04.
+
+        :return: a class to instance meters of report G04
+        """
+        return MeterG04
+
+
 class RemoteTerminalUnitS52(RemoteTerminalUnitDetails):
     """
     Class for a remote terminal unit of report S52.
@@ -3567,6 +3644,10 @@ class Report(object):
             'G02': {
                 'class': ConcentratorG02,
                 'args': [objectified_concentrator]
+            },
+            'G04': {
+                'class': ConcentratorG04,
+                'args': [objectified_concentrator],
             }
         }
 
