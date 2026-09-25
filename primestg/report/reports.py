@@ -591,17 +591,26 @@ class MeasureG04(Measure):
             values = {
                 'timestamp': self._get_timestamp('Fh'),
                 'season': get('Fh')[-1:],
-                'bc': get('Bc'),
+                'i1_lv': get_float_value(get('MaxIph1_lv')),
+                'i2_lv': get_float_value(get('MaxIph2_lv')),
+                'i3_lv': get_float_value(get('MaxIph3_lv')),
                 'ineutral': get_float_value(get('MaxIneutral')),
+                'v1_lv': get_integer_value(get('MaxVph1_lv')),
+                'v2_lv': get_integer_value(get('MaxVph2_lv')),
+                'v3_lv': get_integer_value(get('MaxVph3_lv')),
+                'v1_mv': get_integer_value(get('MaxVph1_mv')),
+                'v2_mv': get_integer_value(get('MaxVph2_mv')),
+                'v3_mv': get_integer_value(get('MaxVph3_mv')),
+                'ai': get_integer_value(get('MaxPplus_triph')),
+                'ae': get_integer_value(get('MaxPminus_triph')),
+                'r_inductiva': get_integer_value(get('MaxQplus_triph')),
+                'r_capacitiva': get_integer_value(get('MaxQminus_triph')),
+                'v1_comp': get_integer_value(get('MaxV1_comp')),
+                'v2_comp': get_integer_value(get('MaxV2_comp')),
+                'vo_comp': get_integer_value(get('MaxVo_comp')),
+                'v_hs': get_integer_value(get('MaxVhs')),
+                'bc': get('Bc'),
             }
-            for measure, func in [
-                ('v', get_integer_value),
-                ('i', get_float_value)
-            ]:
-                for phase in [1,2,3]:
-                    field = '{}{}'.format(measure, phase) # i1_lv
-                    g04_field = 'Max{}ph{}_lv'.format(measure.upper(), phase) # MaxIph1_lv
-                    values[field] = func(get(g04_field))
 
         except Exception as e:
             self._warnings.append('ERROR: Reading G04 report. Thrown '

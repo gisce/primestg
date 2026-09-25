@@ -14,19 +14,29 @@ with description('Report G04 example'):
         first_value_meter = {
             'timestamp': '2026-09-15 04:00:00',
             'season': 'S',
-            'bc': '82',
+            'i1_lv': 122.9,
+            'i2_lv': 115.9,
+            'i3_lv': 126.1,
             'ineutral': 10.7,
-            'v1': 137,
-            'v2': 137,
-            'v3': 137,
-            'i1': 122.9,
-            'i2': 115.9,
-            'i3': 126.1,
+            'v1_lv': 137,
+            'v2_lv': 137,
+            'v3_lv': 137,
+            'v1_mv': 11368,
+            'v2_mv': 11366,
+            'v3_mv': 11344,
+            'ai': 46290,
+            'ae': 0,
+            'r_inductiva': 8300,
+            'r_capacitiva': 2820,
+            'v1_comp': 137,
+            'v2_comp': 2,
+            'vo_comp': 2,
+            'v_hs': 0,
+            'bc': '82',
             'name': 'CIR2081429002',
             'cnc_name': 'CIR4621511370'
         }
         concentrator = list(self.report.concentrators)[0]
         parameter = concentrator.meters[0]
-        first_task_first_concentrator = parameter.values[0]
-        expect(first_task_first_concentrator)\
-            .to(equal(first_value_meter))
+        first_value = parameter.values[0]
+        expect(first_value).to(equal(first_value_meter))
