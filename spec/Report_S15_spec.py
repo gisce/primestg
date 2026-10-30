@@ -26,7 +26,7 @@ with description('Report S15 examples'):
                 'name': 'ZIV0000035545',
                 'event_code': 1,
                 'season': 'W',
-                'timestamp': '2016-12-02 13:12:40:',
+                'timestamp': '2016-12-02 13:12:40',
                 'data': 'D1: MeterID\nD2: Switch states',
                 'event_group': 2
             }
@@ -35,8 +35,9 @@ with description('Report S15 examples'):
         parameter = concentrator.parameters[0]
         first_task_first_concentrator = parameter.values
 
-        expect(sorted(first_task_first_concentrator))\
-            .to(equal(sorted(expected_first_value_first_concentrator)))
+        expect(first_task_first_concentrator).to(
+            equal(expected_first_value_first_concentrator)
+        )
 
     with it('generates the expected results for the whole report'):
 
