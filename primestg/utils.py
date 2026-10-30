@@ -12,6 +12,8 @@ from string import printable
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from .event_groups import *
+from cryptography.hazmat.primitives.keywrap import aes_key_wrap, aes_key_unwrap
+from binascii import hexlify, unhexlify
 
 TZ = timezone('Europe/Madrid')
 PRIORITY_VERYHIGH = 1
@@ -140,6 +142,25 @@ def prepare_params(payload):
         params.update(hex_powers)
         params.update({'date': datetohexprime(latent_date)})
         return params
+
+
+def key_wrap(master_key, key):
+    return aes_key_wrap(master_key, key)
+
+
+def key_unwrap(master_key, wrapped_key):
+    return aes_key_unwrap(master_key, wrapped_key)
+
+
+def bin2octet(data):
+    """ Converts binary data into its hexadecimal representation. """
+    return hexlify(data)
+
+
+def octet2bin(data):
+    """ Converts hexadecimal data back into its binary representation."""
+    return unhexlify(data)
+
 
 class PrimeTemplates:
 
