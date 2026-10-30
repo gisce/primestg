@@ -9,7 +9,7 @@ from primestg.utils import octet2name, octet2number
 
 
 SUPPORTED_REPORTS = ['S01', 'S02', 'S04', 'S05', 'S06', 'S07', 'S08', 'S09', 'S12', 'S13', 'S14',
-                     'S15', 'S17', 'S18', 'S21', 'S23', 'S24', 'S26', 'S27', 'S31', 'S42', 'S52',
+                     'S15', 'S17', 'S18', 'S21', 'S23', 'S24', 'S26', 'S27', 'S31', 'S32', 'S42', 'S52',
                      'G01', 'G02', 'G04']
 
 
@@ -1562,6 +1562,69 @@ class ParameterConcentratorEvents(Parameter):
             data = '\n'.join(d1s + d2s)
             if data:
                 values.update({'data': data})
+        except Exception as e:
+            self._warnings.append('ERROR: Reading a concentrator event. Thrown '
+                                  'exception: {}'.format(e))
+            return []
+
+        return values
+
+
+class ParameterS32(Parameter):
+    """
+    Class for a set of parameters of report S32.
+    """
+
+    def __init__(
+            self,
+            objectified_parameter,
+            report_version,
+            concentrator_name,
+            request_id
+    ):
+        super(ParameterS32, self).__init__(
+            objectified_parameter,
+            report_version
+        )
+        self.concentrator_name = concentrator_name
+        self.request_id = request_id
+
+    @property
+    def concentrator_name(self):
+        return self._concentrator_name
+
+    @concentrator_name.setter
+    def concentrator_name(self, value):
+        self._concentrator_name = value
+
+    @property
+    def request_id(self):
+        return self._request_id
+
+    @request_id.setter
+    def request_id(self, value):
+        self._request_id = value
+
+    @property
+    def values(self):
+        """
+        Set of parameters of report S32.
+
+        :return: a dict with a set of parameters of report S32
+        """
+        try:
+            get = self.objectified.get
+            values = {
+                'name': self.concentrator_name,
+                'event_code': int(get('C')),
+                'season': get('Fh')[-1:],
+                'timestamp': self._get_timestamp('Fh'),
+                'event_group': int(get('Et')),
+                'D1': self.objectified.D1,
+            }
+            d2s = {d.get('cosemID'): str(d) for d in getattr(self.objectified, 'D2', [])}
+            if d2s:
+                values.update({'D2': d2s})
         except Exception as e:
             self._warnings.append('ERROR: Reading a concentrator event. Thrown '
                                   'exception: {}'.format(e))
@@ -3197,6 +3260,32 @@ class ConcentratorS31(ConcentratorWithMetersWithConcentratorName):
         return [v for v in values if v]
 
 
+class ConcentratorS32(ConcentratorEvents):
+
+    def __init__(self, objectified_concentrator, report_version, request_id, report_type):
+        super(ConcentratorS32, self).__init__(objectified_concentrator, report_version, request_id)
+        self.report_version = report_version
+        self.request_id = request_id
+        self.report_type = report_type
+
+    @property
+    def parameters(self):
+        """
+        Parameter set objects of this concentrator.
+
+        :return: a list of parameter set objects
+        """
+        parameters = []
+        if getattr(self.objectified, 'S32', None) is not None:
+            for parameter in self.objectified.S32:
+                parameters.append(ParameterS32(
+                    parameter,
+                    self.report_version,
+                    self.name,
+                    self.request_id))
+        return parameters
+
+
 class ConcentratorS23(ConcentratorWithMetersWithConcentratorName):
 
     """
@@ -3628,6 +3717,15 @@ class Report(object):
                     objectified_concentrator,
                     self.report_version,
                     self.request_id,
+                ]
+            },
+            'S32': {
+                'class': ConcentratorS32,
+                'args': [
+                    objectified_concentrator,
+                    self.report_version,
+                    self.request_id,
+                    self.report_type
                 ]
             },
             'S42': {
