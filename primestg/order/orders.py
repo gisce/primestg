@@ -784,13 +784,15 @@ class B32:
     """
     def __init__(self, generic_values, payload):
         self.generic_values = generic_values
+        version = generic_values.get('version', '3.1.c')
         self.order = CntOrderHeader(
             generic_values.get('id_pet'),
             generic_values.get('id_req'),
             generic_values.get('cnc'),
             generic_values.get('cnt'),
-            generic_values.get('version', '3.1.c'),
+            version,
         )
+        payload.update({'version': version})
         self.order.cnc.cnt.feed({'payload': B32Payload(payload)})
 
 
@@ -842,12 +844,18 @@ class B32Payload(XmlModel):
                 )
 
         def __init__(self, payload, drop_empty=False):
+            version = payload.get('version')
+            attributes = {
+                'ClientId': str(payload['client_id']),
+                'Secret': str(payload.get('secret', '')),
+            }
+            dasec_name = 'DASec'
+            if version < '4':
+                attributes['FactorySecret'] = str(payload.get('factory_secret', ''))
+                dasec_name = 'RemoteDASec'
+
             self.remote_data_access_sec = XmlField(
-                'RemoteDASec', attributes={
-                    'ClientId': str(payload['client_id']),
-                    'FactorySecret': str(payload.get('factory_secret', '')),
-                    'Secret': str(payload.get('secret', '')),
-                }
+                dasec_name, attributes=attributes
             )
 
             self.cdt_secs = []
@@ -855,20 +863,28 @@ class B32Payload(XmlModel):
             for cdt_sec in cdt_secs:
                 self.cdt_secs.append(self.CDTSec(cdt_sec, drop_empty=drop_empty))
             super(B32Payload.RemoteDASec, self).__init__(
-                'RemoteDASec', 'remote_data_access_sec', drop_empty=drop_empty
+                dasec_name, 'remote_data_access_sec', drop_empty=drop_empty
             )
 
     def __init__(self, payload, drop_empty=False):
-        self.b32_content = XmlField('B32')
+        version = payload.get('version')
+        attributes = {}
+        if version <= '4':
+            attributes = {
+                'Fini': str(payload['date_from']),
+                'Ffin': str(payload['date_to']),
+            }
+        self.b32_content = XmlField('B32', attributes=attributes)
 
         master_key_payload = payload.get('master_key')
         if master_key_payload:
             self.master_key = self.MasterKey(master_key_payload, drop_empty=drop_empty)
 
         self.local_da_sec = []
-        local_data_access_sec_payloads = payload.get('local_data_access_sec', [])
-        for ldas_payload in local_data_access_sec_payloads:
-            self.local_da_sec.append(self.LocalDASec(ldas_payload, drop_empty=drop_empty))
+        if version >= '4':
+            local_data_access_sec_payloads = payload.get('local_data_access_sec', [])
+            for ldas_payload in local_data_access_sec_payloads:
+                self.local_da_sec.append(self.LocalDASec(ldas_payload, drop_empty=drop_empty))
 
         remote_data_access_sec_payload = payload.get('remote_data_access_sec')
         if remote_data_access_sec_payload:
