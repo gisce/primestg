@@ -850,7 +850,7 @@ class B32Payload(XmlModel):
                 'Secret': str(payload.get('secret', '')),
             }
             dasec_name = 'DASec'
-            if version < '4':
+            if version >= '4':
                 attributes['FactorySecret'] = str(payload.get('factory_secret', ''))
                 dasec_name = 'RemoteDASec'
 
@@ -888,6 +888,7 @@ class B32Payload(XmlModel):
 
         remote_data_access_sec_payload = payload.get('remote_data_access_sec')
         if remote_data_access_sec_payload:
+            remote_data_access_sec_payload.update({'version': version})
             self.remote_da_sec = self.RemoteDASec(remote_data_access_sec_payload, drop_empty=drop_empty)
 
         super(B32Payload, self).__init__(
