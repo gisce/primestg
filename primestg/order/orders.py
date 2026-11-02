@@ -724,14 +724,16 @@ class B31:
     """
     def __init__(self, generic_values, payload):
         self.generic_values = generic_values
+        version = generic_values.get('version', '3.1.c')
         self.order = OrderHeader(
             generic_values.get('id_pet'),
             generic_values.get('id_req'),
             generic_values.get('cnc'),
-            generic_values.get('version', '3.1.c'),
+            version,
         )
         meter_list = []
         for meter_payload in payload.get('meters', []):
+            meter_payload.update({'version': version})
             meter_list.append(B31Meter(meter_payload))
 
         self.order.cnc.b31_meters = meter_list
@@ -765,11 +767,13 @@ class B31Meter(XmlModel):
             )
 
     def __init__(self, payload, drop_empty=False):
-        self.b31_content = XmlField(
-            'B31', attributes={
-                'CntId': str(payload['meter_id']),
-            }
-        )
+        version = payload.get('version')
+        attributes = {'CntId': str(payload['meter_id'])}
+        if version < '4':
+            activation_date = datetimetoprime(payload['activation_date'])
+            attributes['ActDate'] = activation_date
+
+        self.b31_content = XmlField('B31', attributes=attributes)
         self.da_sec = self.DASec(payload, drop_empty=drop_empty)
         super(B31Meter, self).__init__(
             'B31Meter', 'b31_content', drop_empty=drop_empty

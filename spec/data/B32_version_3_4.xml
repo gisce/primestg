@@ -1,0 +1,13 @@
+<Order IdReq="B32" IdPet="11006811" Version="3.4">
+    <Cnc Id="AAA57C4730016">
+        <Cnt Id="BBB0115108646">
+            <B32 Fini="20130101000000000W" Ffin="20130101000500000W">
+                <MasterKey KeyId="3657378" KeyWrap="805398099580948550"/>
+                <DASec ClientId="4" Secret="00ABCDEF">
+                    <CDTSec KeyId="5647378" KeyType="GUnKey" KeyWrap="805398099580948550" KeyVal="01010101010101010101010101010101"/>
+                    <CDTSec KeyId="64838374" KeyType="GAuKey" KeyWrap="648763278468726487" KeyVal="01010101010101010101010101010101"/>
+                </DASec>
+            </B32>
+        </Cnt>
+    </Cnc>
+</Order>

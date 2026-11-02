@@ -91,7 +91,9 @@ def get_update_meter_keys_parameters(raw_keys):
     return vals
 
 
-def get_update_cnc_keys_parameters(raw_keys, meter):
+def get_update_cnc_keys_parameters(meter, version, kwargs):
+    raw_keys = kwargs['keys']
+    activation_date = datetime.strptime(kwargs['activation_date'], '%Y-%m-%d %H:%M:%S')
     parsed = parse_parameters_keys(raw_keys)
     if 'c4' in parsed:
         vals = {'meter_id': meter}
@@ -100,6 +102,7 @@ def get_update_cnc_keys_parameters(raw_keys, meter):
         if 'cdt_secs' in parsed:
             vals['data_transport_sec_keys'] = parsed['cdt_secs']
         res = {'meters': [vals]}
+        vals['activation_date'] = activation_date
     else:
         res = {'meters': []}
     return res
@@ -299,7 +302,7 @@ def sends_order(**kwargs):
    elif order_name == 'meter_keys':
        vals = get_update_meter_keys_parameters(kwargs['keys'])
    elif order_name == 'cnc_keys':
-       vals = get_update_cnc_keys_parameters(kwargs['keys'], meter_name)
+       vals = get_update_cnc_keys_parameters(meter_name, version, kwargs)
 
    vals.update({
        'date_to': format_timestamp(datetime.now()+timedelta(hours=1)),
