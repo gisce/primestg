@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 from primestg.order.orders import Order
 from primestg.utils import assertXMLEqual
+from datetime import datetime
 
 with description('Order B31 Generation'):
     with before.all:
         filenames = [
             'spec/data/B31.xml',
             'spec/data/B31_2.xml',
+            'spec/data/B31_version_3_4.xml',
         ]
         self.expected_results = []
 
@@ -79,3 +81,34 @@ with description('Order B31 Generation'):
         order = Order('B31')
         order = order.create(generic_values, payload)
         assertXMLEqual(order, self.expected_results[1])
+
+    with it('generates expected v3.4 B31 xml'):
+        generic_values = {
+            'id_pet': '831',
+            'id_req': 'B31',
+            'cnc': 'ZZZ0000000001',
+            'version': '3.4',
+        }
+        payload = {
+            'meters': [{
+                'meter_id': 'XXX0219910832', 'client_id': 4,
+                'activation_date': datetime(2013, 1, 1),
+                'secret': '00000005', 'data_transport_sec_keys': [{
+                    'key_id': 5647378, 'key_type': 'GUnKey', 'key_val': '01010101010101010101010101010101',
+                }, {
+                    'key_id': 64838374, 'key_type': 'GAuKey', 'key_val': '02020202020202020202020202020202',
+                }]
+            }, {
+                'meter_id': 'XXX0219910833', 'client_id': 4,
+                'activation_date': datetime(2013, 1, 1),
+                'secret': '00000005', 'data_transport_sec_keys': [{
+                    'key_id': 5647378, 'key_type': 'GUnKey', 'key_val': '01010101010101010101010101010101',
+                }, {
+                    'key_id': 64838374, 'key_type': 'GAuKey', 'key_val': '02020202020202020202020202020202',
+                }]
+            }],
+        }
+
+        order = Order('B31')
+        order = order.create(generic_values, payload)
+        assertXMLEqual(order, self.expected_results[2])
