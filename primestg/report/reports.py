@@ -1620,7 +1620,7 @@ class ParameterS32(Parameter):
                 'season': get('Fh')[-1:],
                 'timestamp': self._get_timestamp('Fh'),
                 'event_group': int(get('Et')),
-                'D1': self.objectified.D1,
+                'D1': str(self.objectified.D1),
             }
             d2s = {d.get('cosemID'): str(d) for d in getattr(self.objectified, 'D2', [])}
             if d2s:
