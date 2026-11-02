@@ -733,8 +733,7 @@ class B31:
         )
         meter_list = []
         for meter_payload in payload.get('meters', []):
-            meter_payload.update({'version': version})
-            meter_list.append(B31Meter(meter_payload))
+            meter_list.append(B31Meter(meter_payload, version))
 
         self.order.cnc.b31_meters = meter_list
 
@@ -766,8 +765,7 @@ class B31Meter(XmlModel):
                 'DASec', 'da_sec', drop_empty
             )
 
-    def __init__(self, payload, drop_empty=False):
-        version = payload.get('version')
+    def __init__(self, payload, version, drop_empty=False):
         attributes = {'CntId': str(payload['meter_id'])}
         if version < '4':
             activation_date = datetimetoprime(payload['activation_date'])
@@ -796,8 +794,7 @@ class B32:
             generic_values.get('cnt'),
             version,
         )
-        payload.update({'version': version})
-        self.order.cnc.cnt.feed({'payload': B32Payload(payload)})
+        self.order.cnc.cnt.feed({'payload': B32Payload(payload, version)})
 
 
 class B32Payload(XmlModel):
@@ -847,8 +844,7 @@ class B32Payload(XmlModel):
                     'CDTSec', 'data_transport_sec_key', drop_empty=drop_empty
                 )
 
-        def __init__(self, payload, drop_empty=False):
-            version = payload.get('version')
+        def __init__(self, payload, version, drop_empty=False):
             attributes = {
                 'ClientId': str(payload['client_id']),
                 'Secret': str(payload.get('secret', '')),
@@ -870,10 +866,9 @@ class B32Payload(XmlModel):
                 dasec_name, 'remote_data_access_sec', drop_empty=drop_empty
             )
 
-    def __init__(self, payload, drop_empty=False):
-        version = payload.get('version')
+    def __init__(self, payload, version, drop_empty=False):
         attributes = {}
-        if version <= '4':
+        if version < '4':
             attributes = {
                 'Fini': str(payload['date_from']),
                 'Ffin': str(payload['date_to']),
@@ -892,8 +887,7 @@ class B32Payload(XmlModel):
 
         remote_data_access_sec_payload = payload.get('remote_data_access_sec')
         if remote_data_access_sec_payload:
-            remote_data_access_sec_payload.update({'version': version})
-            self.remote_da_sec = self.RemoteDASec(remote_data_access_sec_payload, drop_empty=drop_empty)
+            self.remote_da_sec = self.RemoteDASec(remote_data_access_sec_payload, version, drop_empty=drop_empty)
 
         super(B32Payload, self).__init__(
             'b32Payload', 'b32_content', drop_empty=drop_empty
