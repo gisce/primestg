@@ -26,14 +26,14 @@ with description('Order B31 Generation'):
         }
         payload = {
             'meters': [{
-                'meter_id': 'BBB0115108646', 'client_id': 4,
+                'cnt': 'BBB0115108646', 'client_id': 4,
                 'secret': '00ABCDEF', 'data_transport_sec_keys': [{
                     'key_id': 66365377, 'key_type': 'GUnKey', 'key_val': 805398099580948550,
                 }, {
                     'key_id': 8373663, 'key_type': 'GAuKey', 'key_val': 648242389442428979,
                 }]
             }, {
-                'meter_id': 'CCC0115108646', 'client_id': 4,
+                'cnt': 'CCC0115108646', 'client_id': 4,
                 'secret': '00ABCDEF', 'data_transport_sec_keys': [{
                     'key_id': 88747433, 'key_type': 'GUnKey', 'key_val': 805398099580948550,
                 }, {
@@ -55,21 +55,21 @@ with description('Order B31 Generation'):
         }
         payload = {
             'meters': [{
-                'meter_id': 'XXX0219910832', 'client_id': 4,
+                'cnt': 'XXX0219910832', 'client_id': 4,
                 'secret': '00000005', 'data_transport_sec_keys': [{
                     'key_id': 5647378, 'key_type': 'GUnKey', 'key_val': '01010101010101010101010101010101',
                 }, {
                     'key_id': 64838374, 'key_type': 'GAuKey', 'key_val': '02020202020202020202020202020202',
                 }]
             }, {
-                'meter_id': 'XXX0219910833', 'client_id': 4,
+                'cnt': 'XXX0219910833', 'client_id': 4,
                 'secret': '00000005', 'data_transport_sec_keys': [{
                     'key_id': 5647378, 'key_type': 'GUnKey', 'key_val': '01010101010101010101010101010101',
                 }, {
                     'key_id': 64838374, 'key_type': 'GAuKey', 'key_val': '02020202020202020202020202020202',
                 }]
             }, {
-                'meter_id': 'XXX0219910834', 'client_id': 4,
+                'cnt': 'XXX0219910834', 'client_id': 4,
                 'secret': '00000005', 'data_transport_sec_keys': [{
                     'key_id': 5647378, 'key_type': 'GUnKey', 'key_val': '01010101010101010101010101010101',
                 }, {
@@ -91,7 +91,7 @@ with description('Order B31 Generation'):
         }
         payload = {
             'meters': [{
-                'meter_id': 'XXX0219910832', 'client_id': 4,
+                'cnt': 'XXX0219910832', 'client_id': 4,
                 'activation_date': datetime(2013, 1, 1),
                 'secret': '00000005', 'data_transport_sec_keys': [{
                     'key_id': 5647378, 'key_type': 'GUnKey', 'key_val': '01010101010101010101010101010101',
@@ -99,7 +99,7 @@ with description('Order B31 Generation'):
                     'key_id': 64838374, 'key_type': 'GAuKey', 'key_val': '02020202020202020202020202020202',
                 }]
             }, {
-                'meter_id': 'XXX0219910833', 'client_id': 4,
+                'cnt': 'XXX0219910833', 'client_id': 4,
                 'activation_date': datetime(2013, 1, 1),
                 'secret': '00000005', 'data_transport_sec_keys': [{
                     'key_id': 5647378, 'key_type': 'GUnKey', 'key_val': '01010101010101010101010101010101',
