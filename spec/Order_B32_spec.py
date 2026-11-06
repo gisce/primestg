@@ -15,6 +15,7 @@ with description('Order B32 Generation'):
             'spec/data/B32_init_meter.xml',
             'spec/data/B32_update_lls_after_field_operator_usage.xml',
             'spec/data/B32_version_3_4.xml',
+            'spec/data/B32_version_3_4_v2.xml',
         ]
         self.expected_results = []
 
@@ -240,3 +241,64 @@ with description('Order B32 Generation'):
         order = Order('B32')
         order = order.create(generic_values, payload)
         assertXMLEqual(order, self.expected_results[6])
+
+    with it('generates expected output for v3.4 v2 B32 xml'):
+        generic_values = {
+            'id_pet': '11006811',
+            'id_req': 'B32',
+            'cnc': 'AAA57C4730016',
+            'cnt': 'BBB0115108646',
+            'version': '3.4',
+        }
+        payload = {
+            'date_from': format_timestamp(datetime(2013, 1, 1)),
+            'date_to': format_timestamp(datetime(2013, 1, 1, 0, 5)),
+            'master_key': {'key_id': 3657378, 'key_wrap': 805398099580948550},
+            'local_data_access_sec': [{
+                'client_id': 1,
+                'secret': '00ABCDEF',
+                'data_transport_sec_keys': [{
+                    'key_id': 5647378,
+                    'key_type': 'GUnKey',
+                    'key_val': '01010101010101010101010101010101',
+                    'key_wrap': 805398099580948550,
+                }, {
+                    'key_id': 64838374,
+                    'key_type': 'GAuKey',
+                    'key_val': '01010101010101010101010101010101',
+                    'key_wrap': 648763278468726487,
+                }]
+            }, {
+                'client_id': 2,
+                'secret': '00ABCDEF',
+                'data_transport_sec_keys': [{
+                    'key_id': 5647378,
+                    'key_type': 'GUnKey',
+                    'key_val': '01010101010101010101010101010101',
+                    'key_wrap': 805398099580948550,
+                }, {
+                    'key_id': 64838374,
+                    'key_type': 'GAuKey',
+                    'key_val': '01010101010101010101010101010101',
+                    'key_wrap': 648763278468726487,
+                }]
+            }],
+            'remote_data_access_sec': {
+                'client_id': 4, 'factory_secret': 'filler', 'secret': '00ABCDEF',
+                'data_transport_sec_keys': [{
+                    'key_id': 5647378,
+                    'key_type': 'GUnKey',
+                    'key_val': '01010101010101010101010101010101',
+                    'key_wrap': 805398099580948550,
+                }, {
+                    'key_id': 64838374,
+                    'key_type': 'GAuKey',
+                    'key_val': '01010101010101010101010101010101',
+                    'key_wrap': 648763278468726487,
+                }]
+            }
+        }
+
+        order = Order('B32')
+        order = order.create(generic_values, payload)
+        assertXMLEqual(order, self.expected_results[7])
