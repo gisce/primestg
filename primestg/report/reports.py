@@ -267,7 +267,7 @@ class ParameterS31(Parameter):
                     'key_request': get('KeyRequest'),
                     'lls_opt_rea': key_request(key, 2),
                     'lls_opt_sec': key_request(key, 3),
-                    'lls_plc': key_request(key, 4),
+                    'lls': key_request(key, 4),
                     'gaukey': key_request(key, 5),
                     'gbrkey': key_request(key, 6),
                     'gunkey': key_request(key, 7),

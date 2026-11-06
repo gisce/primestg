@@ -759,7 +759,7 @@ class B31Meter(XmlModel):
                 }
             )
             self.cdt_secs = []
-            for cdt_sec_payload in payload['data_transport_sec_keys']:
+            for cdt_sec_payload in payload.get('data_transport_sec_keys', []):
                 self.cdt_secs.append(self.CDTSec(cdt_sec_payload, drop_empty=drop_empty))
             super(B31Meter.DASec, self).__init__(
                 'DASec', 'da_sec', drop_empty
@@ -794,28 +794,96 @@ class B32:
             generic_values.get('cnt'),
             version,
         )
-        self.order.cnc.cnt.feed({'payload': B32Payload(payload, version)})
+        if version >= '4':
+            b32 = B32Payload4X(payload)
+        else:
+            data_access_sec = []
+            if payload.get('remote_data_access_sec'):
+                data_access_sec.append(payload['remote_data_access_sec'])
+            if payload.get('local_data_access_sec'):
+                data_access_sec.extend(payload['local_data_access_sec'])
+            payload['data_access_sec'] = data_access_sec
+            b32 = B32Payload3X(payload)
+        self.order.cnc.cnt.feed({'payload': b32})
 
 
-class B32Payload(XmlModel):
+class MasterKey(XmlModel):
+    def __init__(self, payload, drop_empty=False):
+        self.master_key_content = XmlField(
+            'MasterKey', attributes={
+                'KeyId': str(payload['key_id']),
+                'KeyWrap': str(payload['key_wrap']),
+            }
+        )
+        super(MasterKey, self).__init__(
+            'MasterKey', 'master_key_content', drop_empty=drop_empty
+        )
+
+
+class B32Payload3X(XmlModel):
+    """
+        The class used to instantiate the B32 parameters
+        :return: B32 parameters
+        """
+
+    _sort_order = ('master_key', 'da_sec')
+
+    class DASec(XmlModel):
+        class CDTSec(XmlModel):
+            def __init__(self, payload, drop_empty=False):
+                self.data_transport_sec_key = XmlField(
+                    'CDTSec', attributes={
+                        'KeyId': str(payload['key_id']),
+                        'KeyType': str(payload['key_type']),
+                        'KeyWrap': str(payload['key_wrap']),
+                        'KeyVal': str(payload['key_val']),
+                    }
+                )
+                super(B32Payload3X.DASec.CDTSec, self).__init__(
+                    'CDTSec', 'data_transport_sec_key', drop_empty=drop_empty
+                )
+
+        def __init__(self, payload, drop_empty=False):
+            attributes = {
+                'ClientId': str(payload['client_id']),
+                'Secret': str(payload.get('secret', '')),
+            }
+            self.data_access_sec = XmlField('DASec', attributes=attributes)
+            self.cdt_secs = []
+            cdt_secs = payload.get('data_transport_sec_keys', [])
+            for cdt_sec in cdt_secs:
+                self.cdt_secs.append(
+                    self.CDTSec(cdt_sec, drop_empty=drop_empty))
+            super(B32Payload3X.DASec, self).__init__(
+                'DASec', 'data_access_sec', drop_empty=drop_empty
+            )
+
+    def __init__(self, payload, drop_empty=False):
+        self.b32_content = XmlField('B32', attributes={
+            'Fini': str(payload['date_from']),
+            'Ffin': str(payload['date_to']),
+        })
+
+        master_key_payload = payload.get('master_key')
+        if master_key_payload:
+            self.master_key = MasterKey(master_key_payload, drop_empty=drop_empty)
+
+        self.da_sec = []
+        data_access_sec_payloads = payload.get('data_access_sec', [])
+        for das_payload in data_access_sec_payloads:
+            self.da_sec.append(self.DASec(das_payload, drop_empty=drop_empty))
+
+        super(B32Payload3X, self).__init__(
+            'b32Payload', 'b32_content', drop_empty=drop_empty
+        )
+
+
+class B32Payload4X(XmlModel):
     """
     The class used to instantiate the B32 parameters
     :return: B32 parameters
     """
-
     _sort_order = ('master_key', 'local_da_sec', 'remote_da_sec')
-
-    class MasterKey(XmlModel):
-        def __init__(self, payload, drop_empty=False):
-            self.master_key_content = XmlField(
-                'MasterKey', attributes={
-                    'KeyId': str(payload['key_id']),
-                    'KeyWrap': str(payload['key_wrap']),
-                }
-            )
-            super(B32Payload.MasterKey, self).__init__(
-                'MasterKey', 'master_key_content', drop_empty=drop_empty
-            )
 
     class LocalDASec(XmlModel):
         def __init__(self, payload, drop_empty=False):
@@ -825,7 +893,7 @@ class B32Payload(XmlModel):
                     'Secret': str(payload.get('secret', '')),
                 }
             )
-            super(B32Payload.LocalDASec, self).__init__(
+            super(B32Payload4X.LocalDASec, self).__init__(
                 'LocalDASec', 'local_data_access_sec', drop_empty=drop_empty
             )
 
@@ -840,56 +908,44 @@ class B32Payload(XmlModel):
                         'KeyVal': str(payload['key_val']),
                     }
                 )
-                super(B32Payload.RemoteDASec.CDTSec, self).__init__(
+                super(B32Payload4X.RemoteDASec.CDTSec, self).__init__(
                     'CDTSec', 'data_transport_sec_key', drop_empty=drop_empty
                 )
 
-        def __init__(self, payload, version, drop_empty=False):
+        def __init__(self, payload, drop_empty=False):
             attributes = {
                 'ClientId': str(payload['client_id']),
                 'Secret': str(payload.get('secret', '')),
+                'FactorySecret': str(payload.get('factory_secret', '')),
             }
-            dasec_name = 'DASec'
-            if version >= '4':
-                attributes['FactorySecret'] = str(payload.get('factory_secret', ''))
-                dasec_name = 'RemoteDASec'
-
             self.remote_data_access_sec = XmlField(
-                dasec_name, attributes=attributes
+                'RemoteDASec', attributes=attributes
             )
 
             self.cdt_secs = []
             cdt_secs = payload.get('data_transport_sec_keys', [])
             for cdt_sec in cdt_secs:
                 self.cdt_secs.append(self.CDTSec(cdt_sec, drop_empty=drop_empty))
-            super(B32Payload.RemoteDASec, self).__init__(
-                dasec_name, 'remote_data_access_sec', drop_empty=drop_empty
+            super(B32Payload4X.RemoteDASec, self).__init__(
+                'RemoteDASec', 'remote_data_access_sec', drop_empty=drop_empty
             )
 
-    def __init__(self, payload, version, drop_empty=False):
-        attributes = {}
-        if version < '4':
-            attributes = {
-                'Fini': str(payload['date_from']),
-                'Ffin': str(payload['date_to']),
-            }
-        self.b32_content = XmlField('B32', attributes=attributes)
-
+    def __init__(self, payload, drop_empty=False):
+        self.b32_content = XmlField('B32')
         master_key_payload = payload.get('master_key')
         if master_key_payload:
-            self.master_key = self.MasterKey(master_key_payload, drop_empty=drop_empty)
+            self.master_key = MasterKey(master_key_payload, drop_empty=drop_empty)
 
         self.local_da_sec = []
-        if version >= '4':
-            local_data_access_sec_payloads = payload.get('local_data_access_sec', [])
-            for ldas_payload in local_data_access_sec_payloads:
-                self.local_da_sec.append(self.LocalDASec(ldas_payload, drop_empty=drop_empty))
+        local_data_access_sec_payloads = payload.get('local_data_access_sec', [])
+        for ldas_payload in local_data_access_sec_payloads:
+            self.local_da_sec.append(self.LocalDASec(ldas_payload, drop_empty=drop_empty))
 
         remote_data_access_sec_payload = payload.get('remote_data_access_sec')
         if remote_data_access_sec_payload:
-            self.remote_da_sec = self.RemoteDASec(remote_data_access_sec_payload, version, drop_empty=drop_empty)
+            self.remote_da_sec = self.RemoteDASec(remote_data_access_sec_payload, drop_empty=drop_empty)
 
-        super(B32Payload, self).__init__(
+        super(B32Payload4X, self).__init__(
             'b32Payload', 'b32_content', drop_empty=drop_empty
         )
 
