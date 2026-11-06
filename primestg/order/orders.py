@@ -759,7 +759,7 @@ class B31Meter(XmlModel):
                 }
             )
             self.cdt_secs = []
-            for cdt_sec_payload in payload['data_transport_sec_keys']:
+            for cdt_sec_payload in payload.get('data_transport_sec_keys', []):
                 self.cdt_secs.append(self.CDTSec(cdt_sec_payload, drop_empty=drop_empty))
             super(B31Meter.DASec, self).__init__(
                 'DASec', 'da_sec', drop_empty
@@ -798,9 +798,9 @@ class B32:
             b32 = B32Payload4X(payload)
         else:
             data_access_sec = []
-            if 'remote_data_access_sec' in payload:
+            if payload.get('remote_data_access_sec'):
                 data_access_sec.append(payload['remote_data_access_sec'])
-            if 'local_data_access_sec' in payload:
+            if payload.get('local_data_access_sec'):
                 data_access_sec.extend(payload['local_data_access_sec'])
             payload['data_access_sec'] = data_access_sec
             b32 = B32Payload3X(payload)
