@@ -96,7 +96,7 @@ def get_update_cnc_keys_parameters(meter, version, kwargs):
     activation_date = datetime.strptime(kwargs['activation_date'], '%Y-%m-%d %H:%M:%S')
     parsed = parse_parameters_keys(raw_keys)
     if 'c4' in parsed:
-        vals = {'meter_id': meter}
+        vals = {'cnt': meter}
         vals['client_id'] = 4
         vals['secret'] = parsed['c4']['secret']
         if 'cdt_secs' in parsed:

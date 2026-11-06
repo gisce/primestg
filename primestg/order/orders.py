@@ -766,7 +766,7 @@ class B31Meter(XmlModel):
             )
 
     def __init__(self, payload, version, drop_empty=False):
-        attributes = {'CntId': str(payload['meter_id'])}
+        attributes = {'CntId': str(payload['cnt'])}
         if version < '4':
             activation_date = datetimetoprime(payload['activation_date'])
             attributes['ActDate'] = activation_date
