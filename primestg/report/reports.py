@@ -1548,7 +1548,7 @@ class ParameterConcentratorEvents(Parameter):
             get = self.objectified.get
             name = ''
             if hasattr(self.objectified, 'D1'):
-                name = getattr(self.objectified, 'D1')
+                name = str(getattr(self.objectified, 'D1'))
             values = {
                 'name': name,
                 'cnc_name': self.concentrator_name,
