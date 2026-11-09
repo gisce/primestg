@@ -18,7 +18,8 @@ with description('Report S32 example'):
 
     with it('generates expected results for the values of the the first  concentrator'):
         expected_first_value_first_concentrator = {
-            'name': 'XXX0004427746',
+            'name': 'XXX0036491967',
+            'cnc_name': 'XXX0004427746',
             'event_code': 1,
             'event_group': 5,
             'season': 'S',

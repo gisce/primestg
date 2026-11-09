@@ -1,5 +1,6 @@
 [{
-    'name': 'XXX0004427746',
+    'name': 'XXX0036491967',
+    'cnc_name': 'XXX0004427746',
     'event_code': 1,
     'event_group': 5,
     'season': 'S',
