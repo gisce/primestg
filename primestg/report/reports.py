@@ -1546,8 +1546,12 @@ class ParameterConcentratorEvents(Parameter):
         values = []
         try:
             get = self.objectified.get
+            name = ''
+            if hasattr(self.objectified, 'D1'):
+                name = getattr(self.objectified, 'D1')
             values = {
-                'name': self.concentrator_name,
+                'name': name,
+                'cnc_name': self.concentrator_name,
                 'event_code': int(get('C')),
                 'season': get('Fh')[-1:],
                 'timestamp': self._get_timestamp('Fh'),
