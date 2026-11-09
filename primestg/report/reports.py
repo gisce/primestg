@@ -1570,69 +1570,6 @@ class ParameterConcentratorEvents(Parameter):
         return values
 
 
-class ParameterS32(Parameter):
-    """
-    Class for a set of parameters of report S32.
-    """
-
-    def __init__(
-            self,
-            objectified_parameter,
-            report_version,
-            concentrator_name,
-            request_id
-    ):
-        super(ParameterS32, self).__init__(
-            objectified_parameter,
-            report_version
-        )
-        self.concentrator_name = concentrator_name
-        self.request_id = request_id
-
-    @property
-    def concentrator_name(self):
-        return self._concentrator_name
-
-    @concentrator_name.setter
-    def concentrator_name(self, value):
-        self._concentrator_name = value
-
-    @property
-    def request_id(self):
-        return self._request_id
-
-    @request_id.setter
-    def request_id(self, value):
-        self._request_id = value
-
-    @property
-    def values(self):
-        """
-        Set of parameters of report S32.
-
-        :return: a dict with a set of parameters of report S32
-        """
-        try:
-            get = self.objectified.get
-            values = {
-                'name': self.concentrator_name,
-                'event_code': int(get('C')),
-                'season': get('Fh')[-1:],
-                'timestamp': self._get_timestamp('Fh'),
-                'event_group': int(get('Et')),
-                'D1': str(self.objectified.D1),
-            }
-            d2s = {d.get('cosemID'): str(d) for d in getattr(self.objectified, 'D2', [])}
-            if d2s:
-                values.update({'D2': d2s})
-        except Exception as e:
-            self._warnings.append('ERROR: Reading a concentrator event. Thrown '
-                                  'exception: {}'.format(e))
-            return []
-
-        return values
-
-
 class LineSupervisorS52(LineSupervisorDetails):
     """
     Class for a line supervisor of report S52.
@@ -3278,7 +3215,7 @@ class ConcentratorS32(ConcentratorEvents):
         parameters = []
         if getattr(self.objectified, 'S32', None) is not None:
             for parameter in self.objectified.S32:
-                parameters.append(ParameterS32(
+                parameters.append(ParameterConcentratorEvents(
                     parameter,
                     self.report_version,
                     self.name,
