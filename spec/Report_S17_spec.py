@@ -23,7 +23,8 @@ with description('Report S17 examples'):
 
         expected_first_value_first_concentrator = \
             {
-                'name': 'ZIV0000035545',
+                'name': 'admin',
+                'cnc_name': 'ZIV0000035545',
                 'event_code': 1,
                 'season': 'W',
                 'timestamp': '2016-12-02 13:12:40:',

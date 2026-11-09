@@ -9,7 +9,7 @@ from primestg.utils import octet2name, octet2number
 
 
 SUPPORTED_REPORTS = ['S01', 'S02', 'S04', 'S05', 'S06', 'S07', 'S08', 'S09', 'S12', 'S13', 'S14',
-                     'S15', 'S17', 'S18', 'S21', 'S23', 'S24', 'S26', 'S27', 'S31', 'S42', 'S52',
+                     'S15', 'S17', 'S18', 'S21', 'S23', 'S24', 'S26', 'S27', 'S31', 'S32', 'S42', 'S52',
                      'G01', 'G02', 'G04']
 
 
@@ -1546,8 +1546,12 @@ class ParameterConcentratorEvents(Parameter):
         values = []
         try:
             get = self.objectified.get
+            name = ''
+            if hasattr(self.objectified, 'D1'):
+                name = str(getattr(self.objectified, 'D1'))
             values = {
-                'name': self.concentrator_name,
+                'name': name,
+                'cnc_name': self.concentrator_name,
                 'event_code': int(get('C')),
                 'season': get('Fh')[-1:],
                 'timestamp': self._get_timestamp('Fh'),
@@ -3197,6 +3201,32 @@ class ConcentratorS31(ConcentratorWithMetersWithConcentratorName):
         return [v for v in values if v]
 
 
+class ConcentratorS32(ConcentratorEvents):
+
+    def __init__(self, objectified_concentrator, report_version, request_id, report_type):
+        super(ConcentratorS32, self).__init__(objectified_concentrator, report_version, request_id)
+        self.report_version = report_version
+        self.request_id = request_id
+        self.report_type = report_type
+
+    @property
+    def parameters(self):
+        """
+        Parameter set objects of this concentrator.
+
+        :return: a list of parameter set objects
+        """
+        parameters = []
+        if getattr(self.objectified, 'S32', None) is not None:
+            for parameter in self.objectified.S32:
+                parameters.append(ParameterConcentratorEvents(
+                    parameter,
+                    self.report_version,
+                    self.name,
+                    self.request_id))
+        return parameters
+
+
 class ConcentratorS23(ConcentratorWithMetersWithConcentratorName):
 
     """
@@ -3628,6 +3658,15 @@ class Report(object):
                     objectified_concentrator,
                     self.report_version,
                     self.request_id,
+                ]
+            },
+            'S32': {
+                'class': ConcentratorS32,
+                'args': [
+                    objectified_concentrator,
+                    self.report_version,
+                    self.request_id,
+                    self.report_type
                 ]
             },
             'S42': {
