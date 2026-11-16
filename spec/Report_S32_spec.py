@@ -49,3 +49,20 @@ with description('Report S32 example'):
                 if cnc.warnings:
                     warnings.append(cnc.warnings)
                 expect(result).to(equal(expected_result))
+
+    with it('generates the correct errors for the report with errors'):
+        expected_errors = [{
+            'name': 'MMM0037592013',
+            'cnc_name': 'MMM7940190606',
+            'errcat': '2',
+            'errcode': '6',
+        }, {
+            'name': 'MMM0037592014',
+            'cnc_name': 'MMM7940190606',
+            'errcat': '2',
+            'errcode': '6',
+        }]
+
+        concentrator = list(self.report[1].concentrators)[0]
+        errors = concentrator.errors
+        expect(errors).to(equal(expected_errors))

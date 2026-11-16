@@ -3226,6 +3226,21 @@ class ConcentratorS32(ConcentratorEvents):
                     self.request_id))
         return parameters
 
+    @property
+    def errors(self):
+        self._errors = []
+        cnc_name = self.objectified.get('Id')
+        if getattr(self.objectified, 'Cnt', None) is not None:
+            for meter in self.objectified.Cnt:
+                if meter.get('ErrCat'):
+                    self._errors.append({
+                        'name': meter.get('Id'),
+                        'cnc_name': cnc_name,
+                        'errcat': meter.get('ErrCat'),
+                        'errcode': meter.get('ErrCode')
+                    })
+        return self._errors
+
 
 class ConcentratorS23(ConcentratorWithMetersWithConcentratorName):
 
